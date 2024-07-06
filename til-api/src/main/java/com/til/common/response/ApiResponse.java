@@ -24,6 +24,10 @@ public class ApiResponse<T> {
 		return new ApiResponse<>(BaseSuccessCode.OK, null);
 	}
 
+	public static <T> ApiResponse<T> ok(SuccessCode status) {
+		return new ApiResponse<>(status, null);
+	}
+
 	public static <T> ApiResponse<T> ok(T data) {
 		return new ApiResponse<>(BaseSuccessCode.OK, data);
 	}

@@ -39,6 +39,7 @@ out/
 
 ## docker
 db/
+!til-*/**/db/
 
 ## Mac
 .DS_Store

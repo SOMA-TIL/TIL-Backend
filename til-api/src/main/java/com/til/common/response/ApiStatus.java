@@ -22,4 +22,8 @@ public class ApiStatus {
 	public static ApiStatus of(ErrorCode status) {
 		return new ApiStatus(status.name(), status.getMessage());
 	}
+
+	public static ApiStatus of(String code, String message) {
+		return new ApiStatus(code, message);
+	}
 }

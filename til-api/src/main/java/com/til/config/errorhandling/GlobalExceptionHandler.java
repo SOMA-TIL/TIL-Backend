@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.til.domain.common.enums.BaseErrorCode;
 import com.til.domain.common.exception.BaseException;
+import com.til.domain.common.exception.InvalidDtoException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +31,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return ResponseEntity
 			.status(ex.getErrorCode().getStatus().value())
+			.body(response);
+	}
+
+	@ExceptionHandler(InvalidDtoException.class)
+	protected ResponseEntity<ErrorResponse> handleInvalidDtoException(final InvalidDtoException ex) {
+		log.error("InvalidDtoException: {}", ex.getMessage());
+		ErrorResponse response = ErrorResponse.of("INVALID_DTO", ex.getMessage());
+
+		return ResponseEntity
+			.status(HttpStatus.BAD_REQUEST)
 			.body(response);
 	}
 
