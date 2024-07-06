@@ -1,5 +1,7 @@
 package com.til.controller.user;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,5 +25,11 @@ public class UserController {
 	public ApiResponse join(@RequestBody @Valid UserJoinRequest request) {
 		userService.join(request.toServiceDto());
 		return ApiResponse.ok(UserSuccessCode.SUCCESS_JOIN);
+	}
+
+	@GetMapping("/nickname/{nickname}")
+	public ApiResponse checkNickname(@PathVariable String nickname) {
+		userService.checkNickname(nickname);
+		return ApiResponse.ok(UserSuccessCode.POSSIBLE_NICKNAME);
 	}
 }

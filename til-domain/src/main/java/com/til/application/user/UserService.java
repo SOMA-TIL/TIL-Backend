@@ -29,14 +29,18 @@ public class UserService {
 		if (userRepository.existsByEmail(userJoinDto.email())) {
 			throw new BaseException(UserErrorCode.ALREADY_EXISTS_EMAIL);
 		}
-		if (userRepository.existsByNickname(userJoinDto.nickname())) {
-			throw new BaseException(UserErrorCode.ALREADY_EXISTS_NICKNAME);
-		}
+		checkNickname(userJoinDto.nickname());
 
 		String encodePassword = passwordEncoder.encode(userJoinDto.password());
 		User user = userJoinDto.toEntity();
 		user.setPassword(encodePassword);
 
 		userRepository.save(user);
+	}
+
+	public void checkNickname(String nickname) {
+		if (userRepository.existsByNickname(nickname)) {
+			throw new BaseException(UserErrorCode.ALREADY_EXISTS_NICKNAME);
+		}
 	}
 }
