@@ -3,7 +3,6 @@ package com.til.application.user;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.BDDMockito.*;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,8 +26,7 @@ class UserServiceTest {
 	private UserRepository userRepository;
 
 	@Test
-	@DisplayName("중복되는 이메일은 회원가입할 수 없다.")
-	void joinFailWhenEmailDuplicated() {
+	void 회원가입시_이메일이_중복되면_예외를_던진다() {
 		// given
 		given(userRepository.existsByEmail(anyString())).willReturn(true);
 
@@ -42,8 +40,7 @@ class UserServiceTest {
 	}
 
 	@Test
-	@DisplayName("중복되는 닉네임은 회원가입할 수 없다.")
-	void joinFailWhenNicknameDuplicated() {
+	void 회원가입시_닉네임이_중복되면_예외를_던진다() {
 		// given
 		given(userRepository.existsByEmail(anyString())).willReturn(false);
 		given(userRepository.existsByNickname(anyString())).willReturn(true);
