@@ -13,3 +13,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+jwt:
+  secret: secretKey1secretKey2secretKey3secretKey4secretKey5secretKey6secretKey7secretKey8
+  access:
+    expiration: 1800000 # 30 minutes(1000 * 60 * 30)
+  refresh:
+    expiration: 1209600000 # 14 days(1000 * 60 * 60 * 24 * 14)
