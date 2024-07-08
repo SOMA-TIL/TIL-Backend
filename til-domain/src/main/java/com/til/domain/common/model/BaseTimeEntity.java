@@ -14,11 +14,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+@MappedSuperclass
 @Getter
 @SuperBuilder
-@MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseTimeEntity {
 	@CreatedDate
 	@Column(name = "created_date", nullable = false, updatable = false)

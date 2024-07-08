@@ -21,8 +21,8 @@ import com.til.domain.common.exception.InvalidDtoException;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(BaseException.class)
 	protected ResponseEntity<ErrorResponse> handleCustomException(final BaseException ex) {
