@@ -56,8 +56,8 @@ class UserServiceTest {
 
 	private UserJoinDto createUserJoinDto() {
 		return UserJoinDto.builder()
-			.email("sun@til.com")
-			.password("pw@2024!")
+			.email("test@til.com")
+			.password("soma2024")
 			.nickname("선인장24")
 			.build();
 	}
