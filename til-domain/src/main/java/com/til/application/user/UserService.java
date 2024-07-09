@@ -4,8 +4,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.user.dto.UserJoinDto;
+import com.til.domain.user.dto.UserLoginDto;
 import com.til.domain.user.enums.UserErrorCode;
 import com.til.domain.user.model.User;
 import com.til.domain.user.repository.UserRepository;
@@ -36,6 +38,16 @@ public class UserService {
 		user.setPassword(encodePassword);
 
 		userRepository.save(user);
+	}
+
+	public AuthUserInfoDto login(UserLoginDto userLoginDto) {
+		User user = userRepository.findByEmail(userLoginDto.email())
+			.orElseThrow(() -> new BaseException(UserErrorCode.NOT_FOUND_USER));
+		if (!passwordEncoder.matches(userLoginDto.password(), user.getPassword())) {
+			throw new BaseException(UserErrorCode.FAILED_LOGIN);
+		}
+
+		return AuthUserInfoDto.of(user.getEmail(), user.getNickname(), user.getRole());
 	}
 
 	public void checkNickname(String nickname) {
