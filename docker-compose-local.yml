@@ -13,3 +13,28 @@ services:
       MYSQL_DATABASE: til
       MYSQL_ROOT_HOST: '%'
       MYSQL_ROOT_PASSWORD: pw@1234
+
+  redis:
+    image: redis:latest
+    container_name: redis_server
+    volumes:
+      - ./db/redis/data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - redis_network
+    command: [ "sh", "-c", "redis-server --requirepass pw@1234 --bind 0.0.0.0" ]
+
+  redis_client:
+    image: redis:latest
+    container_name: redis_client
+    entrypoint: [ "/bin/bash", "-c", "echo 'alias redis-cli-connect=\"redis-cli -h redis_server -a pw@1234\"' >> ~/.bashrc && /bin/bash" ]
+    depends_on:
+      - redis
+    networks:
+      - redis_network
+    stdin_open: true
+    tty: true
+
+networks:
+  redis_network:
