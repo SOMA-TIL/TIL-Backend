@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,25 +15,25 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class TokenProvider implements InitializingBean {
+public class TokenProvider {
 	@Value("${jwt.secret}")
-	private String secretKey;
+	private String SECRET_KEY;
 
-	private SecretKey key;
+	private SecretKey SIGN_KEY;
 
-	@Override
-	public void afterPropertiesSet() {
-		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-		this.key = Keys.hmacShaKeyFor(keyBytes);
+	@PostConstruct
+	public void settingSecretKey() {
+		byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+		this.SIGN_KEY = Keys.hmacShaKeyFor(keyBytes);
 	}
 
 	public String generateToken(String subject, Map<String, Object> claims, Long expireDuration) {
@@ -44,13 +43,13 @@ public class TokenProvider implements InitializingBean {
 			.subject(subject)
 			.claims(claims)
 			.expiration(tokenExpireTime)
-			.signWith(SignatureAlgorithm.HS256, secretKey)
+			.signWith(SIGN_KEY)
 			.compact();
 	}
 
 	public void validateToken(String token) {
 		try {
-			Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+			Jwts.parser().verifyWith(SIGN_KEY).build().parseSignedClaims(token);
 		} catch (MalformedJwtException | SignatureException | UnsupportedJwtException | IllegalArgumentException e) {
 			throw new TokenInvalidException(AuthErrorCode.INVALID_TOKEN);
 		} catch (ExpiredJwtException e) {
@@ -60,7 +59,7 @@ public class TokenProvider implements InitializingBean {
 
 	public Claims parseClaims(String token) {
 		return Jwts.parser()
-			.verifyWith(key)
+			.verifyWith(SIGN_KEY)
 			.build()
 			.parseSignedClaims(token)
 			.getPayload();
