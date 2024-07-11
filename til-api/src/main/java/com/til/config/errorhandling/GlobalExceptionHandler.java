@@ -1,12 +1,11 @@
 package com.til.config.errorhandling;
 
-import java.nio.file.AccessDeniedException;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -96,7 +95,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ErrorResponse> handleAllException(final Exception ex) {
-		log.error("Exception: {}", ex.getMessage());
+		log.error("Exception: {} {}", ex.getClass(), ex.getMessage());
 		ErrorResponse response = ErrorResponse.of(BaseErrorCode.INTERNAL_SERVER_ERROR);
 
 		return ResponseEntity
