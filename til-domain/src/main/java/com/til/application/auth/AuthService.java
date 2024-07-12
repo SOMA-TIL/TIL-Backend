@@ -71,7 +71,7 @@ public class AuthService {
 	}
 
 	private String resolveToken(String bearerToken) {
-		if (StringUtils.hasText(bearerToken) & bearerToken.startsWith(BEARER_TYPE)) {
+		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_TYPE)) {
 			return bearerToken.substring(BEARER_TYPE.length() + 1);
 		}
 		return null;
@@ -80,5 +80,4 @@ public class AuthService {
 	private Long getExpireDuration(TokenType tokenType) {
 		return tokenType == TokenType.ACCESS ? ACCESS_EXPIRE_DURATION : REFRESH_EXPIRE_DURATION;
 	}
-
 }
