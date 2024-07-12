@@ -1,15 +1,25 @@
 package com.til.config;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.til.config.resolver.CurrentUserResolver;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
-public class WebConfig {
+@RequiredArgsConstructor
+public class WebConfig implements WebMvcConfigurer {
 	@Value("${cors.allowed.origin}")
 	private String ALLOWED_ORIGIN_URL;
+
+	private final CurrentUserResolver currentUserResolver;
 
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
@@ -23,5 +33,9 @@ public class WebConfig {
 					.allowCredentials(true);
 			}
 		};
+	}
+
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+		resolvers.add(currentUserResolver);
 	}
 }

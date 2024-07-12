@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.common.exception.BaseException;
+import com.til.domain.user.dto.UserInfoDto;
 import com.til.domain.user.dto.UserJoinDto;
 import com.til.domain.user.dto.UserLoginDto;
 import com.til.domain.user.enums.UserErrorCode;
@@ -33,21 +34,29 @@ public class UserService {
 		}
 		checkNickname(userJoinDto.nickname());
 
-		String encodePassword = passwordEncoder.encode(userJoinDto.password());
 		User user = userJoinDto.toEntity();
-		user.setPassword(encodePassword);
+		user.setPassword(passwordEncoder.encode(userJoinDto.password()));
 
 		userRepository.save(user);
 	}
 
 	public AuthUserInfoDto login(UserLoginDto userLoginDto) {
-		User user = userRepository.findByEmail(userLoginDto.email())
-			.orElseThrow(() -> new BaseException(UserErrorCode.NOT_FOUND_USER));
+		User user = getUserByEmail(userLoginDto.email());
 		if (!passwordEncoder.matches(userLoginDto.password(), user.getPassword())) {
 			throw new BaseException(UserErrorCode.FAILED_LOGIN);
 		}
 
 		return AuthUserInfoDto.of(user.getEmail(), user.getNickname(), user.getRole());
+	}
+
+	public UserInfoDto getUserInfo(String email) {
+		User user = getUserByEmail(email);
+		return UserInfoDto.of(user);
+	}
+
+	private User getUserByEmail(String email) {
+		return userRepository.findByEmail(email)
+			.orElseThrow(() -> new BaseException(UserErrorCode.NOT_FOUND_USER));
 	}
 
 	public void checkNickname(String nickname) {
