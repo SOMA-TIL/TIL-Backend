@@ -1,30 +1,5 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3308/til
-    username: root
-    password: pw@1234
-  jpa:
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    show-sql: true
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        format_sql: true
-  data:
-    redis:
-      host: 127.0.0.1
-      port: 6379
-      password: pw@1234
-jwt:
-  secret: secretKey1secretKey2secretKey3secretKey4secretKey5secretKey6secretKey7secretKey8
-  access:
-    expiration: 1800000 # 30 minutes(1000 * 60 * 30)
-  refresh:
-    expiration: 1209600000 # 14 days(1000 * 60 * 60 * 24 * 14)
-
-cors:
-  allowed:
-    origin: http://localhost:3000
+  config:
+    import:
+      - optional:file:configs/common/application.yml
+      - optional:file:configs/api/application.yml
