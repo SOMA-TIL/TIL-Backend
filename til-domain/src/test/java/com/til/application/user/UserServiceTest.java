@@ -3,8 +3,6 @@ package com.til.application.user;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.BDDMockito.*;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -60,7 +58,7 @@ class UserServiceTest {
 	@Test
 	void 로그인시_회원으로_등록되지_않은_정보는_예외를_던진다() {
 		// given
-		given(userRepository.findByEmail(anyString())).willReturn(Optional.empty());
+		given(userRepository.getByEmail(anyString())).willThrow(BaseException.class);
 		UserLoginDto userLoginDto = createUserLoginDto();
 
 		// when

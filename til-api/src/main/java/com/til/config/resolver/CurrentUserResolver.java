@@ -13,8 +13,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.til.application.user.UserService;
 import com.til.common.annotation.CurrentUser;
-import com.til.domain.common.enums.BaseErrorCode;
-import com.til.domain.common.exception.BaseException;
 import com.til.domain.user.dto.UserInfoDto;
 
 import lombok.NonNull;
@@ -36,7 +34,6 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
 		@NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 		return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
 			.filter(Authentication::isAuthenticated)
-			.map(auth -> userService.getUserInfo(auth.getPrincipal().toString()))
-			.orElseThrow(() -> new BaseException(BaseErrorCode.UNAUTHORIZED));
+			.map(auth -> userService.getUserInfo(auth.getPrincipal().toString()));
 	}
 }

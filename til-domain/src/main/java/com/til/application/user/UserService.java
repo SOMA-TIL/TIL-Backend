@@ -41,7 +41,7 @@ public class UserService {
 	}
 
 	public AuthUserInfoDto login(UserLoginDto userLoginDto) {
-		User user = getUserByEmail(userLoginDto.email());
+		User user = userRepository.getByEmail(userLoginDto.email());
 		if (!passwordEncoder.matches(userLoginDto.password(), user.getPassword())) {
 			throw new BaseException(UserErrorCode.FAILED_LOGIN);
 		}
@@ -50,13 +50,8 @@ public class UserService {
 	}
 
 	public UserInfoDto getUserInfo(String email) {
-		User user = getUserByEmail(email);
+		User user = userRepository.getByEmail(email);
 		return UserInfoDto.of(user);
-	}
-
-	private User getUserByEmail(String email) {
-		return userRepository.findByEmail(email)
-			.orElseThrow(() -> new BaseException(UserErrorCode.NOT_FOUND_USER));
 	}
 
 	public void checkNickname(String nickname) {
