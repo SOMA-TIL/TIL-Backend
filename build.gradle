@@ -1,3 +1,6 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+import org.springframework.boot.gradle.tasks.run.BootRun
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.1'
@@ -59,5 +62,28 @@ subprojects {
 
     test {
         useJUnitPlatform()
+    }
+
+    bootJar.enabled = true
+    jar.enabled = false
+
+    sourceSets { // 서브 모듈에 해당하는 환경변수 경로 연결
+        main {
+            resources {
+                srcDir "${rootProject.projectDir}/configs/${project.name.split('-')[1]}"
+            }
+        }
+    }
+
+    tasks.withType(BootJar).configureEach {
+        bootJar.manifest {
+            attributes('Spring-Boot-Profile': project.hasProperty('profile') ? project.profile : 'local')
+        }
+    }
+
+    tasks.withType(BootRun).configureEach {
+        doFirst {
+            systemProperty 'spring.profiles.active', "${project.hasProperty('profile') ? project.profile : 'local'}"
+        }
     }
 }
