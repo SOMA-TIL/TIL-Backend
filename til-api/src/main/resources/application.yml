@@ -1,5 +1,0 @@
-spring:
-  config:
-    import:
-      - optional:file:configs/common/application.yml
-      - optional:file:configs/api/application.yml
