@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.user.dto.UserJoinDto;
 import com.til.domain.user.dto.UserLoginDto;
+import com.til.domain.user.enums.UserErrorCode;
 import com.til.domain.user.repository.UserRepository;
 import com.til.domain.user.validator.UserInfoValidator;
 
@@ -33,7 +34,9 @@ class UserServiceTest {
 
 		// when & then
 		assertThatThrownBy(() -> userService.join(createUserJoinDto()))
-			.isInstanceOf(BaseException.class);
+			.isInstanceOf(BaseException.class)
+			.extracting(error -> ((BaseException)error).getErrorCode())
+			.isEqualTo(UserErrorCode.ALREADY_EXISTS_EMAIL);
 	}
 
 	@Test
@@ -44,17 +47,21 @@ class UserServiceTest {
 
 		// when & then
 		assertThatThrownBy(() -> userService.join(createUserJoinDto()))
-			.isInstanceOf(BaseException.class);
+			.isInstanceOf(BaseException.class)
+			.extracting(error -> ((BaseException)error).getErrorCode())
+			.isEqualTo(UserErrorCode.ALREADY_EXISTS_NICKNAME);
 	}
 
 	@Test
 	void 로그인시_회원으로_등록되지_않은_정보는_예외를_던진다() {
 		// given
-		given(userRepository.getByEmail(anyString())).willThrow(BaseException.class);
+		given(userRepository.getByEmail(anyString())).willThrow(new BaseException(UserErrorCode.NOT_FOUND_USER));
 
 		// when & then
 		assertThatThrownBy(() -> userService.login(createUserLoginDto()))
-			.isInstanceOf(BaseException.class);
+			.isInstanceOf(BaseException.class)
+			.extracting(error -> ((BaseException)error).getErrorCode())
+			.isEqualTo(UserErrorCode.NOT_FOUND_USER);
 	}
 
 	private UserJoinDto createUserJoinDto() {

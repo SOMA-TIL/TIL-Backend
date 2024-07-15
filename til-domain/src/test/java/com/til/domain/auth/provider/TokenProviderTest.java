@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.til.domain.auth.enums.AuthErrorCode;
 import com.til.domain.auth.exception.TokenInvalidException;
 
 import io.jsonwebtoken.Jwts;
@@ -38,20 +39,24 @@ class TokenProviderTest {
 	void 유효기간이_지난_토큰을_검증하면_예외를_던진다() {
 		// given & when & then
 		assertThatThrownBy(() -> tokenProvider.validateToken(createExpiredToken()))
-			.isInstanceOf(TokenInvalidException.class);
+			.isInstanceOf(TokenInvalidException.class)
+			.extracting(error -> ((TokenInvalidException)error).getErrorCode())
+			.isEqualTo(AuthErrorCode.EXPIRED_TOKEN);
 	}
 
 	@Test
 	void 시크릿키가_문제있는_토큰을_검증하면_예외를_던진다() {
 		// given & when & then
 		assertThatThrownBy(() -> tokenProvider.validateToken(createInvalidToken()))
-			.isInstanceOf(TokenInvalidException.class);
+			.isInstanceOf(TokenInvalidException.class)
+			.extracting(error -> ((TokenInvalidException)error).getErrorCode())
+			.isEqualTo(AuthErrorCode.INVALID_TOKEN);
 	}
 
 	@Test
 	void 유효기간이_지나지_않고_시크릿키가_문제없는_토큰을_검증하면_예외를_던지지_않는다() {
 		// given & when & then
-		assertAll(() -> tokenProvider.validateToken(createValidToken()));
+		assertDoesNotThrow(() -> tokenProvider.validateToken(createValidToken()));
 	}
 
 	private String createExpiredToken() {
