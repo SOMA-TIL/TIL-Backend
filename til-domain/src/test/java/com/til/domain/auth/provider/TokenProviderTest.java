@@ -1,6 +1,7 @@
 package com.til.domain.auth.provider;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
 import java.util.Map;
@@ -35,38 +36,22 @@ class TokenProviderTest {
 
 	@Test
 	void 유효기간이_지난_토큰을_검증하면_예외를_던진다() {
-		// given
-		String token = createExpiredToken();
-
-		// when
-		Throwable throwable = catchThrowable(() -> tokenProvider.validateToken(token));
-
-		// then
-		assertThat(throwable).isInstanceOf(TokenInvalidException.class);
+		// given & when & then
+		assertThatThrownBy(() -> tokenProvider.validateToken(createExpiredToken()))
+			.isInstanceOf(TokenInvalidException.class);
 	}
 
 	@Test
 	void 시크릿키가_문제있는_토큰을_검증하면_예외를_던진다() {
-		// given
-		String token = createInvalidToken();
-
-		// when
-		Throwable throwable = catchThrowable(() -> tokenProvider.validateToken(token));
-
-		// then
-		assertThat(throwable).isInstanceOf(TokenInvalidException.class);
+		// given & when & then
+		assertThatThrownBy(() -> tokenProvider.validateToken(createInvalidToken()))
+			.isInstanceOf(TokenInvalidException.class);
 	}
 
 	@Test
 	void 유효기간이_지나지_않고_시크릿키가_문제없는_토큰을_검증하면_예외를_던지지_않는다() {
-		// given
-		String token = createValidToken();
-
-		// when
-		Throwable throwable = catchThrowable(() -> tokenProvider.validateToken(token));
-
-		// then
-		assertThat(throwable).isNull();
+		// given & when & then
+		assertAll(() -> tokenProvider.validateToken(createValidToken()));
 	}
 
 	private String createExpiredToken() {

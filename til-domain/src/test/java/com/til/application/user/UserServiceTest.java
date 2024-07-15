@@ -31,13 +31,9 @@ class UserServiceTest {
 		// given
 		given(userRepository.existsByEmail(anyString())).willReturn(true);
 
-		UserJoinDto userJoinDto = createUserJoinDto();
-
-		// when
-		Throwable throwable = catchThrowable(() -> userService.join(userJoinDto));
-
-		// then
-		assertThat(throwable).isInstanceOf(BaseException.class);
+		// when & then
+		assertThatThrownBy(() -> userService.join(createUserJoinDto()))
+			.isInstanceOf(BaseException.class);
 	}
 
 	@Test
@@ -46,26 +42,19 @@ class UserServiceTest {
 		given(userRepository.existsByEmail(anyString())).willReturn(false);
 		given(userRepository.existsByNickname(anyString())).willReturn(true);
 
-		UserJoinDto userJoinDto = createUserJoinDto();
-
-		// when
-		Throwable throwable = catchThrowable(() -> userService.join(userJoinDto));
-
-		// then
-		assertThat(throwable).isInstanceOf(BaseException.class);
+		// when & then
+		assertThatThrownBy(() -> userService.join(createUserJoinDto()))
+			.isInstanceOf(BaseException.class);
 	}
 
 	@Test
 	void 로그인시_회원으로_등록되지_않은_정보는_예외를_던진다() {
 		// given
 		given(userRepository.getByEmail(anyString())).willThrow(BaseException.class);
-		UserLoginDto userLoginDto = createUserLoginDto();
 
-		// when
-		Throwable throwable = catchThrowable(() -> userService.login(userLoginDto));
-
-		// then
-		assertThat(throwable).isInstanceOf(BaseException.class);
+		// when & then
+		assertThatThrownBy(() -> userService.login(createUserLoginDto()))
+			.isInstanceOf(BaseException.class);
 	}
 
 	private UserJoinDto createUserJoinDto() {
