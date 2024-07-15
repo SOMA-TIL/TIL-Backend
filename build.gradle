@@ -5,6 +5,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
+    id 'com.diffplug.spotless' version '6.25.0'
 }
 
 bootJar.enabled = false
@@ -18,6 +19,18 @@ allprojects {
 
     repositories {
         mavenCentral()
+    }
+
+    apply plugin: 'com.diffplug.spotless'
+
+    spotless { // code formatter 설정
+        java {
+            importOrder('java', 'javax', 'org', 'com', 'com.diffplug', '')
+            removeUnusedImports()
+            trimTrailingWhitespace()
+            endWithNewline()
+            eclipse().configFile("${rootProject.projectDir}/.github/style/GoogleStyle.xml")
+        }
     }
 }
 
