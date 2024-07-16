@@ -101,3 +101,11 @@ subprojects {
         }
     }
 }
+
+tasks.register('updateGitHooks', Copy) {
+    from "${rootProject.projectDir}/.github/hooks"
+    into "${rootProject.projectDir}/.git/hooks"
+    fileMode 0755
+}
+
+compileJava.dependsOn updateGitHooks
