@@ -71,6 +71,7 @@ subprojects {
         main {
             resources {
                 srcDir "${rootProject.projectDir}/configs/${project.name.split('-')[1]}"
+                srcDir "${rootProject.projectDir}/db"
             }
         }
     }

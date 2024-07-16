@@ -40,7 +40,8 @@ out/
 
 
 ## docker
-db/
+db/**
+!db/*.sql
 !til-*/**/db/
 
 ## Mac
