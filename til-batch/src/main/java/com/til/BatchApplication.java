@@ -8,20 +8,21 @@ import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class BatchApplication {
-	// ----Test Code----
-	private final TestDomainBean testDomainBean;
 
-	public BatchApplication(TestDomainBean testDomainBean) {
-		this.testDomainBean = testDomainBean;
-	}
+    // ----Test Code----
+    private final TestDomainBean testDomainBean;
 
-	@PostConstruct
-	public void dependencyTest() {
-		testDomainBean.dependencyTest();
-	}
+    public BatchApplication(TestDomainBean testDomainBean) {
+        this.testDomainBean = testDomainBean;
+    }
 
-	// ------------------
-	public static void main(String[] args) {
-		SpringApplication.run(BatchApplication.class, args);
-	}
+    @PostConstruct
+    public void dependencyTest() {
+        testDomainBean.dependencyTest();
+    }
+
+    // ------------------
+    public static void main(String[] args) {
+        SpringApplication.run(BatchApplication.class, args);
+    }
 }

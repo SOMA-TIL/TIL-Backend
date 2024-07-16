@@ -21,19 +21,20 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class CurrentUserResolver implements HandlerMethodArgumentResolver {
-	private final UserService userService;
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		return parameter.hasParameterAnnotation(CurrentUser.class)
-			&& parameter.getParameterType().equals(UserInfoDto.class);
-	}
+    private final UserService userService;
 
-	@Override
-	public Object resolveArgument(@NonNull MethodParameter parameter, ModelAndViewContainer mavContainer,
-		@NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-		return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-			.filter(Authentication::isAuthenticated)
-			.map(auth -> userService.getUserInfo(auth.getPrincipal().toString()));
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return parameter.hasParameterAnnotation(CurrentUser.class)
+            && parameter.getParameterType().equals(UserInfoDto.class);
+    }
+
+    @Override
+    public Object resolveArgument(@NonNull MethodParameter parameter, ModelAndViewContainer mavContainer,
+        @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+            .filter(Authentication::isAuthenticated)
+            .map(auth -> userService.getUserInfo(auth.getPrincipal().toString()));
+    }
 }

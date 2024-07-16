@@ -6,13 +6,14 @@ import lombok.Builder;
 
 @Builder
 public record UserLoginDto(
-	String email,
-	String password
+                           String email,
+                           String password
 ) {
-	public User toEntity() {
-		return User.builder()
-			.email(email)
-			.password(password)
-			.build();
-	}
+
+    public User toEntity() {
+        return User.builder()
+            .email(email)
+            .password(password)
+            .build();
+    }
 }

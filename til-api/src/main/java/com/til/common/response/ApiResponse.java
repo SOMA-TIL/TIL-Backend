@@ -10,29 +10,30 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class ApiResponse<T> {
-	private ApiStatus status;
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private T result;
+    private ApiStatus status;
 
-	private ApiResponse(SuccessCode status, T result) {
-		this.status = ApiStatus.of(status);
-		this.result = result;
-	}
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private T result;
 
-	public static <T> ApiResponse<T> ok() {
-		return new ApiResponse<>(BaseSuccessCode.OK, null);
-	}
+    private ApiResponse(SuccessCode status, T result) {
+        this.status = ApiStatus.of(status);
+        this.result = result;
+    }
 
-	public static <T> ApiResponse<T> ok(SuccessCode status) {
-		return new ApiResponse<>(status, null);
-	}
+    public static <T> ApiResponse<T> ok() {
+        return new ApiResponse<>(BaseSuccessCode.OK, null);
+    }
 
-	public static <T> ApiResponse<T> ok(T data) {
-		return new ApiResponse<>(BaseSuccessCode.OK, data);
-	}
+    public static <T> ApiResponse<T> ok(SuccessCode status) {
+        return new ApiResponse<>(status, null);
+    }
 
-	public static <T> ApiResponse<T> ok(SuccessCode status, T data) {
-		return new ApiResponse<>(status, data);
-	}
+    public static <T> ApiResponse<T> ok(T data) {
+        return new ApiResponse<>(BaseSuccessCode.OK, data);
+    }
+
+    public static <T> ApiResponse<T> ok(SuccessCode status, T data) {
+        return new ApiResponse<>(status, data);
+    }
 }

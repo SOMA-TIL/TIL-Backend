@@ -16,26 +16,28 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
-	@Value("${cors.allowed.origin}")
-	private String ALLOWED_ORIGIN_URL;
 
-	private final CurrentUserResolver currentUserResolver;
+    @Value("${cors.allowed.origin}")
+    private String ALLOWED_ORIGIN_URL;
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-					.allowedOrigins(ALLOWED_ORIGIN_URL)
-					.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
-					.allowedHeaders("*")
-					.allowCredentials(true);
-			}
-		};
-	}
+    private final CurrentUserResolver currentUserResolver;
 
-	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-		resolvers.add(currentUserResolver);
-	}
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                    .allowedOrigins(ALLOWED_ORIGIN_URL)
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                    .allowedHeaders("*")
+                    .allowCredentials(true);
+            }
+        };
+    }
+
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(currentUserResolver);
+    }
 }

@@ -24,73 +24,74 @@ import io.jsonwebtoken.security.Keys;
 
 @ExtendWith(MockitoExtension.class)
 class TokenProviderTest {
-	@InjectMocks
-	private TokenProvider tokenProvider;
 
-	private static final String SECRET_KEY = "test1234".repeat(10);
+    @InjectMocks
+    private TokenProvider tokenProvider;
 
-	@BeforeEach
-	void setUp() {
-		ReflectionTestUtils.setField(tokenProvider, "SECRET_KEY", SECRET_KEY);
-		ReflectionTestUtils.setField(tokenProvider, "SIGN_KEY", Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY)));
-	}
+    private static final String SECRET_KEY = "test1234".repeat(10);
 
-	@Test
-	void 유효기간이_지난_토큰을_검증하면_예외를_던진다() {
-		// given & when & then
-		assertThatThrownBy(() -> tokenProvider.validateToken(createExpiredToken()))
-			.isInstanceOf(TokenInvalidException.class)
-			.extracting(error -> ((TokenInvalidException)error).getErrorCode())
-			.isEqualTo(AuthErrorCode.EXPIRED_TOKEN);
-	}
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(tokenProvider, "SECRET_KEY", SECRET_KEY);
+        ReflectionTestUtils.setField(tokenProvider, "SIGN_KEY", Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY)));
+    }
 
-	@Test
-	void 시크릿키가_문제있는_토큰을_검증하면_예외를_던진다() {
-		// given & when & then
-		assertThatThrownBy(() -> tokenProvider.validateToken(createInvalidToken()))
-			.isInstanceOf(TokenInvalidException.class)
-			.extracting(error -> ((TokenInvalidException)error).getErrorCode())
-			.isEqualTo(AuthErrorCode.INVALID_TOKEN);
-	}
+    @Test
+    void 유효기간이_지난_토큰을_검증하면_예외를_던진다() {
+        // given & when & then
+        assertThatThrownBy(() -> tokenProvider.validateToken(createExpiredToken()))
+            .isInstanceOf(TokenInvalidException.class)
+            .extracting(error -> ((TokenInvalidException) error).getErrorCode())
+            .isEqualTo(AuthErrorCode.EXPIRED_TOKEN);
+    }
 
-	@Test
-	void 유효기간이_지나지_않고_시크릿키가_문제없는_토큰을_검증하면_예외를_던지지_않는다() {
-		// given & when & then
-		assertDoesNotThrow(() -> tokenProvider.validateToken(createValidToken()));
-	}
+    @Test
+    void 시크릿키가_문제있는_토큰을_검증하면_예외를_던진다() {
+        // given & when & then
+        assertThatThrownBy(() -> tokenProvider.validateToken(createInvalidToken()))
+            .isInstanceOf(TokenInvalidException.class)
+            .extracting(error -> ((TokenInvalidException) error).getErrorCode())
+            .isEqualTo(AuthErrorCode.INVALID_TOKEN);
+    }
 
-	private String createExpiredToken() {
-		return Jwts.builder()
-			.subject("test@til.com")
-			.claims(null)
-			.expiration(new Date(System.currentTimeMillis() - 1000000))
-			.signWith(getSignKey())
-			.compact();
-	}
+    @Test
+    void 유효기간이_지나지_않고_시크릿키가_문제없는_토큰을_검증하면_예외를_던지지_않는다() {
+        // given & when & then
+        assertDoesNotThrow(() -> tokenProvider.validateToken(createValidToken()));
+    }
 
-	private String createInvalidToken() {
-		return Jwts.builder()
-			.subject("test@til.com")
-			.claims(null)
-			.expiration(new Date(System.currentTimeMillis() + 1000000))
-			.signWith(getWrongSignKey())
-			.compact();
-	}
+    private String createExpiredToken() {
+        return Jwts.builder()
+            .subject("test@til.com")
+            .claims(null)
+            .expiration(new Date(System.currentTimeMillis() - 1000000))
+            .signWith(getSignKey())
+            .compact();
+    }
 
-	private String createValidToken() {
-		return Jwts.builder()
-			.subject("test@til.com")
-			.claims(Map.of("nickname", "test", "role", "USER", "tokenType", "ACCESS"))
-			.expiration(new Date(System.currentTimeMillis() + 1000000))
-			.signWith(getSignKey())
-			.compact();
-	}
+    private String createInvalidToken() {
+        return Jwts.builder()
+            .subject("test@til.com")
+            .claims(null)
+            .expiration(new Date(System.currentTimeMillis() + 1000000))
+            .signWith(getWrongSignKey())
+            .compact();
+    }
 
-	private SecretKey getSignKey() {
-		return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
-	}
+    private String createValidToken() {
+        return Jwts.builder()
+            .subject("test@til.com")
+            .claims(Map.of("nickname", "test", "role", "USER", "tokenType", "ACCESS"))
+            .expiration(new Date(System.currentTimeMillis() + 1000000))
+            .signWith(getSignKey())
+            .compact();
+    }
 
-	private SecretKey getWrongSignKey() {
-		return Keys.hmacShaKeyFor(Decoders.BASE64.decode("wrong".repeat(10)));
-	}
+    private SecretKey getSignKey() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
+    }
+
+    private SecretKey getWrongSignKey() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode("wrong".repeat(10)));
+    }
 }

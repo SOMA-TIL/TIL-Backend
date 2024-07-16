@@ -9,18 +9,19 @@ import lombok.Builder;
 
 @Builder
 public record UserJoinDto(
-	String email,
-	String password,
-	String nickname
+                          String email,
+                          String password,
+                          String nickname
 ) {
-	public User toEntity() {
-		return User.builder()
-			.email(email)
-			.password(password)
-			.nickname(nickname)
-			.platform(Platform.TIL)
-			.role(Role.USER)
-			.status(Status.ACTIVE)
-			.build();
-	}
+
+    public User toEntity() {
+        return User.builder()
+            .email(email)
+            .password(password)
+            .nickname(nickname)
+            .platform(Platform.TIL)
+            .role(Role.USER)
+            .status(Status.ACTIVE)
+            .build();
+    }
 }

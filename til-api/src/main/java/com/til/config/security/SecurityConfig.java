@@ -19,25 +19,26 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-	private final AuthenticationFilter authenticationFilter;
-	private final AuthenticationDeniedHandler authenticationDeniedHandler;
 
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http
-			.formLogin(AbstractHttpConfigurer::disable)
-			.httpBasic(AbstractHttpConfigurer::disable)
-			.csrf(AbstractHttpConfigurer::disable)
-			.headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-			.sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-			.authorizeHttpRequests((request) -> request
-				.requestMatchers(PathPermission.getPublicPath()).permitAll()
-				.requestMatchers(PathPermission.getAdminPath()).hasRole(Role.ADMIN.name())
-				.anyRequest().authenticated()
-			)
-			.exceptionHandling((except) -> except.accessDeniedHandler(authenticationDeniedHandler))
-			.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    private final AuthenticationFilter authenticationFilter;
+    private final AuthenticationDeniedHandler authenticationDeniedHandler;
 
-		return http.build();
-	}
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .csrf(AbstractHttpConfigurer::disable)
+            .headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+            .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+            .authorizeHttpRequests((request) -> request
+                .requestMatchers(PathPermission.getPublicPath()).permitAll()
+                .requestMatchers(PathPermission.getAdminPath()).hasRole(Role.ADMIN.name())
+                .anyRequest().authenticated()
+            )
+            .exceptionHandling((except) -> except.accessDeniedHandler(authenticationDeniedHandler))
+            .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
 }

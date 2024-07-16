@@ -23,61 +23,62 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AuthService {
-	private final TokenProvider tokenProvider;
-	private final RedisManager redisManager;
 
-	@Value("${jwt.access.expiration}")
-	private Long ACCESS_EXPIRE_DURATION;
+    private final TokenProvider tokenProvider;
+    private final RedisManager redisManager;
 
-	@Value("${jwt.refresh.expiration}")
-	private Long REFRESH_EXPIRE_DURATION;
+    @Value("${jwt.access.expiration}")
+    private Long ACCESS_EXPIRE_DURATION;
 
-	private static final String BEARER_TYPE = "Bearer";
+    @Value("${jwt.refresh.expiration}")
+    private Long REFRESH_EXPIRE_DURATION;
 
-	public AuthTokenDto createToken(AuthUserInfoDto authUserInfoDto) {
-		String accessToken = generateToken(authUserInfoDto, TokenType.ACCESS);
-		String refreshToken = generateToken(authUserInfoDto, TokenType.REFRESH);
-		redisManager.setData(TokenType.REFRESH.name() + "_TOKEN:" + authUserInfoDto.email(), refreshToken,
-			REFRESH_EXPIRE_DURATION);
+    private static final String BEARER_TYPE = "Bearer";
 
-		return AuthTokenDto.of(accessToken, refreshToken);
-	}
+    public AuthTokenDto createToken(AuthUserInfoDto authUserInfoDto) {
+        String accessToken = generateToken(authUserInfoDto, TokenType.ACCESS);
+        String refreshToken = generateToken(authUserInfoDto, TokenType.REFRESH);
+        redisManager.setData(TokenType.REFRESH.name() + "_TOKEN:" + authUserInfoDto.email(), refreshToken,
+            REFRESH_EXPIRE_DURATION);
 
-	public AuthTokenDto reissueToken(String bearerToken) {
-		String refreshToken = resolveToken(bearerToken);
-		tokenProvider.validateToken(refreshToken);
+        return AuthTokenDto.of(accessToken, refreshToken);
+    }
 
-		Claims claims = tokenProvider.parseClaims(refreshToken);
-		AuthUserInfoDto authUserInfoDto = AuthUserInfoDto.of(claims);
+    public AuthTokenDto reissueToken(String bearerToken) {
+        String refreshToken = resolveToken(bearerToken);
+        tokenProvider.validateToken(refreshToken);
 
-		validateRefreshToken(authUserInfoDto.email(), refreshToken);
+        Claims claims = tokenProvider.parseClaims(refreshToken);
+        AuthUserInfoDto authUserInfoDto = AuthUserInfoDto.of(claims);
 
-		return createToken(authUserInfoDto);
-	}
+        validateRefreshToken(authUserInfoDto.email(), refreshToken);
 
-	public void validateRefreshToken(String key, String refreshToken) {
-		String redisToken = redisManager.getData(TokenType.REFRESH.name() + "_TOKEN:" + key);
-		if (!Objects.equals(refreshToken, redisToken)) {
-			throw new TokenInvalidException(AuthErrorCode.INVALID_TOKEN);
-		}
-	}
+        return createToken(authUserInfoDto);
+    }
 
-	private String generateToken(AuthUserInfoDto authUserInfoDto, TokenType tokenType) {
-		String subject = authUserInfoDto.getSubject();
-		Map<String, Object> claims = authUserInfoDto.toClaims(tokenType);
-		Long expireDuration = getExpireDuration(tokenType);
+    public void validateRefreshToken(String key, String refreshToken) {
+        String redisToken = redisManager.getData(TokenType.REFRESH.name() + "_TOKEN:" + key);
+        if (!Objects.equals(refreshToken, redisToken)) {
+            throw new TokenInvalidException(AuthErrorCode.INVALID_TOKEN);
+        }
+    }
 
-		return tokenProvider.generateToken(subject, claims, expireDuration);
-	}
+    private String generateToken(AuthUserInfoDto authUserInfoDto, TokenType tokenType) {
+        String subject = authUserInfoDto.getSubject();
+        Map<String, Object> claims = authUserInfoDto.toClaims(tokenType);
+        Long expireDuration = getExpireDuration(tokenType);
 
-	private String resolveToken(String bearerToken) {
-		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_TYPE)) {
-			return bearerToken.substring(BEARER_TYPE.length() + 1);
-		}
-		return null;
-	}
+        return tokenProvider.generateToken(subject, claims, expireDuration);
+    }
 
-	private Long getExpireDuration(TokenType tokenType) {
-		return tokenType == TokenType.ACCESS ? ACCESS_EXPIRE_DURATION : REFRESH_EXPIRE_DURATION;
-	}
+    private String resolveToken(String bearerToken) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_TYPE)) {
+            return bearerToken.substring(BEARER_TYPE.length() + 1);
+        }
+        return null;
+    }
+
+    private Long getExpireDuration(TokenType tokenType) {
+        return tokenType == TokenType.ACCESS ? ACCESS_EXPIRE_DURATION : REFRESH_EXPIRE_DURATION;
+    }
 }

@@ -34,70 +34,71 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationFilter extends OncePerRequestFilter {
-	private final TokenProvider tokenProvider;
-	private final AntPathMatcher pathMatcher = new AntPathMatcher();
-	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	private static final String AUTHORIZATION_HEADER = "Authorization";
-	private static final String BEARER_TYPE = "Bearer";
+    private final TokenProvider tokenProvider;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) {
-		String path = request.getRequestURI();
-		return Stream.of(PathPermission.getPublicPath())
-			.anyMatch(pattern -> pathMatcher.match(pattern, path));
-	}
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_TYPE = "Bearer";
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request,
-		@NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-		log.debug("[REQUEST_INFO] ({}) URI={}", request.getMethod(), request.getRequestURI());
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return Stream.of(PathPermission.getPublicPath())
+            .anyMatch(pattern -> pathMatcher.match(pattern, path));
+    }
 
-		if (request.getMethod().equals(HttpMethod.OPTIONS.name())) {
-			filterChain.doFilter(request, response);
-			return;
-		}
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+        @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        log.debug("[REQUEST_INFO] ({}) URI={}", request.getMethod(), request.getRequestURI());
 
-		String token = resolveToken(request);
-		if (token == null) {
-			handleException(response);
-			return;
-		}
+        if (request.getMethod().equals(HttpMethod.OPTIONS.name())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-		try {
-			tokenProvider.validateToken(token);
-		} catch (Exception e) {
-			handleException(response);
-			return;
-		}
+        String token = resolveToken(request);
+        if (token == null) {
+            handleException(response);
+            return;
+        }
 
-		Authentication auth = createAuthentication(tokenProvider.parseClaims(token));
-		SecurityContextHolder.getContext().setAuthentication(auth);
-		filterChain.doFilter(request, response);
-	}
+        try {
+            tokenProvider.validateToken(token);
+        } catch (Exception e) {
+            handleException(response);
+            return;
+        }
 
-	private String resolveToken(HttpServletRequest request) {
-		return Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))
-			.filter(token -> token.startsWith(BEARER_TYPE))
-			.map(token -> token.substring(BEARER_TYPE.length() + 1))
-			.orElse(null);
-	}
+        Authentication auth = createAuthentication(tokenProvider.parseClaims(token));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        filterChain.doFilter(request, response);
+    }
 
-	private UsernamePasswordAuthenticationToken createAuthentication(Claims claims) {
-		String email = claims.getSubject();
-		Role role = Role.valueOf(claims.get("role").toString());
-		return new UsernamePasswordAuthenticationToken(email, null, getAuthorities(role));
-	}
+    private String resolveToken(HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))
+            .filter(token -> token.startsWith(BEARER_TYPE))
+            .map(token -> token.substring(BEARER_TYPE.length() + 1))
+            .orElse(null);
+    }
 
-	private Collection<? extends GrantedAuthority> getAuthorities(Role role) {
-		Collection<GrantedAuthority> collectors = new ArrayList<>();
-		collectors.add(() -> "ROLE_" + role.name());
-		return collectors;
-	}
+    private UsernamePasswordAuthenticationToken createAuthentication(Claims claims) {
+        String email = claims.getSubject();
+        Role role = Role.valueOf(claims.get("role").toString());
+        return new UsernamePasswordAuthenticationToken(email, null, getAuthorities(role));
+    }
 
-	private void handleException(HttpServletResponse response) throws IOException {
-		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		response.setContentType("application/json; charset=UTF-8");
-		response.getWriter().write(objectMapper.writeValueAsString(ApiStatus.of(BaseErrorCode.UNAUTHORIZED)));
-	}
+    private Collection<? extends GrantedAuthority> getAuthorities(Role role) {
+        Collection<GrantedAuthority> collectors = new ArrayList<>();
+        collectors.add(() -> "ROLE_" + role.name());
+        return collectors;
+    }
+
+    private void handleException(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json; charset=UTF-8");
+        response.getWriter().write(objectMapper.writeValueAsString(ApiStatus.of(BaseErrorCode.UNAUTHORIZED)));
+    }
 }

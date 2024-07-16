@@ -21,32 +21,33 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user")
 public class User extends BaseTimeEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	@Column(nullable = false)
-	private String email;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(nullable = false)
-	private String password;
+    @Column(nullable = false)
+    private String email;
 
-	@Column(nullable = false)
-	private String nickname;
+    @Column(nullable = false)
+    private String password;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private Platform platform;
+    @Column(nullable = false)
+    private String nickname;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private Role role;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Platform platform;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private Status status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

@@ -7,20 +7,21 @@ import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication
 public class ApiApplication {
-	// ----Test Code----
-	private final TestDomainBean testDomainBean;
 
-	public ApiApplication(TestDomainBean testDomainBean) {
-		this.testDomainBean = testDomainBean;
-	}
+    // ----Test Code----
+    private final TestDomainBean testDomainBean;
 
-	@PostConstruct
-	public void dependencyTest() {
-		testDomainBean.dependencyTest();
-	}
-	// ------------------
+    public ApiApplication(TestDomainBean testDomainBean) {
+        this.testDomainBean = testDomainBean;
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(ApiApplication.class, args);
-	}
+    @PostConstruct
+    public void dependencyTest() {
+        testDomainBean.dependencyTest();
+    }
+    // ------------------
+
+    public static void main(String[] args) {
+        SpringApplication.run(ApiApplication.class, args);
+    }
 }

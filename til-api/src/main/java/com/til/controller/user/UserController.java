@@ -24,26 +24,27 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
-	private final UserService userService;
-	private final AuthService authService;
 
-	@PostMapping("/join")
-	public ApiResponse join(@RequestBody @Valid UserJoinRequest request) {
-		userService.join(request.toServiceDto());
-		return ApiResponse.ok(UserSuccessCode.SUCCESS_JOIN);
-	}
+    private final UserService userService;
+    private final AuthService authService;
 
-	@PostMapping("/login")
-	public ApiResponse login(@RequestBody @Valid UserLoginRequest request) {
-		AuthUserInfoDto userInfoDto = userService.login(request.toServiceDto());
-		AuthTokenDto token = authService.createToken(userInfoDto);
+    @PostMapping("/join")
+    public ApiResponse join(@RequestBody @Valid UserJoinRequest request) {
+        userService.join(request.toServiceDto());
+        return ApiResponse.ok(UserSuccessCode.SUCCESS_JOIN);
+    }
 
-		return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGIN, UserTokenResponse.of(token));
-	}
+    @PostMapping("/login")
+    public ApiResponse login(@RequestBody @Valid UserLoginRequest request) {
+        AuthUserInfoDto userInfoDto = userService.login(request.toServiceDto());
+        AuthTokenDto token = authService.createToken(userInfoDto);
 
-	@GetMapping("/nickname/{nickname}")
-	public ApiResponse checkNickname(@PathVariable String nickname) {
-		userService.checkNickname(nickname);
-		return ApiResponse.ok(UserSuccessCode.POSSIBLE_NICKNAME);
-	}
+        return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGIN, UserTokenResponse.of(token));
+    }
+
+    @GetMapping("/nickname/{nickname}")
+    public ApiResponse checkNickname(@PathVariable String nickname) {
+        userService.checkNickname(nickname);
+        return ApiResponse.ok(UserSuccessCode.POSSIBLE_NICKNAME);
+    }
 }

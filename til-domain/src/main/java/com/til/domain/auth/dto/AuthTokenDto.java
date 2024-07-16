@@ -4,10 +4,11 @@ import lombok.Builder;
 
 @Builder
 public record AuthTokenDto(
-	String accessToken,
-	String refreshToken
+                           String accessToken,
+                           String refreshToken
 ) {
-	public static AuthTokenDto of(String accessToken, String refreshToken) {
-		return new AuthTokenDto(accessToken, refreshToken);
-	}
+
+    public static AuthTokenDto of(String accessToken, String refreshToken) {
+        return new AuthTokenDto(accessToken, refreshToken);
+    }
 }

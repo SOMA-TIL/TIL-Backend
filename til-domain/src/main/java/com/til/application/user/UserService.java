@@ -20,43 +20,44 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserService {
-	private final UserRepository userRepository;
-	private final PasswordEncoder passwordEncoder;
 
-	private final UserInfoValidator userInfoValidator;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-	@Transactional
-	public void join(UserJoinDto userJoinDto) {
-		userInfoValidator.validateJoinInfo(userJoinDto.nickname(), userJoinDto.password());
+    private final UserInfoValidator userInfoValidator;
 
-		if (userRepository.existsByEmail(userJoinDto.email())) {
-			throw new BaseException(UserErrorCode.ALREADY_EXISTS_EMAIL);
-		}
-		checkNickname(userJoinDto.nickname());
+    @Transactional
+    public void join(UserJoinDto userJoinDto) {
+        userInfoValidator.validateJoinInfo(userJoinDto.nickname(), userJoinDto.password());
 
-		User user = userJoinDto.toEntity();
-		user.setPassword(passwordEncoder.encode(userJoinDto.password()));
+        if (userRepository.existsByEmail(userJoinDto.email())) {
+            throw new BaseException(UserErrorCode.ALREADY_EXISTS_EMAIL);
+        }
+        checkNickname(userJoinDto.nickname());
 
-		userRepository.save(user);
-	}
+        User user = userJoinDto.toEntity();
+        user.setPassword(passwordEncoder.encode(userJoinDto.password()));
 
-	public AuthUserInfoDto login(UserLoginDto userLoginDto) {
-		User user = userRepository.getByEmail(userLoginDto.email());
-		if (!passwordEncoder.matches(userLoginDto.password(), user.getPassword())) {
-			throw new BaseException(UserErrorCode.FAILED_LOGIN);
-		}
+        userRepository.save(user);
+    }
 
-		return AuthUserInfoDto.of(user.getEmail(), user.getNickname(), user.getRole());
-	}
+    public AuthUserInfoDto login(UserLoginDto userLoginDto) {
+        User user = userRepository.getByEmail(userLoginDto.email());
+        if (!passwordEncoder.matches(userLoginDto.password(), user.getPassword())) {
+            throw new BaseException(UserErrorCode.FAILED_LOGIN);
+        }
 
-	public UserInfoDto getUserInfo(String email) {
-		User user = userRepository.getByEmail(email);
-		return UserInfoDto.of(user);
-	}
+        return AuthUserInfoDto.of(user.getEmail(), user.getNickname(), user.getRole());
+    }
 
-	public void checkNickname(String nickname) {
-		if (userRepository.existsByNickname(nickname)) {
-			throw new BaseException(UserErrorCode.ALREADY_EXISTS_NICKNAME);
-		}
-	}
+    public UserInfoDto getUserInfo(String email) {
+        User user = userRepository.getByEmail(email);
+        return UserInfoDto.of(user);
+    }
+
+    public void checkNickname(String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
+            throw new BaseException(UserErrorCode.ALREADY_EXISTS_NICKNAME);
+        }
+    }
 }

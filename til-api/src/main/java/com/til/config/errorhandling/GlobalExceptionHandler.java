@@ -23,83 +23,84 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-	@ExceptionHandler(BaseException.class)
-	protected ResponseEntity<ErrorResponse> handleCustomException(final BaseException ex) {
-		log.error("handleCustomException: {}", ex.getErrorCode());
-		ErrorResponse response = ErrorResponse.of(ex.getErrorCode());
 
-		return ResponseEntity
-			.status(ex.getErrorCode().getStatus().value())
-			.body(response);
-	}
+    @ExceptionHandler(BaseException.class)
+    protected ResponseEntity<ErrorResponse> handleCustomException(final BaseException ex) {
+        log.error("handleCustomException: {}", ex.getErrorCode());
+        ErrorResponse response = ErrorResponse.of(ex.getErrorCode());
 
-	@ExceptionHandler(InvalidDtoException.class)
-	protected ResponseEntity<ErrorResponse> handleInvalidDtoException(final InvalidDtoException ex) {
-		log.error("InvalidDtoException: {}", ex.getMessage());
-		ErrorResponse response = ErrorResponse.of("INVALID_DTO", ex.getMessage());
+        return ResponseEntity
+            .status(ex.getErrorCode().getStatus().value())
+            .body(response);
+    }
 
-		return ResponseEntity
-			.status(HttpStatus.BAD_REQUEST)
-			.body(response);
-	}
+    @ExceptionHandler(InvalidDtoException.class)
+    protected ResponseEntity<ErrorResponse> handleInvalidDtoException(final InvalidDtoException ex) {
+        log.error("InvalidDtoException: {}", ex.getMessage());
+        ErrorResponse response = ErrorResponse.of("INVALID_DTO", ex.getMessage());
 
-	@ExceptionHandler(AccessDeniedException.class)
-	protected ResponseEntity<ErrorResponse> handleAccessDenied(final AccessDeniedException ex) {
-		log.error("AccessDeniedException: {}", ex.getMessage());
-		ErrorResponse response = ErrorResponse.of(BaseErrorCode.ACCESS_DENIED);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(response);
+    }
 
-		return ResponseEntity
-			.status(HttpStatus.FORBIDDEN)
-			.body(response);
-	}
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<ErrorResponse> handleAccessDenied(final AccessDeniedException ex) {
+        log.error("AccessDeniedException: {}", ex.getMessage());
+        ErrorResponse response = ErrorResponse.of(BaseErrorCode.ACCESS_DENIED);
 
-	@Override
-	protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
-		HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-		ErrorResponse response = ErrorResponse.of(BaseErrorCode.METHOD_NOT_ALLOWED);
+        return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body(response);
+    }
 
-		return ResponseEntity
-			.status(HttpStatus.METHOD_NOT_ALLOWED)
-			.body(response);
-	}
+    @Override
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
+        HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        ErrorResponse response = ErrorResponse.of(BaseErrorCode.METHOD_NOT_ALLOWED);
 
-	@Override
-	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers,
-		HttpStatusCode status, WebRequest request) {
-		ErrorResponse response = ErrorResponse.of(BaseErrorCode.NOT_FOUND);
+        return ResponseEntity
+            .status(HttpStatus.METHOD_NOT_ALLOWED)
+            .body(response);
+    }
 
-		return ResponseEntity
-			.status(HttpStatus.NOT_FOUND)
-			.body(response);
-	}
+    @Override
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers,
+        HttpStatusCode status, WebRequest request) {
+        ErrorResponse response = ErrorResponse.of(BaseErrorCode.NOT_FOUND);
 
-	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-		HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-		ErrorResponse response = ErrorResponse.of(BaseErrorCode.BAD_REQUEST);
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(response);
+    }
 
-		return ResponseEntity
-			.badRequest()
-			.body(response);
-	}
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+        HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        ErrorResponse response = ErrorResponse.of(BaseErrorCode.BAD_REQUEST);
 
-	@Override
-	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
-		HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-		ErrorResponse response = ErrorResponse.of(BaseErrorCode.BAD_REQUEST);
+        return ResponseEntity
+            .badRequest()
+            .body(response);
+    }
 
-		return ResponseEntity
-			.badRequest()
-			.body(response);
-	}
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+        HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        ErrorResponse response = ErrorResponse.of(BaseErrorCode.BAD_REQUEST);
 
-	@ExceptionHandler(Exception.class)
-	protected ResponseEntity<ErrorResponse> handleAllException(final Exception ex) {
-		log.error("Exception: {} {}", ex.getClass(), ex.getMessage());
-		ErrorResponse response = ErrorResponse.of(BaseErrorCode.INTERNAL_SERVER_ERROR);
+        return ResponseEntity
+            .badRequest()
+            .body(response);
+    }
 
-		return ResponseEntity
-			.internalServerError()
-			.body(response);
-	}
+    @ExceptionHandler(Exception.class)
+    protected ResponseEntity<ErrorResponse> handleAllException(final Exception ex) {
+        log.error("Exception: {} {}", ex.getClass(), ex.getMessage());
+        ErrorResponse response = ErrorResponse.of(BaseErrorCode.INTERNAL_SERVER_ERROR);
+
+        return ResponseEntity
+            .internalServerError()
+            .body(response);
+    }
 }

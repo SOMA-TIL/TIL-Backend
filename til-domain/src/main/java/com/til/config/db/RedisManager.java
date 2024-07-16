@@ -10,26 +10,27 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class RedisManager {
-	private final RedisTemplate<String, String> redisTemplate;
 
-	public void setData(String key, String value) {
-		redisTemplate.opsForValue().set(key, value);
-	}
+    private final RedisTemplate<String, String> redisTemplate;
 
-	public void setData(String key, String value, long duration) {
-		Duration expireDuration = Duration.ofSeconds(duration);
-		redisTemplate.opsForValue().set(key, value, expireDuration);
-	}
+    public void setData(String key, String value) {
+        redisTemplate.opsForValue().set(key, value);
+    }
 
-	public String getData(String key) {
-		return redisTemplate.opsForValue().get(key);
-	}
+    public void setData(String key, String value, long duration) {
+        Duration expireDuration = Duration.ofSeconds(duration);
+        redisTemplate.opsForValue().set(key, value, expireDuration);
+    }
 
-	public void deleteData(String key) {
-		redisTemplate.delete(key);
-	}
+    public String getData(String key) {
+        return redisTemplate.opsForValue().get(key);
+    }
 
-	public boolean existData(String key) {
-		return Boolean.TRUE.equals(redisTemplate.hasKey(key));
-	}
+    public void deleteData(String key) {
+        redisTemplate.delete(key);
+    }
+
+    public boolean existData(String key) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+    }
 }

@@ -9,13 +9,14 @@ import com.til.domain.user.enums.UserErrorCode;
 import com.til.domain.user.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-	boolean existsByEmail(String email);
 
-	boolean existsByNickname(String nickname);
+    boolean existsByEmail(String email);
 
-	Optional<User> findByEmail(String email);
+    boolean existsByNickname(String nickname);
 
-	default User getByEmail(String email) {
-		return findByEmail(email).orElseThrow(() -> new BaseException(UserErrorCode.NOT_FOUND_USER));
-	}
+    Optional<User> findByEmail(String email);
+
+    default User getByEmail(String email) {
+        return findByEmail(email).orElseThrow(() -> new BaseException(UserErrorCode.NOT_FOUND_USER));
+    }
 }
