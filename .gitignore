@@ -40,9 +40,7 @@ out/
 
 
 ## docker
-db/**
-!db/*.sql
-!til-*/**/db/
+docker-volume/
 
 ## Mac
 .DS_Store
