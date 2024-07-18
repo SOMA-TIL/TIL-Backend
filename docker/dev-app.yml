@@ -1,0 +1,20 @@
+# 개발 서버에서 애플리케이션 실행을 위해 사용할 docker-compose 파일
+services:
+  til-api:
+    image: somatil/til-api
+    container_name: app-til-api
+    ports:
+      - 8080:8080
+    networks:
+      - infra_network
+    volumes:
+      - ./configs/api:/app/config
+    environment:
+      - PROFILE=dev
+    command: --spring.config.location=/app/config/
+
+networks:
+  infra_network:
+    driver: bridge
+    external: true
+    name: infra_network
