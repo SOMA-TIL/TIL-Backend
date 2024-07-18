@@ -1,15 +1,16 @@
-# 로컬 개발 환경을 위한 docker-compose 파일
+# 개발 서버에서 사용하는 인프라를 정의한 파일
 services:
   mysql:
     image: mysql:8.4
     container_name: mysql_server
     ports:
-      - 3308:3306
+      - 3306:3306
     networks:
       - infra_network
     volumes:
-      - ./docker-volume/mysql/data:/var/lib/mysql
-      - ./docker-volume/mysql/init:/docker-entrypoint-initdb.d
+      - ./docker-volume/mysql/data:/var/lib/mysql # mysql 데이터베이스 파일
+      - ./docker-volume/mysql/init:/docker-entrypoint-initdb.d # 초기화 스크립트
+      - ./configs/mysql/conf:/etc/mysql/conf.d # bind-address = 0.0.0.0 설정하는 파일
     command:
       - '--character-set-server=utf8mb4'
       - '--collation-server=utf8mb4_unicode_ci'
@@ -22,9 +23,9 @@ services:
     image: redis:latest
     container_name: redis_server
     volumes:
-      - ./docker-volume/redis/data:/data
+      - ./docker-volume/redis/data:/data # redis 데이터베이스 파일
     ports:
-      - "6379:6379"
+      - "0.0.0.0:6379:6379"
     networks:
       - infra_network
       - redis_network
