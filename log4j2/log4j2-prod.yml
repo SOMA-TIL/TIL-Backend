@@ -1,0 +1,38 @@
+configuration:
+  name: til-prod
+
+  springProfile:
+    name: prod
+
+    properties:
+      property:
+        - name: "log-path"
+          value: "./log4j2/logs"
+        - name: "charset-UTF-8"
+          value: "UTF-8"
+        - name: "file-pattern"
+          value: "%d %p [%t] %C{1.}: %m%n"
+
+    appenders:
+      rollingFile:
+        - name: rolling-file-appender
+          fileName: ${log-path}/prod.log
+          filePattern: "${log-path}/archive/prod_%d{yyyy-MM-dd}_%i.log.gz"
+          patternLayout:
+            charset: ${charset-UTF-8}
+            pattern: ${file-pattern}
+          policies:
+            SizeBasedTriggeringPolicy:
+              size: "100MB"
+            TimeBasedTriggeringPolicy:
+              interval: "1"
+          DefaultRollOverStrategy:
+            max: "30"
+            fileIndex: "max"
+
+    loggers:
+      root:
+        level: ERROR
+        appenderRef:
+          - ref: console-appender
+          - ref: rolling-file-appender
