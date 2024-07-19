@@ -28,7 +28,7 @@ public record AuthUserInfoDto(
     }
 
     public static AuthUserInfoDto of(Claims claims) {
-        String email = claims.getSubject().toString();
+        String email = claims.getSubject();
         String nickname = claims.get("nickname").toString();
         Role role = Role.valueOf(claims.get("role").toString());
 
