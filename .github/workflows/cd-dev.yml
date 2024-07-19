@@ -1,0 +1,60 @@
+name: "[CD] Deploy to Dev Server"
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.TOKEN }}
+          submodules: true
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Grant Execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build -Pprofile=dev --exclude-task test --parallel
+
+      - name: Get Module Name
+        id: module_names
+        run: |
+          module_names=$(find ./til-* -name 'Dockerfile' -exec dirname {} \; | awk -F/ '{print $2}')
+          echo "::set-output name=module_names::$module_names"
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Docker Image Build & Push
+        run: |
+          for module_name in ${{ steps.module_names.outputs.module_names }}; do
+            docker build -t somatil/$module_name --build-arg PROFILE=dev -f $module_name/Dockerfile .  
+            docker push somatil/$module_name
+          done
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push
+    steps:
+      - name: Deploy to Dev Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEV_SERVER_IP }}
+          username: ${{ secrets.DEV_SERVER_USERNAME }}
+          key: ${{ secrets.DEV_SERVER_KEY }}
+          script: |
+            cd ~/backend
+            docker-compose down && docker-compose pull
+            docker-compose up -d
+            docker image prune
