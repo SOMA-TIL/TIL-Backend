@@ -1,0 +1,30 @@
+configuration:
+  name: til-test
+
+  springProfile:
+    name: test
+
+    properties:
+      property:
+        - name: "console-pattern"
+          value: "%black{%d} %clr{%-5level} %magenta{[%t]} %cyan{%C}: %msg%n%throwable"
+
+    appenders:
+      console:
+        - name: console-appender
+          target: SYSTEM_OUT
+          patternLayout:
+            pattern: ${console-pattern}
+
+    loggers:
+      root:
+        level: INFO
+        appenderRef:
+          - ref: console-appender
+
+      logger:
+        - name: com.til
+          additivity: "false"
+          level: DEBUG
+          appenderRef:
+            - ref: console-appender
