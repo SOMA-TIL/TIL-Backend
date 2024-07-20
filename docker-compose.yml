@@ -45,5 +45,4 @@ networks:
   infra_network: # 다른 컨테이너와 통신을 위한 네트워크
     name: infra_network
     driver: bridge
-    external: true
   redis_network:
