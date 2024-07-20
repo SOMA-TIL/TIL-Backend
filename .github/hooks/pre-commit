@@ -1,24 +1,20 @@
 #!/bin/sh
 
 # 변경된 파일들 이름 추출 (staged 파일만)
-changedFiles=$(git diff --cached --name-only)
+stagedFiles=$(git diff --staged --name-only)
 
 # SpotlessApply 실행
 echo "Running spotlessApply. Formatting code..."
+
 ./gradlew spotlessApply --daemon
+if [ $? -ne 0 ]; then
+  echo "spotlessApply failed. Please check the error message."
+  exit 1
+fi
 
 # 다시 변경된 파일들 이름 추출
-changedFilesAfter=$(git diff --cached --name-only)
-
-# 변경된 파일들 다시 git add
-for file in $changedFilesAfter; do
-  git add "$file"
+for file in $stagedFiles; do
+  if test -f "$file"; then
+    git add "$file"
+  fi
 done
-
-
-# 실행 결과 확인
-if [ -n "$changedFilesAfter" ]; then # staged 파일 중 spotlessApply 후 변경된 파일이 있을 경우
-  echo "Changes have been staged. Please do not commit them yet."
-else
-  echo "No changes to be committed."
-fi
