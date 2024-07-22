@@ -32,7 +32,7 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(@NonNull MethodParameter parameter, ModelAndViewContainer mavContainer,
-        @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
             .filter(Authentication::isAuthenticated)
             .map(auth -> userService.getUserInfo(auth.getPrincipal().toString()));
