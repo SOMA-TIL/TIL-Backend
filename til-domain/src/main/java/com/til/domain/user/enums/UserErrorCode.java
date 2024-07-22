@@ -4,9 +4,12 @@ import org.springframework.http.HttpStatus;
 
 import com.til.domain.common.enums.ErrorCode;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum UserErrorCode implements ErrorCode {
 
     ALREADY_EXISTS_NICKNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다."),
@@ -16,9 +19,4 @@ public enum UserErrorCode implements ErrorCode {
 
     private final HttpStatus status;
     private final String message;
-
-    UserErrorCode(HttpStatus status, String message) {
-        this.status = status;
-        this.message = message;
-    }
 }

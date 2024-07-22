@@ -2,9 +2,12 @@ package com.til.domain.common.enums;
 
 import org.springframework.http.HttpStatus;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum BaseErrorCode implements ErrorCode {
 
     NOT_FOUND(HttpStatus.NOT_FOUND, "해당 데이터를 찾을 수 없습니다."),
@@ -16,9 +19,4 @@ public enum BaseErrorCode implements ErrorCode {
 
     private final HttpStatus status;
     private final String message;
-
-    BaseErrorCode(HttpStatus status, String message) {
-        this.status = status;
-        this.message = message;
-    }
 }
