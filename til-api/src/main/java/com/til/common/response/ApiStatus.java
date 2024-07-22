@@ -8,8 +8,8 @@ import lombok.Getter;
 @Getter
 public class ApiStatus {
 
-    private String code;
-    private String message;
+    private final String code;
+    private final String message;
 
     private ApiStatus(String code, String message) {
         this.code = code;

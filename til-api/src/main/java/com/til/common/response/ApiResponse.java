@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ApiResponse<T> {
 
-    private ApiStatus status;
+    private final ApiStatus status;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;

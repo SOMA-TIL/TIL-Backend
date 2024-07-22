@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class ErrorResponse {
 
-    private ApiStatus status;
+    private final ApiStatus status;
 
     private ErrorResponse(ErrorCode status) {
         this.status = ApiStatus.of(status);
