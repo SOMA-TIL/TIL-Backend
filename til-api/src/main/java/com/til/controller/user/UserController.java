@@ -39,7 +39,7 @@ public class UserController {
         AuthUserInfoDto userInfoDto = userService.login(request.toServiceDto());
         AuthTokenDto token = authService.createToken(userInfoDto);
 
-        return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGIN, UserLoginResponse.of(token));
+        return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGIN, UserLoginResponse.of(userInfoDto, token));
     }
 
     @GetMapping("/nickname/{nickname}")
