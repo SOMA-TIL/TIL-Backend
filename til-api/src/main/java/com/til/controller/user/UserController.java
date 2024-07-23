@@ -29,7 +29,7 @@ public class UserController {
     private final AuthService authService;
 
     @PostMapping("/join")
-    public ApiResponse join(@RequestBody @Valid UserJoinRequest request) {
+    public ApiResponse<Void> join(@RequestBody @Valid UserJoinRequest request) {
         userService.join(request.toServiceDto());
         return ApiResponse.ok(UserSuccessCode.SUCCESS_JOIN);
     }
@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/nickname/{nickname}")
-    public ApiResponse checkNickname(@PathVariable String nickname) {
+    public ApiResponse<Void> checkNickname(@PathVariable String nickname) {
         userService.checkNickname(nickname);
         return ApiResponse.ok(UserSuccessCode.POSSIBLE_NICKNAME);
     }
