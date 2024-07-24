@@ -60,14 +60,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = resolveToken(request);
-        if (token == null) {
-            handleException(response);
-            return;
-        }
-
-        try {
-            tokenProvider.validateToken(token);
-        } catch (Exception e) {
+        if (token == null || !validateToken(token)) {
             handleException(response);
             return;
         }
@@ -75,6 +68,15 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         Authentication auth = createAuthentication(tokenProvider.parseClaims(token));
         SecurityContextHolder.getContext().setAuthentication(auth);
         filterChain.doFilter(request, response);
+    }
+
+    private boolean validateToken(String token) {
+        try {
+            tokenProvider.validateToken(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private String resolveToken(HttpServletRequest request) {
