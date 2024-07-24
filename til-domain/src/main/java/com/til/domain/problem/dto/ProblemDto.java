@@ -5,15 +5,15 @@ import com.til.domain.problem.model.Problem;
 import lombok.Builder;
 
 @Builder
-public record ProblemInfoDto(
-                             String title,
-                             String question,
-                             String solution,
-                             Integer score
+public record ProblemDto(
+                         String title,
+                         String question,
+                         String solution,
+                         Integer score
 ) {
 
-    public static ProblemInfoDto of(Problem problem) {
-        return ProblemInfoDto.builder()
+    public static ProblemDto of(Problem problem) {
+        return ProblemDto.builder()
             .title(problem.getTitle())
             .question(problem.getQuestion())
             .solution(problem.getSolution())

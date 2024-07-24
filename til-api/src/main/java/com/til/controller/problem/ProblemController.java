@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.til.application.problem.ProblemService;
 import com.til.common.response.ApiResponse;
 import com.til.controller.problem.reponse.ProblemListResponse;
-import com.til.domain.problem.dto.ProblemInfoDto;
+import com.til.domain.problem.dto.ProblemListDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +22,7 @@ public class ProblemController {
 
     @GetMapping("")
     public ApiResponse<ProblemListResponse> getProblemList() {
-        List<ProblemInfoDto> problemList = problemService.getProblemList();
+        List<ProblemListDto> problemList = problemService.getProblemList();
         return ApiResponse.ok(ProblemListResponse.of(problemList));
     }
 }
