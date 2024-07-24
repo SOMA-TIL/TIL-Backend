@@ -16,7 +16,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.til.common.response.ApiStatus;
+import com.til.config.errorhandling.ErrorResponse;
 import com.til.domain.auth.provider.TokenProvider;
 import com.til.domain.common.enums.BaseErrorCode;
 import com.til.domain.user.model.Role;
@@ -99,6 +99,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private void handleException(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json; charset=UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString(ApiStatus.of(BaseErrorCode.UNAUTHORIZED)));
+        response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse.of(BaseErrorCode.UNAUTHORIZED)));
     }
 }
