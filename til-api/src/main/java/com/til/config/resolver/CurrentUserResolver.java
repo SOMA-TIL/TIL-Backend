@@ -13,15 +13,19 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.til.application.user.UserService;
 import com.til.common.annotation.CurrentUser;
+import com.til.config.AppConfig;
 import com.til.domain.user.dto.UserInfoDto;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CurrentUserResolver implements HandlerMethodArgumentResolver {
 
+    private final AppConfig appConfig;
     private final UserService userService;
 
     @Override
@@ -33,6 +37,9 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(@NonNull MethodParameter parameter, ModelAndViewContainer mavContainer,
         @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
+        if (!appConfig.isJwtFilterEnabled()) { // for test
+            return userService.getUserInfo("til@gmail.com");
+        }
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
             .filter(Authentication::isAuthenticated)
             .map(auth -> userService.getUserInfo(auth.getPrincipal().toString()));
