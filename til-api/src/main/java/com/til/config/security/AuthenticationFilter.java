@@ -16,7 +16,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.til.common.response.ApiStatus;
+import com.til.config.errorhandling.ErrorResponse;
 import com.til.domain.auth.provider.TokenProvider;
 import com.til.domain.common.enums.BaseErrorCode;
 import com.til.domain.user.model.Role;
@@ -60,14 +60,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = resolveToken(request);
-        if (token == null) {
-            handleException(response);
-            return;
-        }
-
-        try {
-            tokenProvider.validateToken(token);
-        } catch (Exception e) {
+        if (token == null || !validateToken(token)) {
             handleException(response);
             return;
         }
@@ -75,6 +68,15 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         Authentication auth = createAuthentication(tokenProvider.parseClaims(token));
         SecurityContextHolder.getContext().setAuthentication(auth);
         filterChain.doFilter(request, response);
+    }
+
+    private boolean validateToken(String token) {
+        try {
+            tokenProvider.validateToken(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -99,6 +101,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private void handleException(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json; charset=UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString(ApiStatus.of(BaseErrorCode.UNAUTHORIZED)));
+        response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse.of(BaseErrorCode.UNAUTHORIZED)));
     }
 }
