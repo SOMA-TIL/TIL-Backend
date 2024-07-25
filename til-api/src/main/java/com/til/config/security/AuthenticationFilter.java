@@ -16,6 +16,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.til.config.AppConfig;
 import com.til.config.errorhandling.ErrorResponse;
 import com.til.domain.auth.provider.TokenProvider;
 import com.til.domain.common.enums.BaseErrorCode;
@@ -35,18 +36,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AuthenticationFilter extends OncePerRequestFilter {
 
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_TYPE = "Bearer";
+
+    private final AppConfig appConfig;
     private final TokenProvider tokenProvider;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String BEARER_TYPE = "Bearer";
-
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return Stream.of(PathPermission.getPublicPath())
-            .anyMatch(pattern -> pathMatcher.match(pattern, path));
+        return !appConfig.isJwtFilterEnabled() || Stream.of(PathPermission.getPublicPath())
+            .anyMatch(pattern -> pathMatcher.match(pattern, request.getRequestURI()));
     }
 
     @Override
