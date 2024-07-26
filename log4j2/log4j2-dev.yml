@@ -1,54 +1,51 @@
 configuration:
   name: til-dev
 
-  springProfile:
-    name: dev
+  properties:
+    property:
+      - name: "log-path"
+        value: "./log4j2/logs"
+      - name: "charset-UTF-8"
+        value: "UTF-8"
+      - name: "file-pattern"
+        value: "%d %p [%t] %C{1.}: %m%n"
+      - name: "console-pattern"
+        value: "%black{%d} %clr{%-5level} %magenta{[%t]} %cyan{%C}: %msg%n%throwable"
 
-    properties:
-      property:
-        - name: "log-path"
-          value: "./log4j2/logs"
-        - name: "charset-UTF-8"
-          value: "UTF-8"
-        - name: "file-pattern"
-          value: "%d %p [%t] %C{1.}: %m%n"
-        - name: "console-pattern"
-          value: "%black{%d} %clr{%-5level} %magenta{[%t]} %cyan{%C}: %msg%n%throwable"
+  appenders:
+    console:
+      - name: console-appender
+        target: SYSTEM_OUT
+        patternLayout:
+          pattern: ${console-pattern}
 
-    appenders:
-      console:
-        - name: console-appender
-          target: SYSTEM_OUT
-          patternLayout:
-            pattern: ${console-pattern}
+    rollingFile:
+      - name: rolling-file-appender
+        fileName: ${log-path}/dev.log
+        filePattern: "${log-path}/archive/dev_%d{yyyy-MM-dd}_%i.log.gz"
+        patternLayout:
+          charset: ${charset-UTF-8}
+          pattern: ${file-pattern}
+        policies:
+          SizeBasedTriggeringPolicy:
+            size: "100MB"
+          TimeBasedTriggeringPolicy:
+            interval: "1"
+        DefaultRollOverStrategy:
+          max: "30"
+          fileIndex: "max"
 
-      rollingFile:
-        - name: rolling-file-appender
-          fileName: ${log-path}/dev.log
-          filePattern: "${log-path}/archive/dev_%d{yyyy-MM-dd}_%i.log.gz"
-          patternLayout:
-            charset: ${charset-UTF-8}
-            pattern: ${file-pattern}
-          policies:
-            SizeBasedTriggeringPolicy:
-              size: "100MB"
-            TimeBasedTriggeringPolicy:
-              interval: "1"
-          DefaultRollOverStrategy:
-            max: "30"
-            fileIndex: "max"
+  loggers:
+    root:
+      level: INFO
+      appenderRef:
+        - ref: console-appender
+        - ref: rolling-file-appender
 
-    loggers:
-      root:
-        level: INFO
+    logger:
+      - name: com.til
+        additivity: "false"
+        level: DEBUG
         appenderRef:
           - ref: console-appender
           - ref: rolling-file-appender
-
-      logger:
-        - name: com.til
-          additivity: "false"
-          level: DEBUG
-          appenderRef:
-            - ref: console-appender
-            - ref: rolling-file-appender
