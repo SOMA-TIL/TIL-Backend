@@ -38,8 +38,7 @@ public class AuthService {
     public AuthTokenDto createToken(AuthUserInfoDto authUserInfoDto) {
         String accessToken = generateToken(authUserInfoDto, TokenType.ACCESS);
         String refreshToken = generateToken(authUserInfoDto, TokenType.REFRESH);
-        redisManager.setData(TokenType.REFRESH.name() + "_TOKEN:" + authUserInfoDto.email(), refreshToken,
-            REFRESH_EXPIRE_DURATION);
+        redisManager.setData(generateKeyForRedis(authUserInfoDto.email()), refreshToken, REFRESH_EXPIRE_DURATION);
 
         return AuthTokenDto.of(accessToken, refreshToken);
     }
@@ -57,10 +56,14 @@ public class AuthService {
     }
 
     public void validateRefreshToken(String key, String refreshToken) {
-        String redisToken = redisManager.getData(TokenType.REFRESH.name() + "_TOKEN:" + key);
+        String redisToken = redisManager.getData(generateKeyForRedis(key));
         if (!Objects.equals(refreshToken, redisToken)) {
             throw new TokenInvalidException(AuthErrorCode.INVALID_TOKEN);
         }
+    }
+
+    public void deleteToken(String email) {
+        redisManager.deleteData(generateKeyForRedis(email));
     }
 
     private String generateToken(AuthUserInfoDto authUserInfoDto, TokenType tokenType) {
@@ -80,5 +83,9 @@ public class AuthService {
 
     private Long getExpireDuration(TokenType tokenType) {
         return tokenType == TokenType.ACCESS ? ACCESS_EXPIRE_DURATION : REFRESH_EXPIRE_DURATION;
+    }
+
+    private static String generateKeyForRedis(String email) {
+        return TokenType.REFRESH.name() + "_TOKEN:" + email;
     }
 }
