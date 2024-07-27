@@ -14,6 +14,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import com.til.application.user.UserService;
 import com.til.common.annotation.CurrentUser;
 import com.til.config.AppConfig;
+import com.til.domain.common.enums.BaseErrorCode;
+import com.til.domain.common.exception.BaseException;
 import com.til.domain.user.dto.UserInfoDto;
 
 import lombok.NonNull;
@@ -35,13 +37,15 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public Object resolveArgument(@NonNull MethodParameter parameter, ModelAndViewContainer mavContainer,
+    public UserInfoDto resolveArgument(@NonNull MethodParameter parameter, ModelAndViewContainer mavContainer,
         @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         if (!appConfig.isJwtFilterEnabled()) { // for test
             return userService.getUserInfo("til@gmail.com");
         }
-        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+
+        return Optional.of(SecurityContextHolder.getContext().getAuthentication())
             .filter(Authentication::isAuthenticated)
-            .map(auth -> userService.getUserInfo(auth.getPrincipal().toString()));
+            .map(auth -> userService.getUserInfo(auth.getPrincipal().toString()))
+            .orElseThrow(() -> new BaseException(BaseErrorCode.UNAUTHORIZED));
     }
 }
