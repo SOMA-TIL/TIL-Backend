@@ -1,9 +1,8 @@
-package com.til.domain.problem.model;
+package com.til.domain.category.model;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import com.til.domain.category.model.ProblemCategory;
 import com.til.domain.common.model.BaseTimeEntity;
 
 import jakarta.persistence.CascadeType;
@@ -23,34 +22,20 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "problem")
-public class Problem extends BaseTimeEntity {
+@Table(name = "category")
+public class Category extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String name;
 
     @Column(nullable = false)
-    private String question;
+    private String topic;
 
-    @Column(nullable = false)
-    private String solution;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProblemCategory> problemCategorySet = new HashSet<>();
 
-    @Column(nullable = true)
-    private Integer point;
-
-    @Column(nullable = true)
-    private Integer level;
-
-    @Column(nullable = false)
-    private Integer solved;
-
-    @Column(nullable = false)
-    private Float percentage;
-
-    @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<ProblemCategory> problemCategorySet = new HashSet<>();
 }
