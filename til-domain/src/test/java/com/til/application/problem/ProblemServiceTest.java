@@ -15,7 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import com.til.domain.problem.dto.ProblemPageDto;
+import com.til.domain.common.dto.PageParamDto;
+import com.til.domain.problem.dto.ProblemListDto;
 import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.repository.ProblemRepository;
 
@@ -31,13 +32,19 @@ public class ProblemServiceTest {
     @Test
     void 문제리스트를_정상적으로_반환한다() {
         // given
-        PageRequest pageable = PageRequest.of(0, 10);
+        PageParamDto pageParamDto = PageParamDto.builder()
+            .page(0)
+            .size(10)
+            .sort("id")
+            .order("asc")
+            .build();
+
         Problem problem = createProblem();
-        Page<Problem> problemPage = new PageImpl<>(Collections.singletonList(problem));
+        Page<Problem> problemPage = new PageImpl<>(Collections.singletonList(problem), PageRequest.of(0, 10), 1);
         given(problemRepository.findAll(any(PageRequest.class))).willReturn(problemPage);
 
         // when
-        ProblemPageDto result = problemService.getProblemList(0, 10);
+        ProblemListDto result = problemService.getProblemList(pageParamDto);
 
         // then
         assertThat(result).isNotNull();

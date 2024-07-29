@@ -1,11 +1,12 @@
 package com.til.application.problem;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.til.domain.problem.dto.ProblemPageDto;
+import com.til.domain.common.dto.PageParamDto;
+import com.til.domain.problem.dto.ProblemListDto;
 import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.repository.ProblemRepository;
 
@@ -18,10 +19,10 @@ public class ProblemService {
 
     private final ProblemRepository problemRepository;
 
-    public ProblemPageDto getProblemList(int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
+    public ProblemListDto getProblemList(PageParamDto pageParamDto) {
+        Pageable pageable = pageParamDto.toPageable();
         Page<Problem> problems = problemRepository.findAll(pageable);
-        return ProblemPageDto.of(problems);
+        return ProblemListDto.of(problems);
     }
 
 }

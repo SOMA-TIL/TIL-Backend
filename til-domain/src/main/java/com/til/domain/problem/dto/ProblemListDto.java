@@ -1,34 +1,29 @@
 package com.til.domain.problem.dto;
 
-import com.til.domain.category.model.Category;
-import com.til.domain.category.model.ProblemCategory;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+
+import com.til.domain.common.dto.PageInfoDto;
 import com.til.domain.problem.model.Problem;
 
 import lombok.Builder;
 
 @Builder
 public record ProblemListDto(
-                             Long id,
-                             String title,
-                             int level,
-                             int solved,
-                             double percentage,
-                             String categoryName,
-                             String topic
+                             List<ProblemListInfoDto> problems,
+                             PageInfoDto pageInfo
 ) {
 
-    public static ProblemListDto of(Problem problem) {
-        ProblemCategory problemCategory = problem.getProblemCategorySet().stream().findFirst().orElse(null);
-        Category category = (problemCategory != null) ? problemCategory.getCategory() : null;
-
+    public static ProblemListDto of(Page<Problem> problemsPage) {
+        List<ProblemListInfoDto> problems = problemsPage.getContent().stream()
+            .map(ProblemListInfoDto::of)
+            .collect(Collectors.toList());
+        PageInfoDto pageInfo = PageInfoDto.of(problemsPage);
         return ProblemListDto.builder()
-            .id(problem.getId())
-            .title(problem.getTitle())
-            .level(problem.getLevel())
-            .solved(problem.getSolved())
-            .percentage(problem.getPercentage())
-            .categoryName(category != null ? category.getName() : null)
-            .topic(category != null ? category.getTopic() : null)
+            .problems(problems)
+            .pageInfo(pageInfo)
             .build();
     }
 }
