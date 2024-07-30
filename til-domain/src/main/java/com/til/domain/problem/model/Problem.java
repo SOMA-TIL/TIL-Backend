@@ -53,4 +53,7 @@ public class Problem extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<ProblemCategory> problemCategorySet = new HashSet<>();
+
+    @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<UserProblem> userProblemSet = new HashSet<>();
 }
