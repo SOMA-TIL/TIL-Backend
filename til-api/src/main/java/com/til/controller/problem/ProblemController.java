@@ -34,7 +34,7 @@ public class ProblemController {
             throw new BaseException(BaseErrorCode.INVALID_PAGE_REQUEST);
         }
         ProblemListDto problemListDto = problemService.getProblemList(pageParamRequest.toServiceDto());
-        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEMS, PageResponse.of(problemListDto.problems(),
+        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_LIST, PageResponse.of(problemListDto.problems(),
             problemListDto.pageInfo()));
     }
 
