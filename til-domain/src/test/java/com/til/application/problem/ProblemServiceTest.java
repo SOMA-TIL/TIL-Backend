@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +17,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import com.til.domain.common.dto.PageParamDto;
+import com.til.domain.common.exception.BaseException;
+import com.til.domain.problem.dto.ProblemInfoDto;
 import com.til.domain.problem.dto.ProblemListDto;
+import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.repository.ProblemRepository;
 
@@ -49,6 +53,37 @@ public class ProblemServiceTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result.problems().get(0).id()).isEqualTo(problem.getId());
+        assertThat(result.problems().get(0).title()).isEqualTo(problem.getTitle());
+    }
+
+    @Test
+    void 문제_상세정보를_정상적으로_반환한다() {
+        // given
+        Long problemId = 1L;
+        Problem problem = createProblem();
+        given(problemRepository.findById(problemId)).willReturn(Optional.of(problem));
+
+        // when
+        ProblemInfoDto result = problemService.getProblemInfo(problemId);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.id()).isEqualTo(problem.getId());
+        assertThat(result.title()).isEqualTo(problem.getTitle());
+    }
+
+    @Test
+    void 문제를_찾지_못했을_경우_예외를_던진다() {
+        // given
+        Long problemId = 1L;
+        given(problemRepository.findById(problemId)).willReturn(Optional.empty());
+
+        // when
+        Throwable thrown = catchThrowable(() -> problemService.getProblemInfo(problemId));
+
+        // then
+        assertThat(thrown).isInstanceOf(BaseException.class)
+            .hasMessage(ProblemErrorCode.NOT_FOUND_PROBLEM.getMessage());
     }
 
     private Problem createProblem() {
