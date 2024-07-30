@@ -1,4 +1,4 @@
-package com.til.common.Page;
+package com.til.common.page;
 
 import com.til.domain.common.dto.PageParamDto;
 

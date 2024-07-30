@@ -1,4 +1,4 @@
-package com.til.controller.problem.Response;
+package com.til.controller.problem.response;
 
 import com.til.domain.problem.dto.ProblemInfoDto;
 

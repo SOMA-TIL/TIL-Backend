@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.til.application.problem.ProblemService;
-import com.til.common.Page.PageParamRequest;
-import com.til.common.Page.PageResponse;
+import com.til.common.page.PageParamRequest;
+import com.til.common.page.PageResponse;
 import com.til.common.response.ApiResponse;
-import com.til.controller.problem.Response.ProblemInfoResponse;
+import com.til.controller.problem.response.ProblemInfoResponse;
 import com.til.domain.common.enums.BaseErrorCode;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.ProblemInfoDto;
