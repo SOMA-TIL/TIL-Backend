@@ -6,31 +6,10 @@ import lombok.Builder;
 
 @Builder
 public record ProblemInfoResponse(
-                                  Long id,
-                                  String title,
-                                  String question,
-                                  String solution,
-                                  int point,
-                                  int level,
-                                  int solved,
-                                  double percentage,
-                                  String categoryName,
-                                  String topic
+                                  ProblemInfoDto problemInfo
 ) {
 
     public static ProblemInfoResponse of(ProblemInfoDto problemInfoDto) {
-
-        return ProblemInfoResponse.builder()
-            .id(problemInfoDto.id())
-            .title(problemInfoDto.title())
-            .question(problemInfoDto.question())
-            .solution(problemInfoDto.solution())
-            .point(problemInfoDto.point())
-            .level(problemInfoDto.level())
-            .solved(problemInfoDto.solved())
-            .percentage(problemInfoDto.percentage())
-            .categoryName(problemInfoDto.categoryName())
-            .topic(problemInfoDto.topic())
-            .build();
+        return new ProblemInfoResponse(problemInfoDto);
     }
 }

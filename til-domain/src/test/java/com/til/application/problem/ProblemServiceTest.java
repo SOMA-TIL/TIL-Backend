@@ -5,7 +5,6 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,7 +60,7 @@ public class ProblemServiceTest {
         // given
         Long problemId = 1L;
         Problem problem = createProblem();
-        given(problemRepository.findById(problemId)).willReturn(Optional.of(problem));
+        given(problemRepository.getById(problemId)).willReturn(problem);
 
         // when
         ProblemInfoDto result = problemService.getProblemInfo(problemId);
@@ -76,7 +75,7 @@ public class ProblemServiceTest {
     void 문제를_찾지_못했을_경우_예외를_던진다() {
         // given
         Long problemId = 1L;
-        given(problemRepository.findById(problemId)).willReturn(Optional.empty());
+        given(problemRepository.getById(problemId)).willThrow(new BaseException(ProblemErrorCode.NOT_FOUND_PROBLEM));
 
         // when
         Throwable thrown = catchThrowable(() -> problemService.getProblemInfo(problemId));

@@ -6,10 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.til.domain.common.dto.PageParamDto;
-import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.ProblemInfoDto;
 import com.til.domain.problem.dto.ProblemListDto;
-import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.repository.ProblemRepository;
 
@@ -29,8 +27,7 @@ public class ProblemService {
     }
 
     public ProblemInfoDto getProblemInfo(Long id) {
-        Problem problem = problemRepository.findById(id)
-            .orElseThrow(() -> new BaseException(ProblemErrorCode.NOT_FOUND_PROBLEM));
+        Problem problem = problemRepository.getById(id);
         return ProblemInfoDto.of(problem);
     }
 
