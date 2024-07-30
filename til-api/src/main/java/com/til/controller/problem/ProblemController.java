@@ -9,20 +9,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.til.application.problem.ProblemService;
+import com.til.application.userProblem.UserProblemService;
 import com.til.common.annotation.CurrentUser;
 import com.til.common.page.PageParamRequest;
 import com.til.common.page.PageResponse;
 import com.til.common.response.ApiResponse;
 import com.til.controller.problem.request.FavoriteProblemRequest;
+import com.til.controller.problem.request.UserProblemRequest;
 import com.til.controller.problem.response.ProblemInfoResponse;
+import com.til.controller.problem.response.UserProblemResponse;
 import com.til.domain.common.enums.BaseErrorCode;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.ProblemInfoDto;
 import com.til.domain.problem.dto.ProblemListDto;
 import com.til.domain.problem.dto.ProblemListInfoDto;
+import com.til.domain.problem.dto.UserProblemResultDto;
 import com.til.domain.problem.enums.ProblemSuccessCode;
 import com.til.domain.user.dto.UserInfoDto;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class ProblemController {
 
     private final ProblemService problemService;
+    private final UserProblemService userProblemService;
 
     @GetMapping("")
     public ApiResponse<PageResponse<ProblemListInfoDto>> getProblemList(
@@ -56,4 +62,11 @@ public class ProblemController {
         return ApiResponse.ok();
     }
 
+    @PostMapping("/{id}/solve")
+    public ApiResponse<UserProblemResponse> submitAnswer(@CurrentUser UserInfoDto userInfo, @PathVariable Long id,
+        @RequestBody @Valid UserProblemRequest userProblemRequest) {
+        UserProblemResultDto userProblemResultDto = userProblemService.solveProblem(userProblemRequest.toServiceDto(
+            userInfo.id(), id));
+        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_SOLVE_PROBLEM, UserProblemResponse.of(userProblemResultDto));
+    }
 }
