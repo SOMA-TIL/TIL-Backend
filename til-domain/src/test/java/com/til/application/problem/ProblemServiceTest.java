@@ -1,12 +1,21 @@
 package com.til.application.problem;
 
-import static org.assertj.core.api.AssertionsForClassTypes.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,10 +26,12 @@ import org.springframework.data.domain.PageRequest;
 
 import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.common.exception.BaseException;
+import com.til.domain.problem.dto.FavoriteProblemDto;
 import com.til.domain.problem.dto.ProblemInfoDto;
 import com.til.domain.problem.dto.ProblemListDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
+import com.til.domain.problem.repository.FavoriteProblemRepository;
 import com.til.domain.problem.repository.ProblemRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +42,9 @@ public class ProblemServiceTest {
 
     @Mock
     private ProblemRepository problemRepository;
+
+    @Mock
+    private FavoriteProblemRepository favoriteProblemRepository;
 
     @Test
     void 문제리스트를_정상적으로_반환한다() {
@@ -99,4 +113,94 @@ public class ProblemServiceTest {
             .build();
     }
 
+    @TestFactory
+    public Collection<DynamicTest> 문제_즐겨찾기_추가_테스트를_진행한다() {
+        FavoriteProblemDto favoriteProblemDto = createFavoriteProblemDto(true);
+        given(problemRepository.existsById(favoriteProblemDto.problemId())).willReturn(true);
+
+        return List.of(
+            dynamicTest("새롭게 문제를 즐겨찾기에 추가한다", () -> {
+                // given
+                given(favoriteProblemRepository.existsByUserIdAndProblemId(favoriteProblemDto.userId(),
+                    favoriteProblemDto.problemId())).willReturn(false);
+
+                // when
+                problemService.toggleFavorite(favoriteProblemDto);
+
+                // then
+                then(favoriteProblemRepository).should().save(any());
+            }),
+            dynamicTest("이미 즐겨찾기한 문제를 다시 추가할 경우 예외를 던진다", () -> {
+                // given
+                given(favoriteProblemRepository.existsByUserIdAndProblemId(favoriteProblemDto.userId(),
+                    favoriteProblemDto.problemId())).willReturn(true);
+
+                // when & then
+                assertThatThrownBy(() -> problemService.toggleFavorite(favoriteProblemDto))
+                    .isInstanceOf(BaseException.class)
+                    .extracting(error -> ((BaseException) error).getErrorCode())
+                    .isEqualTo(ProblemErrorCode.ALREADY_FAVORITE_PROBLEM);
+            }),
+            dynamicTest("존재하지 않는 문제를 즐겨찾기에 추가할 경우 예외를 던진다", () -> {
+                // given
+                given(problemRepository.existsById(favoriteProblemDto.problemId())).willReturn(false);
+
+                // when & then
+                assertThatThrownBy(() -> problemService.toggleFavorite(favoriteProblemDto))
+                    .isInstanceOf(BaseException.class)
+                    .extracting(error -> ((BaseException) error).getErrorCode())
+                    .isEqualTo(ProblemErrorCode.NOT_FOUND_PROBLEM);
+            })
+        );
+    }
+
+    @TestFactory
+    public Collection<DynamicTest> 문제_즐겨찾기_삭제_테스트를_진행한다() {
+        FavoriteProblemDto favoriteProblemDto = createFavoriteProblemDto(false);
+        given(problemRepository.existsById(favoriteProblemDto.problemId())).willReturn(true);
+
+        return List.of(
+            dynamicTest("즐겨찾기한 문제를 삭제한다", () -> {
+                // given
+                given(favoriteProblemRepository.existsByUserIdAndProblemId(favoriteProblemDto.userId(),
+                    favoriteProblemDto.problemId())).willReturn(true);
+
+                // when
+                problemService.toggleFavorite(favoriteProblemDto);
+
+                // then
+                then(favoriteProblemRepository)
+                    .should().deleteByUserIdAndProblemId(favoriteProblemDto.userId(), favoriteProblemDto.problemId());
+            }),
+            dynamicTest("즐겨찾기하지 않은 문제를 삭제할 경우 예외를 던진다", () -> {
+                // given
+                given(favoriteProblemRepository.existsByUserIdAndProblemId(favoriteProblemDto.userId(),
+                    favoriteProblemDto.problemId())).willReturn(false);
+
+                // when & then
+                assertThatThrownBy(() -> problemService.toggleFavorite(favoriteProblemDto))
+                    .isInstanceOf(BaseException.class)
+                    .extracting(error -> ((BaseException) error).getErrorCode())
+                    .isEqualTo(ProblemErrorCode.NOT_FOUND_FAVORITE_PROBLEM);
+            }),
+            dynamicTest("존재하지 않는 문제를 즐겨찾기에서 삭제할 경우 예외를 던진다", () -> {
+                // given
+                given(problemRepository.existsById(favoriteProblemDto.problemId())).willReturn(false);
+
+                // when & then
+                assertThatThrownBy(() -> problemService.toggleFavorite(favoriteProblemDto))
+                    .isInstanceOf(BaseException.class)
+                    .extracting(error -> ((BaseException) error).getErrorCode())
+                    .isEqualTo(ProblemErrorCode.NOT_FOUND_PROBLEM);
+            })
+        );
+    }
+
+    private static FavoriteProblemDto createFavoriteProblemDto(boolean isFavorite) {
+        return FavoriteProblemDto.builder()
+            .userId(1L)
+            .problemId(1L)
+            .isFavorite(isFavorite)
+            .build();
+    }
 }
