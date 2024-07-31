@@ -1,7 +1,6 @@
-package com.til.application.userProblem;
+package com.til.application.problem;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -12,10 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.til.domain.common.exception.BaseException;
-import com.til.domain.problem.dto.UserProblemDto;
-import com.til.domain.problem.dto.UserProblemResultDto;
-import com.til.domain.problem.enums.ProblemErrorCode;
+import com.til.domain.problem.dto.SolveProblemDto;
+import com.til.domain.problem.dto.SolveProblemResultDto;
 import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.model.ProblemStatus;
 import com.til.domain.problem.model.UserProblem;
@@ -25,10 +22,10 @@ import com.til.domain.user.model.User;
 import com.til.domain.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
-class UserProblemServiceTest {
+class SolveProblemServiceTest {
 
     @InjectMocks
-    private UserProblemService userProblemService;
+    private SolveProblemService solveProblemService;
 
     @Mock
     private UserProblemRepository userProblemRepository;
@@ -40,43 +37,27 @@ class UserProblemServiceTest {
     private UserRepository userRepository;
 
     @Test
-    void 문제풀이시_저장에_실패하면_예외를_던진다() {
+    void 문제풀이시_상태_결과를_반환한다() {
         // given
-        UserProblemDto userProblemDto = createUserProblemDto();
-        given(userRepository.getById(anyLong())).willReturn(createUser());
-        given(problemRepository.getById(anyLong())).willReturn(createProblem());
-        given(userProblemRepository.saveUserProblem(any(UserProblem.class))).willThrow(new BaseException(
-            ProblemErrorCode.FAILED_TO_SAVE_PROBLEM));
-
-        // when & then
-        assertThatThrownBy(() -> userProblemService.solveProblem(userProblemDto))
-            .isInstanceOf(BaseException.class)
-            .extracting(error -> ((BaseException) error).getErrorCode())
-            .isEqualTo(ProblemErrorCode.FAILED_TO_SAVE_PROBLEM);
-    }
-
-    @Test
-    void 문제풀이시_문제를_풀고_상태결과를_반환한다() {
-        // given
-        UserProblemDto userProblemDto = createUserProblemDto();
+        SolveProblemDto solveProblemDto = createSolveProblemDto();
         User user = createUser();
         Problem problem = createProblem();
         UserProblem userProblem = createUserProblem(user, problem);
 
         given(userRepository.getById(anyLong())).willReturn(user);
         given(problemRepository.getById(anyLong())).willReturn(problem);
-        given(userProblemRepository.saveUserProblem(any(UserProblem.class))).willReturn(userProblem);
+        given(userProblemRepository.save(any(UserProblem.class))).willReturn(userProblem);
 
         // when
-        UserProblemResultDto result = userProblemService.solveProblem(userProblemDto);
+        SolveProblemResultDto result = solveProblemService.solveProblem(solveProblemDto);
 
         // then
         assertThat(result).isNotNull();
         assertThat(result.status()).isIn(ProblemStatus.values());
     }
 
-    private UserProblemDto createUserProblemDto() {
-        return UserProblemDto.builder()
+    private SolveProblemDto createSolveProblemDto() {
+        return SolveProblemDto.builder()
             .userId(1L)
             .problemId(1L)
             .answer("Some Answer")
@@ -102,7 +83,6 @@ class UserProblemServiceTest {
         return UserProblem.builder()
             .user(user)
             .problem(problem)
-            .score(85)
             .status(ProblemStatus.GOOD)
             .build();
     }

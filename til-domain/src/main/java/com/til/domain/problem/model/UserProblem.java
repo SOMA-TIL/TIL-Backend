@@ -23,7 +23,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "user_problem")
+@Table(name = "solve_problem")
 public class UserProblem extends BaseTimeEntity {
 
     @Id
@@ -37,9 +37,6 @@ public class UserProblem extends BaseTimeEntity {
     @Column(nullable = true)
     private String answer;
 
-    @Column(nullable = false)
-    private int score;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -48,8 +45,7 @@ public class UserProblem extends BaseTimeEntity {
     @JoinColumn(name = "problem_id", nullable = false)
     private Problem problem;
 
-    public void setResultProblem(int score, ProblemStatus status) {
-        this.score = score;
+    public void setResultStatus(ProblemStatus status) {
         this.status = status;
     }
 
