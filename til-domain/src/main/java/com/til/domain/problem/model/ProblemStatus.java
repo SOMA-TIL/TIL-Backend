@@ -1,7 +1,7 @@
 package com.til.domain.problem.model;
 
 public enum ProblemStatus {
-    UNSOLVED,
+    PENDING,
     PERFECT,
     GOOD,
     NORMAL,

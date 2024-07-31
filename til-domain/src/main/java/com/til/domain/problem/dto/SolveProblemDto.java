@@ -8,10 +8,10 @@ import com.til.domain.user.model.User;
 import lombok.Builder;
 
 @Builder
-public record UserProblemDto(
-                             Long userId,
-                             Long problemId,
-                             String answer
+public record SolveProblemDto(
+                              Long userId,
+                              Long problemId,
+                              String answer
 ) {
 
     public UserProblem toEntity(User user, Problem problem) {
@@ -19,7 +19,7 @@ public record UserProblemDto(
             .user(user)
             .problem(problem)
             .answer(answer)
-            .status(ProblemStatus.UNSOLVED)
+            .status(ProblemStatus.PENDING)
             .build();
     }
 }
