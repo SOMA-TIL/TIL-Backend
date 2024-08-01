@@ -50,7 +50,7 @@ public class UserController {
         return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGOUT);
     }
 
-    @GetMapping("/nickname/{nickname}")
+    @GetMapping("/check-nickname/{nickname}")
     public ApiResponse<Void> checkNickname(@PathVariable String nickname) {
         userService.checkNickname(nickname);
         return ApiResponse.ok(UserSuccessCode.POSSIBLE_NICKNAME);
