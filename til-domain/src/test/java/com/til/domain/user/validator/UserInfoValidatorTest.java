@@ -28,8 +28,8 @@ class UserInfoValidatorTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("validNicknameProvider")
-    void 회원가입_정보에서_닉네임_정보가_유효하면_예외를_던지지_않는다(String description, String nickname) {
-        assertDoesNotThrow(() -> userInfoValidator.validateJoinInfo(nickname, "password1234"));
+    void 닉네임_정보가_유효하면_예외를_던지지_않는다(String description, String nickname) {
+        assertDoesNotThrow(() -> userInfoValidator.validateNickname(nickname));
     }
 
     private static Stream<Arguments> invalidNicknameProvider() {
@@ -42,9 +42,9 @@ class UserInfoValidatorTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("invalidNicknameProvider")
-    void 회원가입_정보에서_닉네임_정보가_유효하지_않으면_예외를_던진다(String description, String nickname,
+    void 닉네임_정보가_유효하지_않으면_예외를_던진다(String description, String nickname,
         Class<? extends Exception> expectedException) {
-        assertThatThrownBy(() -> userInfoValidator.validateJoinInfo(nickname, "password1234"))
+        assertThatThrownBy(() -> userInfoValidator.validateNickname(nickname))
             .isInstanceOf(expectedException);
     }
 
@@ -58,8 +58,8 @@ class UserInfoValidatorTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("validPasswordProvider")
-    void 회원가입_정보에서_비밀번호_정보가_유효하면_예외를_던지지_않는다(String description, String password) {
-        assertDoesNotThrow(() -> userInfoValidator.validateJoinInfo("nickname", password));
+    void 비밀번호_정보가_유효하면_예외를_던지지_않는다(String description, String password) {
+        assertDoesNotThrow(() -> userInfoValidator.validatePassword(password));
     }
 
     private static Stream<Arguments> invalidPasswordProvider() {
@@ -74,9 +74,9 @@ class UserInfoValidatorTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("invalidPasswordProvider")
-    void 회원가입_정보에서_비밀번호_정보가_유효하지_않으면_예외를_던진다(String description, String password,
+    void 비밀번호_정보가_유효하지_않으면_예외를_던진다(String description, String password,
         Class<? extends Exception> expectedException) {
-        assertThatThrownBy(() -> userInfoValidator.validateJoinInfo("nickname", password))
+        assertThatThrownBy(() -> userInfoValidator.validatePassword(password))
             .isInstanceOf(expectedException);
     }
 }
