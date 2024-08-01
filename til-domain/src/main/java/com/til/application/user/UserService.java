@@ -28,12 +28,7 @@ public class UserService {
 
     @Transactional
     public void join(UserJoinDto userJoinDto) {
-        userInfoValidator.validateJoinInfo(userJoinDto.nickname(), userJoinDto.password());
-
-        if (userRepository.existsByEmail(userJoinDto.email())) {
-            throw new BaseException(UserErrorCode.ALREADY_EXISTS_EMAIL);
-        }
-        checkNickname(userJoinDto.nickname());
+        checkJoinInfo(userJoinDto);
 
         User user = userJoinDto.toEntity();
         user.setPassword(passwordEncoder.encode(userJoinDto.password()));
@@ -55,9 +50,22 @@ public class UserService {
         return UserInfoDto.of(user);
     }
 
+    public void checkEmail(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new BaseException(UserErrorCode.ALREADY_EXISTS_EMAIL);
+        }
+    }
+
     public void checkNickname(String nickname) {
+        userInfoValidator.validateNickname(nickname);
         if (userRepository.existsByNickname(nickname)) {
             throw new BaseException(UserErrorCode.ALREADY_EXISTS_NICKNAME);
         }
+    }
+
+    private void checkJoinInfo(UserJoinDto userJoinDto) {
+        userInfoValidator.validatePassword(userJoinDto.password());
+        checkEmail(userJoinDto.email());
+        checkNickname(userJoinDto.nickname());
     }
 }
