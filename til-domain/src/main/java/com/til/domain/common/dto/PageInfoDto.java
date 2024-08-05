@@ -6,17 +6,17 @@ import lombok.Builder;
 
 @Builder
 public record PageInfoDto(
-                          int page,
-                          int size,
-                          long totalElements,
+                          int currentPage,
+                          int pageSize,
+                          long totalItems,
                           int totalPages
 ) {
 
     public static <T> PageInfoDto of(Page<T> page) {
         return PageInfoDto.builder()
-            .page(page.getNumber())
-            .size(page.getSize())
-            .totalElements(page.getTotalElements())
+            .currentPage(page.getNumber())
+            .pageSize(page.getSize())
+            .totalItems(page.getTotalElements())
             .totalPages(page.getTotalPages())
             .build();
     }

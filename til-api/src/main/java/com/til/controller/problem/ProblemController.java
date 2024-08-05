@@ -12,17 +12,14 @@ import com.til.application.problem.ProblemService;
 import com.til.application.problem.SolveProblemService;
 import com.til.common.annotation.CurrentUser;
 import com.til.common.page.PageParamRequest;
-import com.til.common.page.PageResponse;
 import com.til.common.response.ApiResponse;
 import com.til.controller.problem.request.FavoriteProblemRequest;
 import com.til.controller.problem.request.SolveProblemRequest;
 import com.til.controller.problem.response.ProblemInfoResponse;
+import com.til.controller.problem.response.ProblemPageResponse;
 import com.til.controller.problem.response.SolveProblemResponse;
-import com.til.domain.common.enums.BaseErrorCode;
-import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.ProblemInfoDto;
-import com.til.domain.problem.dto.ProblemListDto;
-import com.til.domain.problem.dto.ProblemListInfoDto;
+import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.SolveProblemResultDto;
 import com.til.domain.problem.enums.ProblemSuccessCode;
 import com.til.domain.user.dto.UserInfoDto;
@@ -39,14 +36,12 @@ public class ProblemController {
     private final SolveProblemService solveProblemService;
 
     @GetMapping("")
-    public ApiResponse<PageResponse<ProblemListInfoDto>> getProblemList(
+    public ApiResponse<ProblemPageResponse> getProblemList(
         @ModelAttribute PageParamRequest pageParamRequest) {
-        if (pageParamRequest.page() < 0 || pageParamRequest.size() <= 0) {
-            throw new BaseException(BaseErrorCode.INVALID_PAGE_REQUEST);
-        }
-        ProblemListDto problemListDto = problemService.getProblemList(pageParamRequest.toServiceDto());
-        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_LIST, PageResponse.of(problemListDto.problems(),
-            problemListDto.pageInfo()));
+        pageParamRequest.validate();
+        ProblemPageDto problemPageDto = problemService.getProblemList(pageParamRequest.toServiceDto());
+        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_LIST, ProblemPageResponse.of(problemPageDto
+            .problemList(), problemPageDto.pageInfo()));
     }
 
     @GetMapping("/{id}")

@@ -9,7 +9,7 @@ import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.FavoriteProblemDto;
 import com.til.domain.problem.dto.ProblemInfoDto;
-import com.til.domain.problem.dto.ProblemListDto;
+import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.repository.FavoriteProblemRepository;
@@ -25,10 +25,10 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
     private final FavoriteProblemRepository favoriteProblemRepository;
 
-    public ProblemListDto getProblemList(PageParamDto pageParamDto) {
+    public ProblemPageDto getProblemList(PageParamDto pageParamDto) {
         Pageable pageable = pageParamDto.toPageable();
         Page<Problem> problems = problemRepository.findAll(pageable);
-        return ProblemListDto.of(problems);
+        return ProblemPageDto.of(problems);
     }
 
     public ProblemInfoDto getProblemInfo(Long id) {
