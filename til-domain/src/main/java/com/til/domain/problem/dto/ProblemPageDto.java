@@ -11,18 +11,18 @@ import com.til.domain.problem.model.Problem;
 import lombok.Builder;
 
 @Builder
-public record ProblemListDto(
-                             List<ProblemListInfoDto> problems,
+public record ProblemPageDto(
+                             List<ProblemListInfoDto> problemList,
                              PageInfoDto pageInfo
 ) {
 
-    public static ProblemListDto of(Page<Problem> problemsPage) {
-        List<ProblemListInfoDto> problems = problemsPage.getContent().stream()
+    public static ProblemPageDto of(Page<Problem> problemsPage) {
+        List<ProblemListInfoDto> problemListInfoDtoList = problemsPage.getContent().stream()
             .map(ProblemListInfoDto::of)
             .collect(Collectors.toList());
         PageInfoDto pageInfo = PageInfoDto.of(problemsPage);
-        return ProblemListDto.builder()
-            .problems(problems)
+        return ProblemPageDto.builder()
+            .problemList(problemListInfoDtoList)
             .pageInfo(pageInfo)
             .build();
     }

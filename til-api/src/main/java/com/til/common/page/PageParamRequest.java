@@ -1,6 +1,8 @@
 package com.til.common.page;
 
 import com.til.domain.common.dto.PageParamDto;
+import com.til.domain.common.enums.BaseErrorCode;
+import com.til.domain.common.exception.BaseException;
 
 import lombok.Builder;
 
@@ -30,5 +32,21 @@ public record PageParamRequest(
             .sort(this.sort)
             .order(this.order)
             .build();
+    }
+
+    public void validate() {
+        if (page < 0) {
+            throw new BaseException(BaseErrorCode.INVALID_PAGE_REQUEST);
+        }
+        if (size <= 0) {
+            throw new BaseException(BaseErrorCode.INVALID_PAGE_REQUEST);
+        }
+        if (!isValidOrder(order)) {
+            throw new BaseException(BaseErrorCode.INVALID_PAGE_REQUEST);
+        }
+    }
+
+    private boolean isValidOrder(String order) {
+        return "asc".equalsIgnoreCase(order) || "desc".equalsIgnoreCase(order);
     }
 }

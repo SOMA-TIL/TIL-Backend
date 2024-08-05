@@ -28,7 +28,7 @@ import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.FavoriteProblemDto;
 import com.til.domain.problem.dto.ProblemInfoDto;
-import com.til.domain.problem.dto.ProblemListDto;
+import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.repository.FavoriteProblemRepository;
@@ -61,12 +61,12 @@ public class ProblemServiceTest {
         given(problemRepository.findAll(any(PageRequest.class))).willReturn(problemPage);
 
         // when
-        ProblemListDto result = problemService.getProblemList(pageParamDto);
+        ProblemPageDto result = problemService.getProblemList(pageParamDto);
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.problems().get(0).id()).isEqualTo(problem.getId());
-        assertThat(result.problems().get(0).title()).isEqualTo(problem.getTitle());
+        assertThat(result.problemList().get(0).id()).isEqualTo(problem.getId());
+        assertThat(result.problemList().get(0).title()).isEqualTo(problem.getTitle());
     }
 
     @Test
