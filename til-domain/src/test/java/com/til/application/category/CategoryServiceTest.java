@@ -53,8 +53,7 @@ public class CategoryServiceTest {
     private Category createCategory() {
         return Category.builder()
             .id(1L)
-            .name("NETWORK")
-            .topic("HTTP")
+            .tag("HTTP")
             .build();
     }
 

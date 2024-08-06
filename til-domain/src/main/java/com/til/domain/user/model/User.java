@@ -1,12 +1,7 @@
 package com.til.domain.user.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.til.domain.common.model.BaseTimeEntity;
-import com.til.domain.problem.model.UserProblem;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,7 +9,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -52,9 +46,6 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserProblem> userProblems = new HashSet<>();
 
     public void setPassword(String password) {
         this.password = password;

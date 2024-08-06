@@ -1,7 +1,7 @@
 package com.til.domain.problem.dto;
 
-import com.til.domain.category.model.Category;
-import com.til.domain.category.model.ProblemCategory;
+import java.util.List;
+
 import com.til.domain.problem.model.Problem;
 
 import lombok.Builder;
@@ -12,29 +12,22 @@ public record ProblemInfoDto(
                              String title,
                              String question,
                              String solution,
-                             int point,
+                             String grading,
                              int level,
-                             int solved,
-                             double percentage,
-                             String categoryName,
-                             String topic
+                             List<String> categoryList
 ) {
 
     public static ProblemInfoDto of(Problem problem) {
-        ProblemCategory problemCategory = problem.getProblemCategorySet().stream().findFirst().orElse(null);
-        Category category = (problemCategory != null) ? problemCategory.getCategory() : null;
+        // todo: 카테고리 리스트 받아와서 세팅
 
         return ProblemInfoDto.builder()
             .id(problem.getId())
             .title(problem.getTitle())
             .question(problem.getQuestion())
             .solution(problem.getSolution())
-            .point(problem.getPoint())
+            .grading(problem.getGrading())
             .level(problem.getLevel())
-            .solved(problem.getSolved())
-            .percentage(problem.getPercentage())
-            .categoryName(category != null ? category.getName() : null)
-            .topic(category != null ? category.getTopic() : null)
+            .categoryList(null)
             .build();
     }
 }
