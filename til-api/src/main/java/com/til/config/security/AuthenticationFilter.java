@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,13 +39,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     private final AppConfig appConfig;
     private final TokenProvider tokenProvider;
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !appConfig.isJwtFilterEnabled() || Stream.of(PathPermission.getPublicPath())
-            .anyMatch(pattern -> pathMatcher.match(pattern, request.getRequestURI()));
+        return !appConfig.isJwtFilterEnabled() || PathPermission.isPublicPath(request.getRequestURI());
     }
 
     @Override
