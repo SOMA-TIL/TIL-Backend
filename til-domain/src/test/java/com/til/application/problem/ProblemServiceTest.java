@@ -10,7 +10,6 @@ import static org.mockito.BDDMockito.then;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import org.junit.jupiter.api.DynamicTest;
@@ -105,11 +104,8 @@ public class ProblemServiceTest {
             .title("Sample Problem")
             .question("Sample Question")
             .solution("Sample Solution")
-            .point(10)
+            .grading("")
             .level(1)
-            .solved(100)
-            .percentage(90.0f)
-            .problemCategorySet(new HashSet<>())
             .build();
     }
 

@@ -1,13 +1,10 @@
 package com.til.domain.category.model;
 
 import com.til.domain.common.model.BaseTimeEntity;
-import com.til.domain.problem.model.Problem;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,11 +21,10 @@ public class ProblemCategory extends BaseTimeEntity {
     @Id
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "problem_id", nullable = false)
-    private Problem problem;
+    @Column(nullable = false)
+    private Long problemId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @Column(nullable = false)
+    private Long categoryId;
+
 }

@@ -1,9 +1,7 @@
 package com.til.domain.problem.dto;
 
-import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.model.ProblemStatus;
 import com.til.domain.problem.model.UserProblem;
-import com.til.domain.user.model.User;
 
 import lombok.Builder;
 
@@ -14,10 +12,10 @@ public record SolveProblemDto(
                               String answer
 ) {
 
-    public UserProblem toEntity(User user, Problem problem) {
+    public UserProblem toEntity() {
         return UserProblem.builder()
-            .user(user)
-            .problem(problem)
+            .userId(userId)
+            .problemId(problemId)
             .answer(answer)
             .status(ProblemStatus.PENDING)
             .build();

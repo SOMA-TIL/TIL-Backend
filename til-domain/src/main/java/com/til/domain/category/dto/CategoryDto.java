@@ -6,14 +6,12 @@ import lombok.Builder;
 
 @Builder
 public record CategoryDto(
-                          String name,
-                          String topic
+                          String tag
 ) {
 
     public static CategoryDto of(Category category) {
         return CategoryDto.builder()
-            .name(category.getName())
-            .topic(category.getTopic())
+            .tag(category.getTag())
             .build();
     }
 }

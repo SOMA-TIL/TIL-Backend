@@ -1,12 +1,12 @@
 package com.til.controller.problem.response;
 
-import com.til.domain.problem.dto.SolveProblemResultDto;
+import com.til.domain.problem.dto.SolveProblemModalDto;
 
 public record SolveProblemResponse(
-                                   SolveProblemResultDto problemResult
+                                   SolveProblemModalDto problemResult
 ) {
 
-    public static SolveProblemResponse of(SolveProblemResultDto solveProblemResultDto) {
-        return new SolveProblemResponse(solveProblemResultDto);
+    public static SolveProblemResponse of(SolveProblemModalDto solveProblemModalDto) {
+        return new SolveProblemResponse(solveProblemModalDto);
     }
 }
