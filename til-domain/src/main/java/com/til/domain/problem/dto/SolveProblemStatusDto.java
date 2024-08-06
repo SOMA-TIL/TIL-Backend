@@ -6,12 +6,12 @@ import com.til.domain.problem.model.UserProblem;
 import lombok.Builder;
 
 @Builder
-public record SolveProblemModalDto(
-                                   ProblemStatus status
+public record SolveProblemStatusDto(
+                                    ProblemStatus status
 ) {
 
-    public static SolveProblemModalDto of(UserProblem userProblem) {
-        return SolveProblemModalDto.builder()
+    public static SolveProblemStatusDto of(UserProblem userProblem) {
+        return SolveProblemStatusDto.builder()
             .status(userProblem.getStatus())
             .build();
     }

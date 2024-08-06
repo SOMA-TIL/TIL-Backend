@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.til.domain.problem.dto.SolveProblemDto;
-import com.til.domain.problem.dto.SolveProblemModalDto;
+import com.til.domain.problem.dto.SolveProblemStatusDto;
 import com.til.domain.problem.model.ProblemStatus;
 import com.til.domain.problem.model.UserProblem;
 import com.til.domain.problem.repository.ProblemRepository;
@@ -27,14 +27,14 @@ public class SolveProblemService {
     private final UserRepository userRepository;
 
     @Transactional
-    public SolveProblemModalDto solveProblem(SolveProblemDto solveProblemDto) {
+    public SolveProblemStatusDto solveProblem(SolveProblemDto solveProblemDto) {
         UserProblem userProblem = solveProblemDto.toEntity();
 
         ProblemStatus status = gradeStatus();
         userProblem.setResultStatus(status);
         UserProblem userProblemResult = userProblemRepository.save(userProblem);
 
-        return SolveProblemModalDto.of(userProblemResult);
+        return SolveProblemStatusDto.of(userProblemResult);
     }
 
     // To-do. 채점 로직 수정
