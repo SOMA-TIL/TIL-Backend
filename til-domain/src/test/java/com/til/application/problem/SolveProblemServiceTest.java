@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.til.domain.problem.dto.SolveProblemDto;
-import com.til.domain.problem.dto.SolveProblemModalDto;
+import com.til.domain.problem.dto.SolveProblemStatusDto;
 import com.til.domain.problem.model.ProblemStatus;
 import com.til.domain.problem.model.UserProblem;
 import com.til.domain.problem.repository.ProblemRepository;
@@ -42,7 +42,7 @@ class SolveProblemServiceTest {
         given(userProblemRepository.save(any(UserProblem.class))).willReturn(userProblem);
 
         // when
-        SolveProblemModalDto result = solveProblemService.solveProblem(solveProblemDto);
+        SolveProblemStatusDto result = solveProblemService.solveProblem(solveProblemDto);
 
         // then
         assertThat(result).isNotNull();

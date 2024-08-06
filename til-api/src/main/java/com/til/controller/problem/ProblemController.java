@@ -20,7 +20,7 @@ import com.til.controller.problem.response.ProblemPageResponse;
 import com.til.controller.problem.response.SolveProblemResponse;
 import com.til.domain.problem.dto.ProblemInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
-import com.til.domain.problem.dto.SolveProblemModalDto;
+import com.til.domain.problem.dto.SolveProblemStatusDto;
 import com.til.domain.problem.enums.ProblemSuccessCode;
 import com.til.domain.user.dto.UserInfoDto;
 
@@ -60,8 +60,8 @@ public class ProblemController {
     @PostMapping("/{id}/solve")
     public ApiResponse<SolveProblemResponse> submitAnswer(@CurrentUser UserInfoDto userInfo, @PathVariable Long id,
         @RequestBody @Valid SolveProblemRequest solveProblemRequest) {
-        SolveProblemModalDto solveProblemModalDto = solveProblemService.solveProblem(solveProblemRequest.toServiceDto(
+        SolveProblemStatusDto solveProblemStatusDto = solveProblemService.solveProblem(solveProblemRequest.toServiceDto(
             userInfo.id(), id));
-        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_SOLVE_PROBLEM, SolveProblemResponse.of(solveProblemModalDto));
+        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_SOLVE_PROBLEM, SolveProblemResponse.of(solveProblemStatusDto));
     }
 }
