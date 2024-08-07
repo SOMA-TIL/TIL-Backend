@@ -40,4 +40,22 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                 .fetchOne()
         ).orElseThrow(() -> new BaseException(UserErrorCode.NOT_FOUND_USER));
     }
+
+    @Override
+    public String getPasswordById(Long id) {
+        return Optional.ofNullable(
+            queryFactory.select(user.password)
+                .from(user)
+                .where(user.id.eq(id))
+                .fetchOne()
+        ).orElseThrow(() -> new BaseException(UserErrorCode.NOT_FOUND_USER));
+    }
+
+    @Override
+    public void updatePassword(Long id, String password) {
+        queryFactory.update(user)
+            .set(user.password, password)
+            .where(user.id.eq(id))
+            .execute();
+    }
 }

@@ -9,4 +9,8 @@ public interface UserRepositoryCustom {
     boolean existsByNickname(String nickname);
 
     User getByEmail(String email);
+
+    String getPasswordById(Long id);
+
+    void updatePassword(Long id, String password);
 }
