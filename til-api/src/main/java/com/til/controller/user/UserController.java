@@ -1,6 +1,7 @@
 package com.til.controller.user;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import com.til.common.annotation.CurrentUser;
 import com.til.common.response.ApiResponse;
 import com.til.controller.user.request.UserJoinRequest;
 import com.til.controller.user.request.UserLoginRequest;
+import com.til.controller.user.request.UserPasswordRequest;
 import com.til.controller.user.response.UserLoginResponse;
 import com.til.domain.auth.dto.AuthTokenDto;
 import com.til.domain.auth.dto.AuthUserInfoDto;
@@ -54,5 +56,12 @@ public class UserController {
     public ApiResponse<Void> checkNickname(@PathVariable String nickname) {
         userService.checkNickname(nickname);
         return ApiResponse.ok(UserSuccessCode.POSSIBLE_NICKNAME);
+    }
+
+    @PatchMapping("/change-password")
+    public ApiResponse<Void> changePassword(@CurrentUser UserInfoDto userInfo,
+        @RequestBody @Valid UserPasswordRequest request) {
+        userService.changePassword(userInfo.id(), request.toServiceDto());
+        return ApiResponse.ok(UserSuccessCode.SUCCESS_CHANGE_PASSWORD);
     }
 }

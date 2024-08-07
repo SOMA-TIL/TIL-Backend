@@ -9,6 +9,7 @@ import com.til.domain.common.exception.BaseException;
 import com.til.domain.user.dto.UserInfoDto;
 import com.til.domain.user.dto.UserJoinDto;
 import com.til.domain.user.dto.UserLoginDto;
+import com.til.domain.user.dto.UserPasswordDto;
 import com.til.domain.user.enums.UserErrorCode;
 import com.til.domain.user.model.User;
 import com.til.domain.user.repository.UserRepository;
@@ -31,14 +32,14 @@ public class UserService {
         checkJoinInfo(userJoinDto);
 
         User user = userJoinDto.toEntity();
-        user.setPassword(passwordEncoder.encode(userJoinDto.password()));
+        user.setPassword(encodePassword(userJoinDto.password()));
 
         userRepository.save(user);
     }
 
     public AuthUserInfoDto login(UserLoginDto userLoginDto) {
         User user = userRepository.getByEmail(userLoginDto.email());
-        if (!passwordEncoder.matches(userLoginDto.password(), user.getPassword())) {
+        if (passwordDoesNotMatch(userLoginDto.password(), user.getPassword())) {
             throw new BaseException(UserErrorCode.FAILED_LOGIN);
         }
 
@@ -63,9 +64,33 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public void changePassword(Long userId, UserPasswordDto userPasswordDto) {
+        checkUpdatePasswordInfo(userId, userPasswordDto);
+        userRepository.updatePassword(userId, encodePassword(userPasswordDto.newPassword()));
+    }
+
     private void checkJoinInfo(UserJoinDto userJoinDto) {
         userInfoValidator.validatePassword(userJoinDto.password());
         checkEmail(userJoinDto.email());
         checkNickname(userJoinDto.nickname());
+    }
+
+    private void checkUpdatePasswordInfo(Long userId, UserPasswordDto userPasswordDto) {
+        userInfoValidator.validatePassword(userPasswordDto.newPassword());
+        if (passwordDoesNotMatch(userPasswordDto.password(), userRepository.getPasswordById(userId))) {
+            throw new BaseException(UserErrorCode.NOT_MATCH_PASSWORD);
+        }
+        if (userPasswordDto.password().equals(userPasswordDto.newPassword())) {
+            throw new BaseException(UserErrorCode.SAME_PASSWORD);
+        }
+    }
+
+    private boolean passwordDoesNotMatch(String rawPassword, String encodedPassword) {
+        return !passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+
+    private String encodePassword(String password) {
+        return passwordEncoder.encode(password);
     }
 }
