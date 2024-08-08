@@ -31,9 +31,7 @@ public class UserService {
     public void join(UserJoinDto userJoinDto) {
         checkJoinInfo(userJoinDto);
 
-        User user = userJoinDto.toEntity();
-        user.setPassword(encodePassword(userJoinDto.password()));
-
+        User user = userJoinDto.toEntityWithEncodedPassword(encodePassword(userJoinDto.password()));
         userRepository.save(user);
     }
 

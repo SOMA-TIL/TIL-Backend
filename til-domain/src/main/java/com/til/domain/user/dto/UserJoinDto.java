@@ -14,10 +14,10 @@ public record UserJoinDto(
                           String nickname
 ) {
 
-    public User toEntity() {
+    public User toEntityWithEncodedPassword(String encodedPassword) {
         return User.builder()
             .email(email)
-            .password(password)
+            .password(encodedPassword)
             .nickname(nickname)
             .platform(Platform.TIL)
             .role(Role.USER)
