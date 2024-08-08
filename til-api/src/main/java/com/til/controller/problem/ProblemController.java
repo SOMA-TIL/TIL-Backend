@@ -5,9 +5,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.til.application.auth.AuthService;
 import com.til.application.problem.ProblemService;
 import com.til.application.problem.SolveProblemService;
 import com.til.common.annotation.CurrentUser;
@@ -32,8 +34,11 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/problem")
 public class ProblemController {
 
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+
     private final ProblemService problemService;
     private final SolveProblemService solveProblemService;
+    private final AuthService authService;
 
     @GetMapping("")
     public ApiResponse<ProblemPageResponse> getProblemList(
@@ -45,8 +50,10 @@ public class ProblemController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<ProblemInfoResponse> getProblemInfo(@PathVariable Long id) {
-        ProblemInfoDto problemInfoDto = problemService.getProblemInfo(id);
+    public ApiResponse<ProblemInfoResponse> getProblemInfo(
+        @RequestHeader(name = AUTHORIZATION_HEADER, required = false) String token, @PathVariable Long id) {
+        ProblemInfoDto problemInfoDto = (token == null) ? problemService.getProblemInfo(id)
+            : problemService.getProblemInfoWithUserData(authService.getUserIdFromToken(token), id);
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_INFO, ProblemInfoResponse.of(problemInfoDto));
     }
 
