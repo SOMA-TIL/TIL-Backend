@@ -1,5 +1,6 @@
 package com.til.application.problem;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.springframework.stereotype.Service;
@@ -29,17 +30,17 @@ public class SolveProblemService {
     @Transactional
     public SolveProblemStatusDto solveProblem(SolveProblemDto solveProblemDto) {
         UserProblem userProblem = solveProblemDto.toEntity();
+        userProblemRepository.save(userProblem);
 
+        // TODO : 채점 요청 후 결과 가져오기
         ProblemStatus status = gradeStatus();
-        userProblem.setResultStatus(status);
-        UserProblem userProblemResult = userProblemRepository.save(userProblem);
-
-        return SolveProblemStatusDto.of(userProblemResult);
+        return SolveProblemStatusDto.of(status);
     }
 
     // To-do. 채점 로직 수정
     private ProblemStatus gradeStatus() {
-        ProblemStatus[] statuses = ProblemStatus.values();
+        ProblemStatus[] statuses = Arrays.stream(ProblemStatus.values())
+            .filter(status -> status != ProblemStatus.PENDING).toArray(ProblemStatus[]::new);
         Random random = new Random();
         int randomIndex = random.nextInt(statuses.length);
         return statuses[randomIndex];

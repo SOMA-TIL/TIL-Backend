@@ -13,7 +13,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -31,7 +30,6 @@ public class User extends BaseTimeEntity {
     private String email;
 
     @Column(nullable = false)
-    @Setter
     private String password;
 
     @Column(nullable = false)

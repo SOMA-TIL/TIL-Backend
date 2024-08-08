@@ -38,9 +38,4 @@ public class UserProblem extends BaseTimeEntity {
 
     @Column(nullable = false)
     private Long problemId;
-
-    public void setResultStatus(ProblemStatus status) {
-        this.status = status;
-    }
-
 }
