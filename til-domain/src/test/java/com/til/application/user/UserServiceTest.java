@@ -98,6 +98,18 @@ class UserServiceTest {
             .isEqualTo(UserErrorCode.SAME_PASSWORD);
     }
 
+    @Test
+    void 닉네임_변경시_이미_사용중인_닉네임이라면_예외를_던진다() {
+        // given
+        given(userRepository.existsByNickname(anyString())).willReturn(true);
+
+        // when & then
+        assertThatThrownBy(() -> userService.changeNickname(1L, "선인장24"))
+            .isInstanceOf(BaseException.class)
+            .extracting(error -> ((BaseException) error).getErrorCode())
+            .isEqualTo(UserErrorCode.ALREADY_EXISTS_NICKNAME);
+    }
+
     private UserJoinDto createUserJoinDto() {
         return UserJoinDto.builder()
             .email("test@til.com")
