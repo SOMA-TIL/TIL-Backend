@@ -10,9 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.problem.dto.SolveProblemDto;
 import com.til.domain.problem.dto.SolveProblemStatusDto;
-import com.til.domain.problem.model.ProblemStatus;
 import com.til.domain.problem.model.UserProblem;
 import com.til.domain.problem.repository.ProblemRepository;
 import com.til.domain.problem.repository.UserProblemRepository;
@@ -46,7 +46,7 @@ class SolveProblemServiceTest {
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.status()).isNotEqualTo(ProblemStatus.PENDING);
+        assertThat(result.status()).isNotEqualTo(GradingStatus.PENDING);
     }
 
     private SolveProblemDto createSolveProblemDto() {
@@ -61,7 +61,7 @@ class SolveProblemServiceTest {
         return UserProblem.builder()
             .userId(userId)
             .problemId(problemId)
-            .status(ProblemStatus.PASS)
+            .status(GradingStatus.COMPLETED)
             .build();
     }
 }
