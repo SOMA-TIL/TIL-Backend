@@ -55,6 +55,12 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public void changeNickname(Long id, String nickname) {
+        checkNickname(nickname);
+        userRepository.updateNickname(id, nickname);
+    }
+
     public void checkNickname(String nickname) {
         userInfoValidator.validateNickname(nickname);
         if (userRepository.existsByNickname(nickname)) {
