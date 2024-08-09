@@ -58,7 +58,7 @@ CREATE TABLE solve_problem
     problem_id    bigint not null,
     user_id       bigint not null,
     answer        text null,
-    status        enum ('PASS', 'FAIL', 'PENDING') not null,
+    status        enum ('PENDING', 'COMPLETED', 'ERROR') not null,
     created_date  datetime(6)                      not null,
     modified_date datetime(6)                      not null
 );

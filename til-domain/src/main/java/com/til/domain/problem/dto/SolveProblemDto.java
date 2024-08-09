@@ -1,6 +1,6 @@
 package com.til.domain.problem.dto;
 
-import com.til.domain.problem.model.ProblemStatus;
+import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.problem.model.UserProblem;
 
 import lombok.Builder;
@@ -17,7 +17,7 @@ public record SolveProblemDto(
             .userId(userId)
             .problemId(problemId)
             .answer(answer)
-            .status(ProblemStatus.PENDING)
+            .status(GradingStatus.PENDING)
             .build();
     }
 }

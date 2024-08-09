@@ -1,6 +1,7 @@
 package com.til.domain.problem.model;
 
 import com.til.domain.common.model.BaseTimeEntity;
+import com.til.domain.grading.enums.GradingStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,7 +29,7 @@ public class UserProblem extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ProblemStatus status;
+    private GradingStatus status;
 
     @Column(nullable = true)
     private String answer;

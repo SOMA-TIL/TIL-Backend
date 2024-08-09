@@ -1,15 +1,15 @@
 package com.til.domain.problem.dto;
 
-import com.til.domain.problem.model.ProblemStatus;
+import com.til.domain.grading.enums.GradingStatus;
 
 import lombok.Builder;
 
 @Builder
 public record SolveProblemStatusDto(
-                                    ProblemStatus status
+                                    GradingStatus status
 ) {
 
-    public static SolveProblemStatusDto of(ProblemStatus status) {
+    public static SolveProblemStatusDto of(GradingStatus status) {
         return SolveProblemStatusDto.builder()
             .status(status)
             .build();
