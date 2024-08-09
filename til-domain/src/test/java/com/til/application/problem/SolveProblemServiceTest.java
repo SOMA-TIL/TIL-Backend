@@ -46,7 +46,7 @@ class SolveProblemServiceTest {
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.status()).isNotEqualTo(GradingStatus.PENDING);
+        assertThat(result.status()).isEqualTo(GradingStatus.PENDING);
     }
 
     private SolveProblemDto createSolveProblemDto() {
