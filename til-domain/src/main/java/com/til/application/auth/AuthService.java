@@ -15,6 +15,7 @@ import com.til.domain.auth.enums.AuthErrorCode;
 import com.til.domain.auth.enums.TokenType;
 import com.til.domain.auth.exception.TokenInvalidException;
 import com.til.domain.auth.provider.TokenProvider;
+import com.til.domain.user.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class AuthService {
 
     private final TokenProvider tokenProvider;
     private final RedisManager redisManager;
+    private final UserRepository userRepository;
 
     @Value("${jwt.access.expiration}")
     private Long ACCESS_EXPIRE_DURATION;
@@ -64,6 +66,13 @@ public class AuthService {
 
     public void deleteToken(String email) {
         redisManager.deleteData(generateKeyForRedis(email));
+    }
+
+    public Long getUserIdFromToken(String bearerToken) {
+        String accessToken = resolveToken(bearerToken);
+        tokenProvider.validateToken(accessToken);
+
+        return userRepository.getIdByEmail(tokenProvider.parseClaims(accessToken).getSubject());
     }
 
     private String generateToken(AuthUserInfoDto authUserInfoDto, TokenType tokenType) {

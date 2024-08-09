@@ -14,20 +14,31 @@ public record ProblemInfoDto(
                              String solution,
                              String grading,
                              int level,
-                             List<String> categoryList
+                             List<String> categoryList,
+                             boolean isFavorite
 ) {
 
     public static ProblemInfoDto of(Problem problem) {
         // todo: 카테고리 리스트 받아와서 세팅
 
+        return createBuilderFromProblem(problem)
+            .categoryList(null)
+            .build();
+    }
+
+    public static ProblemInfoDto of(Problem problem, boolean isFavorite) {
+        return createBuilderFromProblem(problem)
+            .isFavorite(isFavorite)
+            .build();
+    }
+
+    private static ProblemInfoDtoBuilder createBuilderFromProblem(Problem problem) {
         return ProblemInfoDto.builder()
             .id(problem.getId())
             .title(problem.getTitle())
             .question(problem.getQuestion())
             .solution(problem.getSolution())
             .grading(problem.getGrading())
-            .level(problem.getLevel())
-            .categoryList(null)
-            .build();
+            .level(problem.getLevel());
     }
 }

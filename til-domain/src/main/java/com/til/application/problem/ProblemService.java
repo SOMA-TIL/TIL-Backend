@@ -36,6 +36,11 @@ public class ProblemService {
         return ProblemInfoDto.of(problem);
     }
 
+    public ProblemInfoDto getProblemInfoWithUserData(Long userId, Long problemId) {
+        Problem problem = problemRepository.getById(problemId);
+        return ProblemInfoDto.of(problem, favoriteProblemRepository.existsByUserIdAndProblemId(userId, problemId));
+    }
+
     @Transactional
     public void toggleFavorite(FavoriteProblemDto favoriteProblemDto) {
         validateProblemExists(favoriteProblemDto.problemId());

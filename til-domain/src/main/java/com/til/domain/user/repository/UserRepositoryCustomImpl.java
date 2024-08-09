@@ -58,4 +58,14 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
             .where(user.id.eq(id))
             .execute();
     }
+
+    @Override
+    public Long getIdByEmail(String email) {
+        return Optional.ofNullable(
+            queryFactory.select(user.id)
+                .from(user)
+                .where(user.email.eq(email))
+                .fetchOne()
+        ).orElseThrow(() -> new BaseException(UserErrorCode.NOT_FOUND_USER));
+    }
 }
