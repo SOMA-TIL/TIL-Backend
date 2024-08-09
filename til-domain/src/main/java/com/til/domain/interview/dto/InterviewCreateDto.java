@@ -11,14 +11,14 @@ import lombok.Builder;
 public record InterviewCreateDto(
                                  List<Integer> categoryIdList,
                                  InterviewStatus status,
-                                 String uuid,
+                                 String code,
                                  Long userId
 ) {
 
-    public Interview toEntity(String uuid) {
+    public Interview toEntity(String code) {
         return Interview.builder()
             .status(InterviewStatus.PROCESSING)
-            .uuid(uuid)
+            .code(code)
             .userId(userId)
             .build();
     }
