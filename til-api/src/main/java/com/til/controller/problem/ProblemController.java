@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.til.application.grading.GradingService;
 import com.til.application.problem.ProblemService;
 import com.til.application.problem.SolveProblemService;
 import com.til.common.annotation.CurrentUser;
@@ -17,7 +19,10 @@ import com.til.controller.problem.request.FavoriteProblemRequest;
 import com.til.controller.problem.request.SolveProblemRequest;
 import com.til.controller.problem.response.ProblemInfoResponse;
 import com.til.controller.problem.response.ProblemPageResponse;
+import com.til.controller.problem.response.ProblemResultResponse;
 import com.til.controller.problem.response.SolveProblemResponse;
+import com.til.domain.grading.dto.GradingResultDto;
+import com.til.domain.grading.enums.AnswerType;
 import com.til.domain.problem.dto.ProblemInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.SolveProblemStatusDto;
@@ -34,6 +39,7 @@ public class ProblemController {
 
     private final ProblemService problemService;
     private final SolveProblemService solveProblemService;
+    private final GradingService gradingService;
 
     @GetMapping("")
     public ApiResponse<ProblemPageResponse> getProblemList(
@@ -62,6 +68,13 @@ public class ProblemController {
         @RequestBody @Valid SolveProblemRequest solveProblemRequest) {
         SolveProblemStatusDto solveProblemStatusDto = solveProblemService.solveProblem(solveProblemRequest.toServiceDto(
             userInfo.id(), id));
-        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_SOLVE_PROBLEM, SolveProblemResponse.of(solveProblemStatusDto));
+        gradingService.makeGrading(AnswerType.PROBLEM, solveProblemStatusDto.id());
+        return ApiResponse.ok(SolveProblemResponse.of(solveProblemStatusDto));
+    }
+
+    @GetMapping("/{id}/result")
+    public ApiResponse<ProblemResultResponse> getGradingResult(@PathVariable Long id, @RequestParam Long submitId) {
+        GradingResultDto resultDto = gradingService.getGradingResult(AnswerType.PROBLEM, submitId);
+        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_SOLVE_PROBLEM, ProblemResultResponse.of(resultDto));
     }
 }

@@ -1,7 +1,8 @@
-package com.til.domain.problem.model;
+package com.til.domain.grading.model;
 
 import com.til.domain.common.model.BaseTimeEntity;
-import com.til.domain.grading.enums.GradingStatus;
+import com.til.domain.grading.enums.AnswerType;
+import com.til.domain.grading.enums.GradingResult;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,8 +21,8 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "solve_problem")
-public class UserProblem extends BaseTimeEntity {
+@Table(name = "grading")
+public class Grading extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,14 +30,15 @@ public class UserProblem extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private GradingStatus status;
-
-    @Column(nullable = true)
-    private String answer;
+    private AnswerType type;
 
     @Column(nullable = false)
-    private Long userId;
+    private Long targetId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Long problemId;
+    private GradingResult result;
+
+    @Column
+    private String comment;
 }
