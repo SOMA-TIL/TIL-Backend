@@ -9,8 +9,8 @@ import com.til.application.interview.InterviewService;
 import com.til.common.annotation.CurrentUser;
 import com.til.common.response.ApiResponse;
 import com.til.controller.interview.request.InterviewCreateRequest;
-import com.til.controller.interview.response.InterviewUuidResponse;
-import com.til.domain.interview.dto.InterviewUuidDto;
+import com.til.controller.interview.response.InterviewCodeResponse;
+import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.enums.InterviewSuccessCode;
 import com.til.domain.user.dto.UserInfoDto;
 
@@ -24,12 +24,12 @@ public class InterviewController {
     private final InterviewService interviewService;
 
     @PostMapping("/create")
-    public ApiResponse<InterviewUuidResponse> createInterview(@CurrentUser UserInfoDto userInfo,
+    public ApiResponse<InterviewCodeResponse> createInterview(@CurrentUser UserInfoDto userInfo,
         @RequestBody InterviewCreateRequest request) {
-        InterviewUuidDto interviewUuidDto = interviewService.create(request.toServiceDto(userInfo.id()));
+        InterviewCodeDto interviewCodeDto = interviewService.create(request.toServiceDto(userInfo.id()));
 
-        return ApiResponse.ok(InterviewSuccessCode.SUCCESS_INTERVIEW_CREATION, InterviewUuidResponse.of(
-            interviewUuidDto));
+        return ApiResponse.ok(InterviewSuccessCode.SUCCESS_INTERVIEW_CREATION, InterviewCodeResponse.of(
+            interviewCodeDto));
     }
 
 }

@@ -27,7 +27,7 @@ public class Interview extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String uuid;
+    private String code;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
