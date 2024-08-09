@@ -1,12 +1,8 @@
 package com.til.application.problem;
 
-import java.util.Arrays;
-import java.util.Random;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.problem.dto.SolveProblemDto;
 import com.til.domain.problem.dto.SolveProblemStatusDto;
 import com.til.domain.problem.model.UserProblem;
@@ -32,17 +28,6 @@ public class SolveProblemService {
         UserProblem userProblem = solveProblemDto.toEntity();
         userProblemRepository.save(userProblem);
 
-        // TODO : 채점 요청 후 결과 가져오기
-        GradingStatus status = gradeStatus();
-        return SolveProblemStatusDto.of(status);
-    }
-
-    // To-do. 채점 로직 수정
-    private GradingStatus gradeStatus() {
-        GradingStatus[] statuses = Arrays.stream(GradingStatus.values())
-            .filter(status -> status != GradingStatus.PENDING).toArray(GradingStatus[]::new);
-        Random random = new Random();
-        int randomIndex = random.nextInt(statuses.length);
-        return statuses[randomIndex];
+        return SolveProblemStatusDto.of(userProblem.getId(), userProblem.getStatus());
     }
 }
