@@ -14,6 +14,7 @@ import com.til.common.annotation.CurrentUser;
 import com.til.common.response.ApiResponse;
 import com.til.controller.user.request.UserJoinRequest;
 import com.til.controller.user.request.UserLoginRequest;
+import com.til.controller.user.request.UserNicknameRequest;
 import com.til.controller.user.request.UserPasswordRequest;
 import com.til.controller.user.response.UserLoginResponse;
 import com.til.domain.auth.dto.AuthTokenDto;
@@ -56,6 +57,13 @@ public class UserController {
     public ApiResponse<Void> checkNickname(@PathVariable String nickname) {
         userService.checkNickname(nickname);
         return ApiResponse.ok(UserSuccessCode.POSSIBLE_NICKNAME);
+    }
+
+    @PatchMapping("/change-nickname")
+    public ApiResponse<Void> changeNickname(@CurrentUser UserInfoDto userInfo,
+        @RequestBody @Valid UserNicknameRequest request) {
+        userService.changeNickname(userInfo.id(), request.nickname());
+        return ApiResponse.ok(UserSuccessCode.SUCCESS_CHANGE_NICKNAME);
     }
 
     @PatchMapping("/change-password")
