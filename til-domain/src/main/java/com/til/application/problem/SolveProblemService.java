@@ -1,14 +1,19 @@
 package com.til.application.problem;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.SolveProblemDto;
 import com.til.domain.problem.dto.SolveProblemStatusDto;
+import com.til.domain.problem.dto.SubmitHistoryDto;
+import com.til.domain.problem.dto.SubmitResultDto;
+import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.UserProblem;
 import com.til.domain.problem.repository.ProblemRepository;
 import com.til.domain.problem.repository.UserProblemRepository;
-import com.til.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,13 +26,25 @@ public class SolveProblemService {
 
     private final ProblemRepository problemRepository;
 
-    private final UserRepository userRepository;
-
     @Transactional
     public SolveProblemStatusDto solveProblem(SolveProblemDto solveProblemDto) {
         UserProblem userProblem = solveProblemDto.toEntity();
         userProblemRepository.save(userProblem);
 
         return SolveProblemStatusDto.of(userProblem.getId(), userProblem.getStatus());
+    }
+
+    public SubmitResultDto getProblemSubmitResult(Long userId, Long problemId) {
+        validateProblemExists(problemId);
+        List<SubmitHistoryDto> submitHistory = userProblemRepository.getSubmitHistory(userId, problemId);
+        boolean isPass = userProblemRepository.isProblemPassed(userId, problemId);
+        return SubmitResultDto.of(submitHistory, isPass ? problemRepository.getSolutionByProblemId(problemId) : null);
+    }
+
+    private void validateProblemExists(Long problemId) {
+        boolean isExist = problemRepository.existsById(problemId);
+        if (!isExist) {
+            throw new BaseException(ProblemErrorCode.NOT_FOUND_PROBLEM);
+        }
     }
 }
