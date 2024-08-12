@@ -49,7 +49,7 @@ public class UserController {
 
     @GetMapping("/logout")
     public ApiResponse<Void> logout(@CurrentUser UserInfoDto userInfo) {
-        authService.deleteToken(userInfo.email());
+        authService.deleteToken(userInfo.id());
         return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGOUT);
     }
 

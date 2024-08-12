@@ -1,5 +1,7 @@
 package com.til.controller.auth;
 
+import static com.til.domain.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +19,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
-
-    public static final String AUTHORIZATION_HEADER = "Authorization";
 
     private final AuthService authService;
 

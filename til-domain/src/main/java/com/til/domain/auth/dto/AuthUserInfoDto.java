@@ -10,13 +10,13 @@ import lombok.Builder;
 
 @Builder
 public record AuthUserInfoDto(
-                              String email,
+                              Long id,
                               String nickname,
                               Role role
 ) {
 
     public String getSubject() {
-        return this.email;
+        return this.id.toString();
     }
 
     public Map<String, Object> toClaims(TokenType tokenType) {
@@ -28,20 +28,20 @@ public record AuthUserInfoDto(
     }
 
     public static AuthUserInfoDto of(Claims claims) {
-        String email = claims.getSubject();
+        String id = claims.getSubject();
         String nickname = claims.get("nickname").toString();
         Role role = Role.valueOf(claims.get("role").toString());
 
         return AuthUserInfoDto.builder()
-            .email(email)
+            .id(Long.parseLong(id))
             .nickname(nickname)
             .role(role)
             .build();
     }
 
-    public static AuthUserInfoDto of(String email, String nickname, Role role) {
+    public static AuthUserInfoDto of(Long id, String nickname, Role role) {
         return AuthUserInfoDto.builder()
-            .email(email)
+            .id(id)
             .nickname(nickname)
             .role(role)
             .build();
