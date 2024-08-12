@@ -15,6 +15,4 @@ public interface UserRepositoryCustom {
     void updatePassword(Long id, String password);
 
     void updateNickname(Long id, String nickname);
-
-    Long getIdByEmail(String email);
 }
