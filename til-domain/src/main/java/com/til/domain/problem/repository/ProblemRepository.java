@@ -6,7 +6,7 @@ import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
 
-public interface ProblemRepository extends JpaRepository<Problem, Long> {
+public interface ProblemRepository extends JpaRepository<Problem, Long>, ProblemRepositoryCustom {
 
     default Problem getById(Long id) {
         return findById(id).orElseThrow(() -> new BaseException(ProblemErrorCode.NOT_FOUND_PROBLEM));

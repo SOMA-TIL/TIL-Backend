@@ -22,12 +22,14 @@ import com.til.controller.problem.request.SolveProblemRequest;
 import com.til.controller.problem.response.ProblemInfoResponse;
 import com.til.controller.problem.response.ProblemPageResponse;
 import com.til.controller.problem.response.ProblemResultResponse;
+import com.til.controller.problem.response.ProblemSubmitHistory;
 import com.til.controller.problem.response.SolveProblemResponse;
 import com.til.domain.grading.dto.GradingResultDto;
 import com.til.domain.grading.enums.AnswerType;
 import com.til.domain.problem.dto.ProblemInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.SolveProblemStatusDto;
+import com.til.domain.problem.dto.SubmitResultDto;
 import com.til.domain.problem.enums.ProblemSuccessCode;
 import com.til.domain.user.dto.UserInfoDto;
 
@@ -83,5 +85,12 @@ public class ProblemController {
     public ApiResponse<ProblemResultResponse> getGradingResult(@PathVariable Long id, @RequestParam Long submitId) {
         GradingResultDto resultDto = gradingService.getGradingResult(AnswerType.PROBLEM, submitId);
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_SOLVE_PROBLEM, ProblemResultResponse.of(resultDto));
+    }
+
+    @GetMapping("/{id}/history")
+    public ApiResponse<ProblemSubmitHistory> getProblemSubmitHistory(@CurrentUser UserInfoDto userInfoDto,
+        @PathVariable Long id) {
+        SubmitResultDto submitResult = solveProblemService.getProblemSubmitResult(userInfoDto.id(), id);
+        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_SUBMIT_HISTORY, ProblemSubmitHistory.of(submitResult));
     }
 }

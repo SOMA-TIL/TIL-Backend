@@ -92,6 +92,30 @@ VALUES ((SELECT id FROM user WHERE email = "til@gmail.com"), 1, now(), now()),
        ((SELECT id FROM user WHERE email = "til@gmail.com"), 7, now(), now()),
        ((SELECT id FROM user WHERE email = "til@gmail.com"), 10, now(), now());
 
+-- =================== solve_problem ===================
+INSERT INTO solve_problem (id, problem_id, user_id, answer, status, created_date, modified_date)
+VALUES
+    (1, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 첫번째 답변 제출", "COMPLETED", now(), now()),
+    (2, 4, (SELECT id FROM user WHERE email = "til@gmail.com"), "4번 문제 첫번째 답변 제출", "COMPLETED", now(), now()),
+    (3, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 두번째 답변 제출", "COMPLETED", now(), now()),
+    (4, 1, (SELECT id FROM user WHERE email = "user2@gmail.com"), "1번 문제 첫번째 답변 제출", "PENDING", now(), now()),
+    (5, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 세번째 답변 제출", "COMPLETED", now(), now()),
+    (6, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 네번째 답변 제출", "COMPLETED", now(), now()),
+    (7, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 다섯번째 답변 제출", "COMPLETED", now(), now()),
+    (8, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 여섯번째 답변 제출", "COMPLETED", now(), now());
+
+
+-- =================== grading ===================
+INSERT INTO grading (type, target_id, result, comment, created_date, modified_date)
+VALUES
+    ("PROBLEM", 1, "PASS", "1번 문제 첫번째 답변 채점 결과 피드백", now(), now()),
+    ("PROBLEM", 2, "FAIL", "4번 문제 첫번째 답변 채점 결과 피드백", now(), now()),
+    ("PROBLEM", 3, "FAIL", "1번 문제 두번째 답변 채점 결과 피드백", now(), now()),
+    ("PROBLEM", 5, "PASS", "1번 문제 세번째 답변 채점 결과 피드백", now(), now()),
+    ("PROBLEM", 6, "PASS", "1번 문제 네번째 답변 채점 결과 피드백", now(), now()),
+    ("PROBLEM", 7, "PASS", "1번 문제 다섯번째 답변 채점 결과 피드백", now(), now()),
+    ("PROBLEM", 8, "PASS", "1번 문제 여섯번째 답변 채점 결과 피드백", now(), now());
+
 -- =================== interview ===================
 INSERT INTO interview (code, status, user_id, created_date, modified_date)
 VALUES
