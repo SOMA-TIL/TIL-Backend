@@ -45,9 +45,9 @@ CREATE TABLE problem
 
 CREATE TABLE problem_category
 (
-    category_id   bigint not null,
-    id            bigint not null primary key,
+    id            bigint auto_increment primary key,
     problem_id    bigint not null,
+    category_id   bigint not null,
     created_date  datetime(6) not null,
     modified_date datetime(6) not null
 );

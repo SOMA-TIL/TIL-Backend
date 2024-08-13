@@ -60,12 +60,13 @@ public class ProblemServiceTest {
         given(problemRepository.findAll(any(PageRequest.class))).willReturn(problemPage);
 
         // when
-        ProblemPageDto result = problemService.getProblemList(pageParamDto);
+        ProblemPageDto<Problem> result = problemService.getProblemList(pageParamDto);
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.problemList().get(0).id()).isEqualTo(problem.getId());
-        assertThat(result.problemList().get(0).title()).isEqualTo(problem.getTitle());
+        assertThat(result.problemList().size()).isEqualTo(1);
+        assertThat(result.problemList().get(0).getId()).isEqualTo(problem.getId());
+        assertThat(result.problemList().get(0).getTitle()).isEqualTo(problem.getTitle());
     }
 
     @Test

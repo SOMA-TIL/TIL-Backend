@@ -26,6 +26,7 @@ import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.grading.dto.GradingResultDto;
 import com.til.domain.grading.enums.AnswerType;
 import com.til.domain.problem.dto.ProblemInfoDto;
+import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.SolveProblemStatusDto;
 import com.til.domain.problem.dto.SubmitResultDto;
@@ -47,7 +48,8 @@ public class ProblemController {
     public ApiResponse<ProblemPageResponse> getProblemList(
         @ModelAttribute PageParamRequest pageParamRequest) {
         pageParamRequest.validate();
-        ProblemPageDto problemPageDto = problemService.getProblemList(pageParamRequest.toServiceDto());
+        ProblemPageDto<ProblemOverviewInfoDto> problemPageDto = problemService.getProblemOverviewList(pageParamRequest
+            .toServiceDto());
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_LIST, ProblemPageResponse.of(problemPageDto
             .problemList(), problemPageDto.pageInfo()));
     }
