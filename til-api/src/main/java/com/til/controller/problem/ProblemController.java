@@ -5,12 +5,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.til.application.auth.AuthService;
 import com.til.application.grading.GradingService;
 import com.til.application.problem.ProblemService;
 import com.til.application.problem.SolveProblemService;
@@ -24,6 +22,7 @@ import com.til.controller.problem.response.ProblemPageResponse;
 import com.til.controller.problem.response.ProblemResultResponse;
 import com.til.controller.problem.response.ProblemSubmitHistory;
 import com.til.controller.problem.response.SolveProblemResponse;
+import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.grading.dto.GradingResultDto;
 import com.til.domain.grading.enums.AnswerType;
 import com.til.domain.problem.dto.ProblemInfoDto;
@@ -31,7 +30,6 @@ import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.SolveProblemStatusDto;
 import com.til.domain.problem.dto.SubmitResultDto;
 import com.til.domain.problem.enums.ProblemSuccessCode;
-import com.til.domain.user.dto.UserInfoDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,12 +39,9 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/problem")
 public class ProblemController {
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-
     private final ProblemService problemService;
     private final SolveProblemService solveProblemService;
     private final GradingService gradingService;
-    private final AuthService authService;
 
     @GetMapping("")
     public ApiResponse<ProblemPageResponse> getProblemList(
@@ -59,21 +54,21 @@ public class ProblemController {
 
     @GetMapping("/{id}")
     public ApiResponse<ProblemInfoResponse> getProblemInfo(
-        @RequestHeader(name = AUTHORIZATION_HEADER, required = false) String token, @PathVariable Long id) {
-        ProblemInfoDto problemInfoDto = (token == null) ? problemService.getProblemInfo(id)
-            : problemService.getProblemInfoWithUserData(authService.getUserIdFromToken(token), id);
+        @CurrentUser(required = false) AuthUserInfoDto userInfo, @PathVariable Long id) {
+        ProblemInfoDto problemInfoDto = (userInfo == null) ? problemService.getProblemInfo(id)
+            : problemService.getProblemInfoWithUserData(userInfo.id(), id);
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_INFO, ProblemInfoResponse.of(problemInfoDto));
     }
 
     @PostMapping("/{id}/favorite")
-    public ApiResponse<Void> favoriteProblem(@CurrentUser UserInfoDto userInfo, @PathVariable Long id,
+    public ApiResponse<Void> favoriteProblem(@CurrentUser AuthUserInfoDto userInfo, @PathVariable Long id,
         @RequestBody FavoriteProblemRequest favoriteProblemRequest) {
         problemService.toggleFavorite(favoriteProblemRequest.toServiceDto(userInfo.id(), id));
         return ApiResponse.ok();
     }
 
     @PostMapping("/{id}/solve")
-    public ApiResponse<SolveProblemResponse> submitAnswer(@CurrentUser UserInfoDto userInfo, @PathVariable Long id,
+    public ApiResponse<SolveProblemResponse> submitAnswer(@CurrentUser AuthUserInfoDto userInfo, @PathVariable Long id,
         @RequestBody @Valid SolveProblemRequest solveProblemRequest) {
         SolveProblemStatusDto solveProblemStatusDto = solveProblemService.solveProblem(solveProblemRequest.toServiceDto(
             userInfo.id(), id));
@@ -88,9 +83,9 @@ public class ProblemController {
     }
 
     @GetMapping("/{id}/history")
-    public ApiResponse<ProblemSubmitHistory> getProblemSubmitHistory(@CurrentUser UserInfoDto userInfoDto,
+    public ApiResponse<ProblemSubmitHistory> getProblemSubmitHistory(@CurrentUser AuthUserInfoDto userInfo,
         @PathVariable Long id) {
-        SubmitResultDto submitResult = solveProblemService.getProblemSubmitResult(userInfoDto.id(), id);
+        SubmitResultDto submitResult = solveProblemService.getProblemSubmitResult(userInfo.id(), id);
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_SUBMIT_HISTORY, ProblemSubmitHistory.of(submitResult));
     }
 }

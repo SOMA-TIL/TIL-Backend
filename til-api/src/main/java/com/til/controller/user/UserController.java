@@ -19,7 +19,6 @@ import com.til.controller.user.request.UserPasswordRequest;
 import com.til.controller.user.response.UserLoginResponse;
 import com.til.domain.auth.dto.AuthTokenDto;
 import com.til.domain.auth.dto.AuthUserInfoDto;
-import com.til.domain.user.dto.UserInfoDto;
 import com.til.domain.user.enums.UserSuccessCode;
 
 import jakarta.validation.Valid;
@@ -48,8 +47,8 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public ApiResponse<Void> logout(@CurrentUser UserInfoDto userInfo) {
-        authService.deleteToken(userInfo.email());
+    public ApiResponse<Void> logout(@CurrentUser AuthUserInfoDto userInfo) {
+        authService.deleteToken(userInfo.id());
         return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGOUT);
     }
 
@@ -60,14 +59,14 @@ public class UserController {
     }
 
     @PatchMapping("/change-nickname")
-    public ApiResponse<Void> changeNickname(@CurrentUser UserInfoDto userInfo,
+    public ApiResponse<Void> changeNickname(@CurrentUser AuthUserInfoDto userInfo,
         @RequestBody @Valid UserNicknameRequest request) {
         userService.changeNickname(userInfo.id(), request.nickname());
         return ApiResponse.ok(UserSuccessCode.SUCCESS_CHANGE_NICKNAME);
     }
 
     @PatchMapping("/change-password")
-    public ApiResponse<Void> changePassword(@CurrentUser UserInfoDto userInfo,
+    public ApiResponse<Void> changePassword(@CurrentUser AuthUserInfoDto userInfo,
         @RequestBody @Valid UserPasswordRequest request) {
         userService.changePassword(userInfo.id(), request.toServiceDto());
         return ApiResponse.ok(UserSuccessCode.SUCCESS_CHANGE_PASSWORD);

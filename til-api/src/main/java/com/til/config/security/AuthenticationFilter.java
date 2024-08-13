@@ -1,26 +1,26 @@
 package com.til.config.security;
 
+import static com.til.domain.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.til.application.auth.AuthService;
 import com.til.config.AppConfig;
 import com.til.config.errorhandling.ErrorResponse;
-import com.til.domain.auth.provider.TokenProvider;
+import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.common.enums.BaseErrorCode;
 import com.til.domain.user.model.Role;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,12 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String BEARER_TYPE = "Bearer";
-
     private final AppConfig appConfig;
-    private final TokenProvider tokenProvider;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final AuthService authService;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -56,37 +53,21 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = resolveToken(request);
-        if (token == null || !validateToken(token)) {
+        String token = extractTokenFromRequest(request);
+
+        if (token == null || !authService.isValidateToken(token)) {
             handleException(response);
             return;
         }
 
-        Authentication auth = createAuthentication(tokenProvider.parseClaims(token));
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        AuthUserInfoDto authUserInfoDto = authService.getUserInfoFromToken(token);
+        SecurityContextHolder.getContext().setAuthentication(
+            new UsernamePasswordAuthenticationToken(authUserInfoDto, null, getAuthorities(authUserInfoDto.role())));
         filterChain.doFilter(request, response);
     }
 
-    private boolean validateToken(String token) {
-        try {
-            tokenProvider.validateToken(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private String resolveToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))
-            .filter(token -> token.startsWith(BEARER_TYPE))
-            .map(token -> token.substring(BEARER_TYPE.length() + 1))
-            .orElse(null);
-    }
-
-    private UsernamePasswordAuthenticationToken createAuthentication(Claims claims) {
-        String email = claims.getSubject();
-        Role role = Role.valueOf(claims.get("role").toString());
-        return new UsernamePasswordAuthenticationToken(email, null, getAuthorities(role));
+    public String extractTokenFromRequest(HttpServletRequest request) {
+        return request.getHeader(AUTHORIZATION_HEADER);
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Role role) {

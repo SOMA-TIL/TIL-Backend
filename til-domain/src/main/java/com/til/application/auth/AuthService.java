@@ -1,5 +1,7 @@
 package com.til.application.auth;
 
+import static com.til.domain.auth.enums.AuthConstants.BEARER_TYPE;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -15,7 +17,6 @@ import com.til.domain.auth.enums.AuthErrorCode;
 import com.til.domain.auth.enums.TokenType;
 import com.til.domain.auth.exception.TokenInvalidException;
 import com.til.domain.auth.provider.TokenProvider;
-import com.til.domain.user.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,6 @@ public class AuthService {
 
     private final TokenProvider tokenProvider;
     private final RedisManager redisManager;
-    private final UserRepository userRepository;
 
     @Value("${jwt.access.expiration}")
     private Long ACCESS_EXPIRE_DURATION;
@@ -35,12 +35,10 @@ public class AuthService {
     @Value("${jwt.refresh.expiration}")
     private Long REFRESH_EXPIRE_DURATION;
 
-    private static final String BEARER_TYPE = "Bearer";
-
     public AuthTokenDto createToken(AuthUserInfoDto authUserInfoDto) {
         String accessToken = generateToken(authUserInfoDto, TokenType.ACCESS);
         String refreshToken = generateToken(authUserInfoDto, TokenType.REFRESH);
-        redisManager.setData(generateKeyForRedis(authUserInfoDto.email()), refreshToken, REFRESH_EXPIRE_DURATION);
+        redisManager.setData(generateKeyForRedis(authUserInfoDto.id()), refreshToken, REFRESH_EXPIRE_DURATION);
 
         return AuthTokenDto.of(accessToken, refreshToken);
     }
@@ -52,27 +50,37 @@ public class AuthService {
         Claims claims = tokenProvider.parseClaims(refreshToken);
         AuthUserInfoDto authUserInfoDto = AuthUserInfoDto.of(claims);
 
-        validateRefreshToken(authUserInfoDto.email(), refreshToken);
+        validateRefreshToken(authUserInfoDto.id(), refreshToken);
 
         return createToken(authUserInfoDto);
     }
 
-    public void validateRefreshToken(String key, String refreshToken) {
-        String redisToken = redisManager.getData(generateKeyForRedis(key));
+    public void validateRefreshToken(Long id, String refreshToken) {
+        String redisToken = redisManager.getData(generateKeyForRedis(id));
         if (!Objects.equals(refreshToken, redisToken)) {
             throw new TokenInvalidException(AuthErrorCode.INVALID_TOKEN);
         }
     }
 
-    public void deleteToken(String email) {
-        redisManager.deleteData(generateKeyForRedis(email));
-    }
-
-    public Long getUserIdFromToken(String bearerToken) {
+    public AuthUserInfoDto getUserInfoFromToken(String bearerToken) {
         String accessToken = resolveToken(bearerToken);
         tokenProvider.validateToken(accessToken);
 
-        return userRepository.getIdByEmail(tokenProvider.parseClaims(accessToken).getSubject());
+        return AuthUserInfoDto.of(tokenProvider.parseClaims(accessToken));
+    }
+
+    public void deleteToken(Long id) {
+        redisManager.deleteData(generateKeyForRedis(id));
+    }
+
+    public boolean isValidateToken(String bearerToken) {
+        String accessToken = resolveToken(bearerToken);
+        try {
+            tokenProvider.validateToken(accessToken);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private String generateToken(AuthUserInfoDto authUserInfoDto, TokenType tokenType) {
@@ -94,7 +102,7 @@ public class AuthService {
         return tokenType == TokenType.ACCESS ? ACCESS_EXPIRE_DURATION : REFRESH_EXPIRE_DURATION;
     }
 
-    private static String generateKeyForRedis(String email) {
-        return TokenType.REFRESH.name() + "_TOKEN:" + email;
+    private static String generateKeyForRedis(Long id) {
+        return TokenType.REFRESH.name() + "_TOKEN:" + id.toString();
     }
 }
