@@ -1,7 +1,6 @@
 package com.til.application.problem;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +8,7 @@ import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.FavoriteProblemDto;
 import com.til.domain.problem.dto.ProblemInfoDto;
+import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
@@ -25,9 +25,13 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
     private final FavoriteProblemRepository favoriteProblemRepository;
 
-    public ProblemPageDto getProblemList(PageParamDto pageParamDto) {
-        Pageable pageable = pageParamDto.toPageable();
-        Page<Problem> problems = problemRepository.findAll(pageable);
+    public ProblemPageDto<ProblemOverviewInfoDto> getProblemOverviewList(PageParamDto pageParamDto) {
+        Page<ProblemOverviewInfoDto> problems = problemRepository.getProblemOverviewInfoList(pageParamDto.toPageable());
+        return ProblemPageDto.of(problems);
+    }
+
+    public ProblemPageDto<Problem> getProblemList(PageParamDto pageParamDto) {
+        Page<Problem> problems = problemRepository.findAll(pageParamDto.toPageable());
         return ProblemPageDto.of(problems);
     }
 

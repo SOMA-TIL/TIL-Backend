@@ -49,7 +49,15 @@ VALUES
     (12, "운영체제", now(), now()),
     (13, "프로세스와 스레드", now(), now()),
     (14, "동시성", now(), now()),
-    (15, "페이징", now(), now());
+    (15, "페이징", now(), now()),
+    -- 디자인 패턴
+    (16, "디자인패턴", now(), now()),
+    -- 알고리즘
+    (17, "알고리즘", now(), now()),
+    (18, "정렬", now(), now()),
+    (19, "그래프", now(), now()),
+    (20, "탐색", now(), now());
+
 
 
 -- =================== problem ===================
@@ -85,6 +93,24 @@ VALUES
     (10, "소프트웨어 개발 방법론", "애자일(Agile) 방법론과 폭포수(Waterfall) 방법론의 차이점을 설명해주세요.",
      "애자일 방법론은 유연하고 반복적인 개발 주기를 강조하며, 변화에 빠르게 대응할 수 있습니다. 반면 폭포수 방법론은 단계별로 순차적으로 진행되며, 초기 계획에 따라 엄격하게 진행됩니다.",
      "", 1, now(), now());
+
+-- =================== problem_category ===================
+INSERT INTO problem_category (problem_id, category_id, created_date, modified_date)
+VALUES (1, 8, now(), now()),
+       (1, 11, now(), now()),
+       (2, 16, now(), now()),
+       (3, 8, now(), now()),
+       (4, 8, now(), now()),
+       (5, 8, now(), now()),
+       (5, 9, now(), now()),
+       (6, 17, now(), now()),
+       (6, 18, now(), now()),
+       (7, 17, now(), now()),
+       (7, 19, now(), now()),
+       (8, 5, now(), now()),
+       (9, 16, now(), now()),
+       (10, 16, now(), now());
+
 
 -- =================== favorite_problem ===================
 INSERT INTO favorite_problem (user_id, problem_id, created_date, modified_date)
