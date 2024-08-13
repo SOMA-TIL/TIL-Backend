@@ -16,7 +16,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import com.til.application.auth.AuthService;
 import com.til.common.annotation.CurrentUser;
 import com.til.config.AppConfig;
-import com.til.domain.user.dto.UserInfoDto;
+import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.user.model.Role;
 
 import lombok.NonNull;
@@ -38,22 +38,22 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
         }
 
         return parameter.hasParameterAnnotation(CurrentUser.class)
-            && parameter.getParameterType().equals(UserInfoDto.class);
+            && parameter.getParameterType().equals(AuthUserInfoDto.class);
     }
 
     @Override
-    public UserInfoDto resolveArgument(@NonNull MethodParameter parameter, ModelAndViewContainer mavContainer,
+    public AuthUserInfoDto resolveArgument(@NonNull MethodParameter parameter, ModelAndViewContainer mavContainer,
         @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         CurrentUser currentUserAnnotation = parameter.getParameterAnnotation(CurrentUser.class);
         boolean required = currentUserAnnotation != null && currentUserAnnotation.required();
 
         if (!appConfig.isJwtFilterEnabled()) { // for test
-            return UserInfoDto.builder().id(6L).role(Role.USER).build();
+            return AuthUserInfoDto.builder().id(6L).role(Role.USER).build();
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {
-            return (UserInfoDto) authentication.getPrincipal();
+            return (AuthUserInfoDto) authentication.getPrincipal();
         }
 
         return (!required && isNull(webRequest.getHeader(AUTHORIZATION_HEADER))) ? null

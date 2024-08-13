@@ -17,8 +17,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.til.application.auth.AuthService;
 import com.til.config.AppConfig;
 import com.til.config.errorhandling.ErrorResponse;
+import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.common.enums.BaseErrorCode;
-import com.til.domain.user.dto.UserInfoDto;
 import com.til.domain.user.model.Role;
 
 import jakarta.servlet.FilterChain;
@@ -60,9 +60,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        UserInfoDto userInfoDto = authService.getUserInfoFromToken(token);
+        AuthUserInfoDto authUserInfoDto = authService.getUserInfoFromToken(token);
         SecurityContextHolder.getContext().setAuthentication(
-            new UsernamePasswordAuthenticationToken(userInfoDto, null, getAuthorities(userInfoDto.role())));
+            new UsernamePasswordAuthenticationToken(authUserInfoDto, null, getAuthorities(authUserInfoDto.role())));
         filterChain.doFilter(request, response);
     }
 
