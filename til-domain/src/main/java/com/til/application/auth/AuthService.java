@@ -17,7 +17,6 @@ import com.til.domain.auth.enums.AuthErrorCode;
 import com.til.domain.auth.enums.TokenType;
 import com.til.domain.auth.exception.TokenInvalidException;
 import com.til.domain.auth.provider.TokenProvider;
-import com.til.domain.user.dto.UserInfoDto;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -63,11 +62,11 @@ public class AuthService {
         }
     }
 
-    public UserInfoDto getUserInfoFromToken(String bearerToken) {
+    public AuthUserInfoDto getUserInfoFromToken(String bearerToken) {
         String accessToken = resolveToken(bearerToken);
         tokenProvider.validateToken(accessToken);
 
-        return UserInfoDto.of(tokenProvider.parseClaims(accessToken));
+        return AuthUserInfoDto.of(tokenProvider.parseClaims(accessToken));
     }
 
     public void deleteToken(Long id) {
