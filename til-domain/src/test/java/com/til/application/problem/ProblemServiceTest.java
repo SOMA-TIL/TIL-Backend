@@ -26,8 +26,8 @@ import org.springframework.data.domain.PageRequest;
 import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.FavoriteProblemDto;
-import com.til.domain.problem.dto.ProblemInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
+import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.repository.FavoriteProblemRepository;
@@ -73,23 +73,24 @@ public class ProblemServiceTest {
     void 문제_상세정보를_정상적으로_반환한다() {
         // given
         Long problemId = 1L;
-        Problem problem = createProblem();
-        given(problemRepository.getById(problemId)).willReturn(problem);
+        ProblemPublicInfoDto problem = createProblemPublicInfo();
+        given(problemRepository.getProblemPublicInfo(problemId)).willReturn(problem);
 
         // when
-        ProblemInfoDto result = problemService.getProblemInfo(null, problemId);
+        ProblemPublicInfoDto result = problemService.getProblemInfo(null, problemId);
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.id()).isEqualTo(problem.getId());
-        assertThat(result.title()).isEqualTo(problem.getTitle());
+        assertThat(result.id()).isEqualTo(problem.id());
+        assertThat(result.title()).isEqualTo(problem.title());
     }
 
     @Test
     void 문제를_찾지_못했을_경우_예외를_던진다() {
         // given
         Long problemId = 1L;
-        given(problemRepository.getById(problemId)).willThrow(new BaseException(ProblemErrorCode.NOT_FOUND_PROBLEM));
+        given(problemRepository.getProblemPublicInfo(problemId)).willThrow(new BaseException(
+            ProblemErrorCode.NOT_FOUND_PROBLEM));
 
         // when
         Throwable thrown = catchThrowable(() -> problemService.getProblemInfo(null, problemId));
@@ -104,8 +105,15 @@ public class ProblemServiceTest {
             .id(1L)
             .title("Sample Problem")
             .question("Sample Question")
-            .solution("Sample Solution")
-            .grading("")
+            .level(1)
+            .build();
+    }
+
+    private ProblemPublicInfoDto createProblemPublicInfo() {
+        return ProblemPublicInfoDto.builder()
+            .id(1L)
+            .title("Sample Problem")
+            .question("Sample Question")
             .level(1)
             .build();
     }

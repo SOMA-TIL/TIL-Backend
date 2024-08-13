@@ -4,12 +4,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.FavoriteProblemDto;
-import com.til.domain.problem.dto.ProblemInfoDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
+import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.repository.FavoriteProblemRepository;
@@ -35,18 +36,18 @@ public class ProblemService {
         return ProblemPageDto.of(problems);
     }
 
-    public ProblemInfoDto getProblemInfo(Long userId, Long problemId) {
-        return (userId == null) ? getProblemPublicInfo(problemId) : getProblemInfoWithUserData(userId, problemId);
+    public ProblemPublicInfoDto getProblemInfo(AuthUserInfoDto userInfo, Long problemId) {
+        return (userInfo == null) ? getProblemPublicInfo(problemId) : getProblemInfoWithUserData(userInfo.id(),
+            problemId);
     }
 
-    private ProblemInfoDto getProblemPublicInfo(Long problemId) {
-        Problem problem = problemRepository.getById(problemId);
-        return ProblemInfoDto.of(problem);
+    private ProblemPublicInfoDto getProblemPublicInfo(Long problemId) {
+        return problemRepository.getProblemPublicInfo(problemId);
     }
 
-    private ProblemInfoDto getProblemInfoWithUserData(Long userId, Long problemId) {
-        Problem problem = problemRepository.getById(problemId);
-        return ProblemInfoDto.of(problem, favoriteProblemRepository.existsByUserIdAndProblemId(userId, problemId));
+    private ProblemPublicInfoDto getProblemInfoWithUserData(Long userId, Long problemId) {
+        return getProblemPublicInfo(problemId)
+            .setFavorite(favoriteProblemRepository.existsByUserIdAndProblemId(userId, problemId));
     }
 
     @Transactional

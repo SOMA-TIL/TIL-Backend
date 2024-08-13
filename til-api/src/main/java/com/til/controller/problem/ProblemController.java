@@ -25,9 +25,9 @@ import com.til.controller.problem.response.SolveProblemResponse;
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.grading.dto.GradingResultDto;
 import com.til.domain.grading.enums.AnswerType;
-import com.til.domain.problem.dto.ProblemInfoDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
+import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.dto.SolveProblemStatusDto;
 import com.til.domain.problem.dto.SubmitResultDto;
 import com.til.domain.problem.enums.ProblemSuccessCode;
@@ -57,8 +57,8 @@ public class ProblemController {
     @GetMapping("/{id}")
     public ApiResponse<ProblemInfoResponse> getProblemInfo(
         @CurrentUser(required = false) AuthUserInfoDto userInfo, @PathVariable Long id) {
-        ProblemInfoDto problemInfoDto = problemService.getProblemInfo(userInfo.id(), id);
-        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_INFO, ProblemInfoResponse.of(problemInfoDto));
+        ProblemPublicInfoDto problemPublicInfo = problemService.getProblemInfo(userInfo, id);
+        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_INFO, ProblemInfoResponse.of(problemPublicInfo));
     }
 
     @PostMapping("/{id}/favorite")
