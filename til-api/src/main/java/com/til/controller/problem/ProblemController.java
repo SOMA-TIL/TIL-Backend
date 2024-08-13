@@ -55,8 +55,7 @@ public class ProblemController {
     @GetMapping("/{id}")
     public ApiResponse<ProblemInfoResponse> getProblemInfo(
         @CurrentUser(required = false) AuthUserInfoDto userInfo, @PathVariable Long id) {
-        ProblemInfoDto problemInfoDto = (userInfo == null) ? problemService.getProblemInfo(id)
-            : problemService.getProblemInfoWithUserData(userInfo.id(), id);
+        ProblemInfoDto problemInfoDto = problemService.getProblemInfo(userInfo.id(), id);
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_INFO, ProblemInfoResponse.of(problemInfoDto));
     }
 

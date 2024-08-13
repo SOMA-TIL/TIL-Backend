@@ -31,12 +31,16 @@ public class ProblemService {
         return ProblemPageDto.of(problems);
     }
 
-    public ProblemInfoDto getProblemInfo(Long id) {
-        Problem problem = problemRepository.getById(id);
+    public ProblemInfoDto getProblemInfo(Long userId, Long problemId) {
+        return (userId == null) ? getProblemPublicInfo(problemId) : getProblemInfoWithUserData(userId, problemId);
+    }
+
+    private ProblemInfoDto getProblemPublicInfo(Long problemId) {
+        Problem problem = problemRepository.getById(problemId);
         return ProblemInfoDto.of(problem);
     }
 
-    public ProblemInfoDto getProblemInfoWithUserData(Long userId, Long problemId) {
+    private ProblemInfoDto getProblemInfoWithUserData(Long userId, Long problemId) {
         Problem problem = problemRepository.getById(problemId);
         return ProblemInfoDto.of(problem, favoriteProblemRepository.existsByUserIdAndProblemId(userId, problemId));
     }

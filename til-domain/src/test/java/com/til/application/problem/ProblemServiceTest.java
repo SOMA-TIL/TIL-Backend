@@ -76,7 +76,7 @@ public class ProblemServiceTest {
         given(problemRepository.getById(problemId)).willReturn(problem);
 
         // when
-        ProblemInfoDto result = problemService.getProblemInfo(problemId);
+        ProblemInfoDto result = problemService.getProblemInfo(null, problemId);
 
         // then
         assertThat(result).isNotNull();
@@ -91,7 +91,7 @@ public class ProblemServiceTest {
         given(problemRepository.getById(problemId)).willThrow(new BaseException(ProblemErrorCode.NOT_FOUND_PROBLEM));
 
         // when
-        Throwable thrown = catchThrowable(() -> problemService.getProblemInfo(problemId));
+        Throwable thrown = catchThrowable(() -> problemService.getProblemInfo(null, problemId));
 
         // then
         assertThat(thrown).isInstanceOf(BaseException.class)
