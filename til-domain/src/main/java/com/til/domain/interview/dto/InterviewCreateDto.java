@@ -9,7 +9,7 @@ import lombok.Builder;
 
 @Builder
 public record InterviewCreateDto(
-                                 List<Integer> categoryIdList,
+                                 List<Long> categoryIdList,
                                  InterviewStatus status,
                                  String code,
                                  Long userId

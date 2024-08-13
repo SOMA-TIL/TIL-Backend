@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem, interview, grading;
+DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem, interview, grading, interview_category;
 
 CREATE TABLE user
 (
@@ -80,6 +80,15 @@ CREATE TABLE grading
     target_id     bigint not null,
     result        enum ('PASS', 'FAIL') not null,
     comment       text null,
+    created_date  datetime(6) not null,
+    modified_date datetime(6) not null
+);
+
+CREATE TABLE interview_category
+(
+    id            bigint auto_increment not null primary key,
+    interview_id  bigint not null,
+    category_id   bigint not null,
     created_date  datetime(6) not null,
     modified_date datetime(6) not null
 );

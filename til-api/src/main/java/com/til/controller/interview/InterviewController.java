@@ -26,7 +26,7 @@ public class InterviewController {
     @PostMapping("/create")
     public ApiResponse<InterviewCodeResponse> createInterview(@CurrentUser UserInfoDto userInfo,
         @RequestBody InterviewCreateRequest request) {
-        InterviewCodeDto interviewCodeDto = interviewService.create(request.toServiceDto(userInfo.id()));
+        InterviewCodeDto interviewCodeDto = interviewService.createInterview(request.toServiceDto(userInfo.id()));
 
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_INTERVIEW_CREATION, InterviewCodeResponse.of(
             interviewCodeDto));
