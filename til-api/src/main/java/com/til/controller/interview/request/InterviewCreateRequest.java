@@ -5,7 +5,7 @@ import java.util.List;
 import com.til.domain.interview.dto.InterviewCreateDto;
 
 public record InterviewCreateRequest(
-                                     List<Integer> categoryIdList,
+                                     List<Long> categoryIdList,
                                      Long userId
 ) {
 

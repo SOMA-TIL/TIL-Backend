@@ -11,7 +11,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum InterviewErrorCode implements ErrorCode {
 
-    FAIL_CREATE_INTERVIEW(HttpStatus.INTERNAL_SERVER_ERROR, "모의면접 생성에 실패했습니다.");
+    FAIL_CREATE_INTERVIEW(HttpStatus.INTERNAL_SERVER_ERROR, "모의면접 생성에 실패했습니다."),
+    ALREADY_PROCESSING_INTERVIEW(HttpStatus.BAD_REQUEST, "이미 진행중인 모의면접이 존재합니다.");
 
     private final HttpStatus status;
     private final String message;
