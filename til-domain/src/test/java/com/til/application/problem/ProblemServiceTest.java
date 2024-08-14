@@ -1,6 +1,6 @@
 package com.til.application.problem;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
@@ -26,8 +26,10 @@ import org.springframework.data.domain.PageRequest;
 import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.FavoriteProblemDto;
+import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.ProblemPublicInfoDto;
+import com.til.domain.problem.dto.ProblemSearchDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.repository.FavoriteProblemRepository;
@@ -67,6 +69,45 @@ public class ProblemServiceTest {
         assertThat(result.problemList().size()).isEqualTo(1);
         assertThat(result.problemList().get(0).getId()).isEqualTo(problem.getId());
         assertThat(result.problemList().get(0).getTitle()).isEqualTo(problem.getTitle());
+    }
+
+    @Test
+    void 문제_리스트를_필터링하여_정상적으로_반환한다() {
+        // given
+        PageParamDto pageParamDto = PageParamDto.builder()
+            .page(0)
+            .size(10)
+            .sort("id")
+            .order("asc")
+            .build();
+
+        ProblemSearchDto problemSearchDto = ProblemSearchDto.builder()
+            .keyword("test")
+            .level(1)
+            .categoryList(Collections.singletonList(1L))
+            .build();
+
+        ProblemOverviewInfoDto problemOverviewInfoDto = new ProblemOverviewInfoDto(
+            1L, "test Problem", 1, Collections.singletonList(1L)
+        );
+
+        Page<ProblemOverviewInfoDto> problemPage = new PageImpl<>(Collections.singletonList(problemOverviewInfoDto),
+            PageRequest.of(0, 10), 1);
+        given(problemRepository.getProblemOverviewInfoList(any(PageRequest.class), any(ProblemSearchDto.class)))
+            .willReturn(problemPage);
+
+        // when
+        ProblemPageDto<ProblemOverviewInfoDto> result = problemService.getProblemOverviewList(pageParamDto,
+            problemSearchDto);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.problemList()).isNotNull();
+
+        ProblemOverviewInfoDto dto = result.problemList().get(0);
+        assertThat(dto.title()).contains("test");
+        assertThat(dto.level()).isEqualTo(1);
+        assertThat(dto.categoryList()).containsExactly(1L);
     }
 
     @Test

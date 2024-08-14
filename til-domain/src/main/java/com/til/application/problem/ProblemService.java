@@ -11,6 +11,7 @@ import com.til.domain.problem.dto.FavoriteProblemDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.ProblemPublicInfoDto;
+import com.til.domain.problem.dto.ProblemSearchDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
 import com.til.domain.problem.repository.FavoriteProblemRepository;
@@ -26,8 +27,10 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
     private final FavoriteProblemRepository favoriteProblemRepository;
 
-    public ProblemPageDto<ProblemOverviewInfoDto> getProblemOverviewList(PageParamDto pageParamDto) {
-        Page<ProblemOverviewInfoDto> problems = problemRepository.getProblemOverviewInfoList(pageParamDto.toPageable());
+    public ProblemPageDto<ProblemOverviewInfoDto> getProblemOverviewList(PageParamDto pageParamDto,
+        ProblemSearchDto problemSearchDto) {
+        Page<ProblemOverviewInfoDto> problems = problemRepository.getProblemOverviewInfoList(pageParamDto.toPageable(),
+            problemSearchDto);
         return ProblemPageDto.of(problems);
     }
 

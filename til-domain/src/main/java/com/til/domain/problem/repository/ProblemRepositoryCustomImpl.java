@@ -1,6 +1,7 @@
 package com.til.domain.problem.repository;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.types.dsl.Expressions.allOf;
 import static com.til.domain.category.model.QProblemCategory.problemCategory;
 import static com.til.domain.problem.model.QProblem.problem;
 
@@ -13,10 +14,12 @@ import org.springframework.data.domain.Pageable;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPublicInfoDto;
+import com.til.domain.problem.dto.ProblemSearchDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.QProblem;
 
@@ -36,10 +39,22 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     }
 
     @Override
-    public Page<ProblemOverviewInfoDto> getProblemOverviewInfoList(Pageable pageable) {
+    public Page<ProblemOverviewInfoDto> getProblemOverviewInfoList(Pageable pageable, ProblemSearchDto searchDto) {
+        BooleanExpression keywordCondition = hasText(searchDto.keyword())
+            ? problem.title.containsIgnoreCase(searchDto.keyword())
+            : null;
+
+        BooleanExpression levelCondition = searchDto.level() != null
+            ? problem.level.eq(searchDto.level())
+            : null;
+
+        BooleanExpression categoryCondition = inCategories(searchDto.categoryList());
+
+        BooleanExpression searchCondition = allOf(keywordCondition, levelCondition, categoryCondition);
+
         List<ProblemOverviewInfoDto> content = queryFactory.from(problem)
             .leftJoin(problemCategory).on(problem.id.eq(problemCategory.problemId))
-            .where(getPageConditions(pageable))
+            .where(getPageConditions(pageable), searchCondition)
             .orderBy(problem.id.desc())
             .transform(
                 groupBy(problem.id, problem.title, problem.level)
@@ -53,9 +68,25 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
 
         Long total = queryFactory.select(problem.count())
             .from(problem)
+            .leftJoin(problemCategory).on(problem.id.eq(problemCategory.problemId))
+            .where(searchCondition)
             .fetchOne();
 
         return new PageImpl<>(content, pageable, total == null ? 0 : total);
+    }
+
+    private BooleanExpression inCategories(List<Long> categoryIds) {
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return null;
+        }
+        return JPAExpressions.selectFrom(problemCategory)
+            .where(problemCategory.problemId.eq(problem.id))
+            .where(problemCategory.categoryId.in(categoryIds))
+            .exists();
+    }
+
+    private boolean hasText(String text) {
+        return text != null && !text.trim().isEmpty();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.til.controller.problem;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import com.til.common.annotation.CurrentUser;
 import com.til.common.page.PageParamRequest;
 import com.til.common.response.ApiResponse;
 import com.til.controller.problem.request.FavoriteProblemRequest;
+import com.til.controller.problem.request.SearchProblemRequest;
 import com.til.controller.problem.request.SolveProblemRequest;
 import com.til.controller.problem.response.ProblemInfoResponse;
 import com.til.controller.problem.response.ProblemPageResponse;
@@ -44,12 +47,14 @@ public class ProblemController {
     private final SolveProblemService solveProblemService;
     private final GradingService gradingService;
 
+    private static final Logger logger = LoggerFactory.getLogger(ProblemController.class);
+
     @GetMapping("")
     public ApiResponse<ProblemPageResponse> getProblemList(
-        @ModelAttribute PageParamRequest pageParamRequest) {
+        @ModelAttribute PageParamRequest pageParamRequest, @ModelAttribute SearchProblemRequest searchProblemRequest) {
         pageParamRequest.validate();
         ProblemPageDto<ProblemOverviewInfoDto> problemPageDto = problemService.getProblemOverviewList(pageParamRequest
-            .toServiceDto());
+            .toServiceDto(), searchProblemRequest.toServiceDto());
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_LIST, ProblemPageResponse.of(problemPageDto
             .problemList(), problemPageDto.pageInfo()));
     }
