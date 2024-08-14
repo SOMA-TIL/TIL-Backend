@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem, interview, grading, interview_category;
+DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem, interview, grading, interview_category, interview_problem;
 
 CREATE TABLE user
 (
@@ -89,6 +89,18 @@ CREATE TABLE interview_category
     id            bigint auto_increment not null primary key,
     interview_id  bigint not null,
     category_id   bigint not null,
+    created_date  datetime(6) not null,
+    modified_date datetime(6) not null
+);
+
+CREATE TABLE interview_problem
+(
+    id            bigint auto_increment not null primary key,
+    answer        text          null,
+    sequence      int       not null,
+    status        enum('UNSOLVED', 'SOLVED', 'PENDING', 'DONE') not null,
+    interview_id  bigint    not null,
+    problem_id    bigint    not null,
     created_date  datetime(6) not null,
     modified_date datetime(6) not null
 );
