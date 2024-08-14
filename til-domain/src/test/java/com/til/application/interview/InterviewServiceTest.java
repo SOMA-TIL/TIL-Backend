@@ -16,11 +16,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.til.domain.category.repository.InterviewCategoryRepository;
+import com.til.domain.category.repository.ProblemCategoryRepository;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewCreateDto;
 import com.til.domain.interview.enums.InterviewErrorCode;
 import com.til.domain.interview.model.InterviewStatus;
+import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
 import com.til.utils.random.RandomValueGenerator;
 
@@ -35,6 +37,12 @@ public class InterviewServiceTest {
 
     @Mock
     private InterviewCategoryRepository interviewCategoryRepository;
+
+    @Mock
+    private InterviewProblemRepository interviewProblemRepository;
+
+    @Mock
+    private ProblemCategoryRepository problemCategoryRepository;
 
     @Test
     void 모의면접을_정상적으로_생성하고_11자리_code를_받아온다() {

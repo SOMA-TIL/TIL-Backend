@@ -1,5 +1,6 @@
 package com.til.application.interview;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -7,12 +8,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.til.domain.category.dto.InterviewCategoryDto;
 import com.til.domain.category.repository.InterviewCategoryRepository;
+import com.til.domain.category.repository.ProblemCategoryRepository;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewCreateDto;
 import com.til.domain.interview.enums.InterviewErrorCode;
 import com.til.domain.interview.model.Interview;
+import com.til.domain.interview.model.InterviewProblem;
 import com.til.domain.interview.model.InterviewStatus;
+import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
 import com.til.utils.random.RandomValueGenerator;
 
@@ -25,6 +29,9 @@ public class InterviewService {
 
     private final InterviewRepository interviewRepository;
     private final InterviewCategoryRepository interviewCategoryRepository;
+    private final InterviewProblemRepository interviewProblemRepository;
+
+    private final ProblemCategoryRepository problemCategoryRepository;
 
     private static final int RANDOM_ID_SIZE = 11;
 
@@ -39,9 +46,8 @@ public class InterviewService {
 
         createInterviewCategory(interview.getId(), interviewCreateDto.categoryIdList());
 
-        // todo: interview_problem 생성
-        // 1. categoryIdList 조건으로 해당하는 문제 id 리스트 가져온다.
-        // 2. interview_problem 생성하여 삽입(초기상태 UNSOLVED), 문제 순서 랜덤 부여
+        // todo: 카테고리 내부에서 문제를 랜덤으로 선정하도록 구현
+        createInterviewProblem(interviewCreateDto.categoryIdList(), interview.getId());
 
         return InterviewCodeDto.of(interview);
     }
@@ -61,6 +67,23 @@ public class InterviewService {
     private void createInterviewCategory(Long interviewId, List<Long> categoryIdList) {
         categoryIdList.forEach((categoryId) -> interviewCategoryRepository.save(InterviewCategoryDto.of(interviewId,
             categoryId).toEntity()));
+    }
+
+    private void createInterviewProblem(List<Long> categoryIdList, Long interviewId) {
+        List<InterviewProblem> interviewProblemList = new ArrayList<>();
+
+        categoryIdList.forEach((categoryId) -> {
+            List<Long> problemIdList = problemCategoryRepository.getProblemIdListByCategoryId(categoryId);
+
+            // todo: Bulk Insert 리팩토링, 문제 Sequence로직 구현
+            for (int i = 0; i < problemIdList.size(); i++) {
+                interviewProblemList.add(
+                    InterviewProblem.createUnsolvedInterviewProblem(i + 1, interviewId, problemIdList.get(i))
+                );
+            }
+        });
+
+        interviewProblemRepository.saveAll(interviewProblemList);
     }
 
     private String createRandomId() {
