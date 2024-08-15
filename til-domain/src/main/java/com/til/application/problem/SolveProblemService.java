@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.SolveProblemDto;
-import com.til.domain.problem.dto.SolveProblemStatusDto;
 import com.til.domain.problem.dto.SubmitHistoryDto;
 import com.til.domain.problem.dto.SubmitResultDto;
+import com.til.domain.problem.dto.SubmitStatusDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.UserProblem;
 import com.til.domain.problem.repository.ProblemRepository;
@@ -27,11 +27,11 @@ public class SolveProblemService {
     private final ProblemRepository problemRepository;
 
     @Transactional
-    public SolveProblemStatusDto solveProblem(SolveProblemDto solveProblemDto) {
+    public SubmitStatusDto solveProblem(SolveProblemDto solveProblemDto) {
         UserProblem userProblem = solveProblemDto.toEntity();
         userProblemRepository.save(userProblem);
 
-        return SolveProblemStatusDto.of(userProblem.getId(), userProblem.getStatus());
+        return SubmitStatusDto.of(userProblem.getId(), userProblem.getStatus());
     }
 
     public SubmitResultDto getProblemSubmitResult(Long userId, Long problemId) {

@@ -31,8 +31,8 @@ import com.til.domain.grading.enums.AnswerType;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.ProblemPublicInfoDto;
-import com.til.domain.problem.dto.SolveProblemStatusDto;
 import com.til.domain.problem.dto.SubmitResultDto;
+import com.til.domain.problem.dto.SubmitStatusDto;
 import com.til.domain.problem.enums.ProblemSuccessCode;
 
 import jakarta.validation.Valid;
@@ -76,16 +76,18 @@ public class ProblemController {
     @PostMapping("/{id}/solve")
     public ApiResponse<SolveProblemResponse> submitAnswer(@CurrentUser AuthUserInfoDto userInfo, @PathVariable Long id,
         @RequestBody @Valid SolveProblemRequest solveProblemRequest) {
-        SolveProblemStatusDto solveProblemStatusDto = solveProblemService.solveProblem(solveProblemRequest.toServiceDto(
-            userInfo.id(), id));
-        gradingService.makeGrading(AnswerType.PROBLEM, solveProblemStatusDto.id());
-        return ApiResponse.ok(SolveProblemResponse.of(solveProblemStatusDto));
+        SubmitStatusDto submitStatus = solveProblemService.solveProblem(
+            solveProblemRequest.toServiceDto(userInfo.id(), id));
+        gradingService.makeGrading(AnswerType.PROBLEM, submitStatus.submitId());
+        return ApiResponse.ok(SolveProblemResponse.of(submitStatus));
     }
 
     @GetMapping("/{id}/result")
-    public ApiResponse<ProblemResultResponse> getGradingResult(@PathVariable Long id, @RequestParam Long submitId) {
-        GradingResultDto resultDto = gradingService.getGradingResult(AnswerType.PROBLEM, submitId);
-        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_SOLVE_PROBLEM, ProblemResultResponse.of(resultDto));
+    public ApiResponse<ProblemResultResponse> getGradingResult(@CurrentUser AuthUserInfoDto userInfo,
+        @PathVariable Long id, @RequestParam Long submitId) {
+        GradingResultDto gradingResult = gradingService.getGradingResult(userInfo.id(), AnswerType.PROBLEM, id,
+            submitId);
+        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_SOLVE_PROBLEM, ProblemResultResponse.of(gradingResult));
     }
 
     @GetMapping("/{id}/history")
