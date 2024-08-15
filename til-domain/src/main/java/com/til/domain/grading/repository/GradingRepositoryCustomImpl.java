@@ -21,7 +21,6 @@ public class GradingRepositoryCustomImpl implements GradingRepositoryCustom {
     public GradingInputDataDto getGradingInputDataFromUserProblem(Long targetId) {
         return queryFactory.select(Projections.constructor(GradingInputDataDto.class,
             problem.question,
-            problem.solution,
             problem.grading,
             userProblem.answer
         ))
