@@ -60,14 +60,14 @@ public class GradingService {
         });
     }
 
-    public GradingResultDto getGradingResult(AnswerType type, Long targetId) {
-        // TODO : 채점 진행 상태 검증 필요
-        return gradingRepository.getResultByTypeAndTargetId(type, targetId);
+    public GradingResultDto getGradingResult(Long userId, AnswerType type, Long sourceId, Long submitId) {
+        return isUserProblemType(type) ? gradingRepository.getResultFromUserProblem(userId, sourceId, submitId)
+            : gradingRepository.getResultFromInterviewProblem(userId, sourceId, submitId);
     }
 
     private GradingInputDataDto prepareGradingInputDataDto(AnswerType type, Long targetId) {
         log.info("Prepare grading input data : type={}, targetId={}", type, targetId);
-        return (type == AnswerType.PROBLEM) ? gradingRepository.getGradingInputDataFromUserProblem(targetId)
+        return isUserProblemType(type) ? gradingRepository.getGradingInputDataFromUserProblem(targetId)
             : gradingRepository.getGradingInputDataFromInterviewProblem(targetId);
     }
 
@@ -85,5 +85,9 @@ public class GradingService {
                 throw new RuntimeException("Grading request failed", e);
             }
         });
+    }
+
+    private boolean isUserProblemType(AnswerType type) {
+        return type == AnswerType.PROBLEM;
     }
 }

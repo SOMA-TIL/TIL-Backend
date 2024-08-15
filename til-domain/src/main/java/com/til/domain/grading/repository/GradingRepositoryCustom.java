@@ -2,7 +2,6 @@ package com.til.domain.grading.repository;
 
 import com.til.domain.grading.dto.GradingInputDataDto;
 import com.til.domain.grading.dto.GradingResultDto;
-import com.til.domain.grading.enums.AnswerType;
 
 public interface GradingRepositoryCustom {
 
@@ -10,5 +9,7 @@ public interface GradingRepositoryCustom {
 
     GradingInputDataDto getGradingInputDataFromInterviewProblem(Long targetId);
 
-    GradingResultDto getResultByTypeAndTargetId(AnswerType type, Long targetId);
+    GradingResultDto getResultFromUserProblem(Long userId, Long problemId, Long submitId);
+
+    GradingResultDto getResultFromInterviewProblem(Long userId, Long interviewId, Long submitId);
 }

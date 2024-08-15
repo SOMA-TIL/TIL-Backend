@@ -87,7 +87,7 @@ public class ProblemController {
         @PathVariable Long id, @RequestParam Long submitId) {
         GradingResultDto gradingResult = gradingService.getGradingResult(userInfo.id(), AnswerType.PROBLEM, id,
             submitId);
-        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_SOLVE_PROBLEM, ProblemResultResponse.of(gradingResult));
+        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_SUBMIT_RESULT, ProblemResultResponse.of(gradingResult));
     }
 
     @GetMapping("/{id}/history")
