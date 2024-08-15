@@ -14,8 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.problem.dto.SolveProblemDto;
-import com.til.domain.problem.dto.SolveProblemStatusDto;
 import com.til.domain.problem.dto.SubmitResultDto;
+import com.til.domain.problem.dto.SubmitStatusDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.UserProblem;
 import com.til.domain.problem.repository.ProblemRepository;
@@ -42,7 +42,7 @@ class SolveProblemServiceTest {
         given(userProblemRepository.save(any(UserProblem.class))).willReturn(userProblem);
 
         // when
-        SolveProblemStatusDto result = solveProblemService.solveProblem(solveProblemDto);
+        SubmitStatusDto result = solveProblemService.solveProblem(solveProblemDto);
 
         // then
         assertThat(result).isNotNull();
