@@ -1,48 +1,63 @@
 package com.til.application.grading;
 
-import java.util.Random;
+import static com.til.domain.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
 
+import java.util.concurrent.CompletableFuture;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.til.domain.grading.dto.GradingInputDataDto;
 import com.til.domain.grading.dto.GradingResultDto;
 import com.til.domain.grading.enums.AnswerType;
-import com.til.domain.grading.enums.GradingResult;
 import com.til.domain.grading.enums.GradingStatus;
-import com.til.domain.grading.model.Grading;
 import com.til.domain.grading.repository.GradingRepository;
 import com.til.domain.problem.repository.UserProblemRepository;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class GradingService {
+
+    @Value("${grading-service.api.url}")
+    private String GRADING_API_URL;
+
+    @Value("${grading-service.api.key}")
+    private String GRADING_API_KEY;
 
     private final GradingRepository gradingRepository;
     private final UserProblemRepository userProblemRepository;
 
+    private WebClient webClient;
+
+    @PostConstruct
+    public void init() {
+        this.webClient = WebClient.builder().baseUrl(GRADING_API_URL).build();
+    }
+
+    @Async
     @Transactional
     public void makeGrading(AnswerType type, Long targetId) {
-        // TODO : 채점 대상의 정보를 가져옴
         GradingInputDataDto gradingInputDataDto = prepareGradingInputDataDto(type, targetId);
+        log.info("Grading input data : {}", gradingInputDataDto);
 
-        // TODO : 채점 LLM 요청 후 채점 결과를 받아와야 함
-        GradingResult result = getRandomGradingResult();
-        String comment = getRandomComment();
+        CompletableFuture<GradingResultDto> gradingResultFuture = sendGradingRequest(gradingInputDataDto);
 
-        userProblemRepository.updateStatus(targetId, GradingStatus.COMPLETED);
-
-        // TEMP : 채점 결과를 저장
-        Grading grading = Grading.builder()
-            .targetId(targetId)
-            .type(type)
-            .result(result)
-            .comment(comment)
-            .build();
-        gradingRepository.save(grading);
+        gradingResultFuture.thenAccept(result -> {
+            gradingRepository.save(GradingResultDto.toEntity(type, targetId, result));
+            userProblemRepository.updateStatus(targetId, GradingStatus.COMPLETED);
+        }).exceptionally(e -> {
+            userProblemRepository.updateStatus(targetId, GradingStatus.ERROR);
+            return null;
+        });
     }
 
     public GradingResultDto getGradingResult(AnswerType type, Long targetId) {
@@ -51,20 +66,24 @@ public class GradingService {
     }
 
     private GradingInputDataDto prepareGradingInputDataDto(AnswerType type, Long targetId) {
-        if (type == AnswerType.PROBLEM) {
-            return gradingRepository.getGradingInputDataFromInterviewProblem(targetId);
-        }
-        return gradingRepository.getGradingInputDataFromUserProblem(targetId);
+        log.info("Prepare grading input data : type={}, targetId={}", type, targetId);
+        return (type == AnswerType.PROBLEM) ? gradingRepository.getGradingInputDataFromUserProblem(targetId)
+            : gradingRepository.getGradingInputDataFromInterviewProblem(targetId);
     }
 
-    private GradingResult getRandomGradingResult() {
-        Random random = new Random();
-        int randomIndex = random.nextInt(GradingResult.values().length);
-        return GradingResult.values()[randomIndex];
+    private CompletableFuture<GradingResultDto> sendGradingRequest(GradingInputDataDto gradingInputDataDto) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return webClient.post()
+                    .header(AUTHORIZATION_HEADER, GRADING_API_KEY)
+                    .bodyValue(gradingInputDataDto)
+                    .retrieve()
+                    .bodyToMono(GradingResultDto.class)
+                    .block();
+            } catch (Exception e) {
+                log.error("Grading request failed: {}", e.getMessage());
+                throw new RuntimeException("Grading request failed", e);
+            }
+        });
     }
-
-    private String getRandomComment() {
-        return "사용자 입력에 대한 피드백입니다.";
-    }
-
 }
