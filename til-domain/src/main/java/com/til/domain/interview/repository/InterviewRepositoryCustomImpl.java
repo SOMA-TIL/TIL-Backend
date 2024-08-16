@@ -2,7 +2,12 @@ package com.til.domain.interview.repository;
 
 import static com.til.domain.interview.model.QInterview.interview;
 
+import java.util.Optional;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.til.domain.common.exception.BaseException;
+import com.til.domain.interview.enums.InterviewErrorCode;
+import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewStatus;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +31,15 @@ public class InterviewRepositoryCustomImpl implements InterviewRepositoryCustom 
             .from(interview)
             .where(interview.userId.eq(userId), interview.status.eq(status))
             .fetchFirst() != null;
+    }
+
+    @Override
+    public Interview getByCode(String code) {
+        return Optional.ofNullable(
+            queryFactory.selectFrom(interview)
+                .where(interview.code.eq(code))
+                .fetchOne()
+        ).orElseThrow(() -> new BaseException(InterviewErrorCode.NOT_FOUND_INTERVIEW));
     }
 
 }

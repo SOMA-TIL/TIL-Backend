@@ -1,5 +1,6 @@
 package com.til.domain.interview.repository;
 
+import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewStatus;
 
 public interface InterviewRepositoryCustom {
@@ -8,4 +9,5 @@ public interface InterviewRepositoryCustom {
 
     boolean existsByUserIdAndStatus(Long userId, InterviewStatus status);
 
+    Interview getByCode(String code);
 }
