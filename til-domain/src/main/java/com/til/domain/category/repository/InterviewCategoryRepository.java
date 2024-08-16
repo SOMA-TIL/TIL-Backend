@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.til.domain.category.model.InterviewCategory;
 
-public interface InterviewCategoryRepository extends JpaRepository<InterviewCategory, Long> {
+public interface InterviewCategoryRepository extends JpaRepository<InterviewCategory, Long>,
+    InterviewCategoryRepositoryCustom {
 
 }

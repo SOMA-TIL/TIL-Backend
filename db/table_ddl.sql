@@ -66,7 +66,7 @@ CREATE TABLE solve_problem
 CREATE TABLE interview
 (
     id            bigint auto_increment primary key,
-    code          varchar(20)                      not null,
+    code          varchar(20)                     not null unique,
     status        enum ('PROCESSING', 'DONE', 'ABORTED') not null,
     user_id       bigint                           not null,
     created_date  datetime(6)                      not null,
