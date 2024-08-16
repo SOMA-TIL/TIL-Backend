@@ -22,6 +22,7 @@ dependencies {
 
     // WebFlux for Http Request
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.112.Final:osx-aarch_64'
 }
 
 def querydslDir = layout.buildDirectory.dir('generated/querydsl')
