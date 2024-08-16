@@ -6,6 +6,7 @@ import static com.til.domain.category.model.QProblemCategory.problemCategory;
 import static com.til.domain.problem.model.QProblem.problem;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,11 +18,11 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.til.domain.common.exception.BaseException;
+import com.til.domain.problem.dto.ProblemBasicInfoDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.dto.ProblemSearchDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
-import com.til.domain.problem.model.QProblem;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,6 +41,43 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
 
     @Override
     public Page<ProblemOverviewInfoDto> getProblemOverviewInfoList(Pageable pageable, ProblemSearchDto searchDto) {
+        BooleanExpression searchCondition = getSearchCondition(searchDto);
+
+        List<ProblemBasicInfoDto> problemList = queryFactory
+            .select(Projections.constructor(ProblemBasicInfoDto.class,
+                problem.id,
+                problem.title,
+                problem.level
+            ))
+            .from(problem)
+            .where(searchCondition)
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(problem.id.desc()) // TODO : 정렬 기준 추가
+            .fetch();
+
+        Map<Long, List<Long>> categoryInfo = queryFactory.from(problemCategory)
+            .where(problemCategory.problemId.in(ProblemBasicInfoDto.getIdList(problemList)))
+            .transform(
+                groupBy(problemCategory.problemId)
+                    .as(GroupBy.list(problemCategory.categoryId))
+            );
+
+        // TODO : 사용자 연관 정보 추가(PASS/FAIL, 즐겨찾기 여부 등)
+
+        return new PageImpl<>(ProblemOverviewInfoDto.ofList(problemList, categoryInfo), pageable, getProblemCount(
+            searchCondition));
+    }
+
+    private long getProblemCount(BooleanExpression searchCondition) {
+        Long count = queryFactory.select((problem.count()))
+            .from(problem)
+            .where(searchCondition)
+            .fetchOne();
+        return count == null ? 0 : count;
+    }
+
+    private BooleanExpression getSearchCondition(ProblemSearchDto searchDto) {
         BooleanExpression keywordCondition = hasText(searchDto.keyword())
             ? problem.title.containsIgnoreCase(searchDto.keyword())
             : null;
@@ -50,29 +88,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
 
         BooleanExpression categoryCondition = inCategories(searchDto.categoryList());
 
-        BooleanExpression searchCondition = allOf(keywordCondition, levelCondition, categoryCondition);
-
-        List<ProblemOverviewInfoDto> content = queryFactory.from(problem)
-            .leftJoin(problemCategory).on(problem.id.eq(problemCategory.problemId))
-            .where(getPageConditions(pageable), searchCondition)
-            .orderBy(problem.id.desc())
-            .transform(
-                groupBy(problem.id, problem.title, problem.level)
-                    .list(Projections.constructor(ProblemOverviewInfoDto.class,
-                        problem.id,
-                        problem.title,
-                        problem.level,
-                        GroupBy.list(problemCategory.categoryId)
-                    ))
-            );
-
-        Long total = queryFactory.select(problem.count())
-            .from(problem)
-            .leftJoin(problemCategory).on(problem.id.eq(problemCategory.problemId))
-            .where(searchCondition)
-            .fetchOne();
-
-        return new PageImpl<>(content, pageable, total == null ? 0 : total);
+        return allOf(keywordCondition, levelCondition, categoryCondition);
     }
 
     private BooleanExpression inCategories(List<Long> categoryIds) {
@@ -107,18 +123,5 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             .stream()
             .findFirst()
             .orElseThrow(() -> new BaseException(ProblemErrorCode.NOT_FOUND_PROBLEM));
-    }
-
-    private BooleanExpression getPageConditions(Pageable pageable) {
-        QProblem subProblem = new QProblem("subProblem");
-        return problem.id.in(
-            queryFactory.from(subProblem)
-                .select(subProblem.id)
-                .from(subProblem)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(subProblem.id.desc()) // TODO : pageable.getSort()
-                .fetch()
-        );
     }
 }
