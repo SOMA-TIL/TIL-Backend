@@ -5,6 +5,8 @@ import static com.til.domain.problem.model.QUserProblem.userProblem;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,6 +23,7 @@ public class UserProblemRepositoryCustomImpl implements UserProblemRepositoryCus
     private final JPAQueryFactory queryFactory;
 
     @Override
+    @Transactional
     public void updateStatus(Long id, GradingStatus status) {
         queryFactory.update(userProblem)
             .set(userProblem.status, status)

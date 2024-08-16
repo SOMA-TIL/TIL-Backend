@@ -11,7 +11,9 @@ public class PathPermission {
     public static String[] getPublicPath() {
         return new String[]{
             "/user/join", "/user/login", "/user/check-nickname/**",
-            "/problem", "/problem/{id}", "/category"};
+            "/problem", "/problem/{id}", "/category",
+            "/mock/**"
+        };
     }
 
     public static String[] getAdminPath() {

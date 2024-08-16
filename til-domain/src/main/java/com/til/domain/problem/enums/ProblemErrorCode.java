@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 public enum ProblemErrorCode implements ErrorCode {
 
     NOT_FOUND_PROBLEM(HttpStatus.NOT_FOUND, "존재하지 않는 문제입니다."),
+    NOT_FOUND_SUBMIT_HISTORY(HttpStatus.NOT_FOUND, "제출 정보가 존재하지 않습니다."),
     ALREADY_FAVORITE_PROBLEM(HttpStatus.BAD_REQUEST, "이미 즐겨찾기한 문제입니다."),
     NOT_FOUND_FAVORITE_PROBLEM(HttpStatus.BAD_REQUEST, "즐겨찾기한 문제가 존재하지 않습니다.");
 
