@@ -9,5 +9,5 @@ public interface InterviewRepositoryCustom {
 
     boolean existsByUserIdAndStatus(Long userId, InterviewStatus status);
 
-    Interview getByCode(String code);
+    Interview getProcessingInterview(Long userId, String code);
 }

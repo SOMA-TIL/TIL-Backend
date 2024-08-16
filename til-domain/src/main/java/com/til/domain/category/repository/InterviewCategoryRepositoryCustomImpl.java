@@ -5,9 +5,7 @@ import static com.til.domain.category.model.QInterviewCategory.interviewCategory
 
 import java.util.List;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.til.domain.category.dto.CategoryDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,8 +15,8 @@ public class InterviewCategoryRepositoryCustomImpl implements InterviewCategoryR
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<CategoryDto> getCategoryListByInterviewId(Long interviewId) {
-        return queryFactory.select(Projections.constructor(CategoryDto.class, category.id, category.tag))
+    public List<Long> getCategoryIdListByInterviewId(Long interviewId) {
+        return queryFactory.select(category.id)
             .from(interviewCategory)
             .leftJoin(category)
             .on(interviewCategory.categoryId.eq(category.id))

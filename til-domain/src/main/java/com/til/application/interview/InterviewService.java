@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.til.domain.category.dto.CategoryDto;
 import com.til.domain.category.dto.InterviewCategoryDto;
 import com.til.domain.category.repository.InterviewCategoryRepository;
 import com.til.domain.category.repository.ProblemCategoryRepository;
@@ -55,28 +54,20 @@ public class InterviewService {
         return InterviewCodeDto.of(interview);
     }
 
-    public InterviewInfoDto getInterviewInfo(Long userId, String code) {
-        Interview interview = interviewRepository.getByCode(code);
+    public InterviewInfoDto getProcessingInterviewInfo(Long userId, String code) {
+        Interview interview = interviewRepository.getProcessingInterview(userId, code);
 
-        validateGetInterviewInfo(userId, interview);
-
-        List<CategoryDto> categoryList = interviewCategoryRepository.getCategoryListByInterviewId(interview.getId());
+        List<Long> categoryIdList = interviewCategoryRepository.getCategoryIdListByInterviewId(interview.getId());
 
         List<InterviewProblemQuestionDto> problemList = interviewProblemRepository
             .getInterviewProblemQuestionByInterviewId(interview.getId());
 
-        return InterviewInfoDto.of(interview.getId(), categoryList, problemList);
+        return InterviewInfoDto.of(interview.getId(), categoryIdList, problemList);
     }
 
     private void checkDuplicateCode(String code) {
         if (interviewRepository.existsByCode(code)) {
             throw new BaseException(InterviewErrorCode.FAIL_CREATE_INTERVIEW);
-        }
-    }
-
-    private void validateGetInterviewInfo(Long userId, Interview interview) {
-        if (!userId.equals(interview.getUserId()) || !InterviewStatus.PROCESSING.equals(interview.getStatus())) {
-            throw new BaseException(InterviewErrorCode.FAIL_GET_INTERVIEW);
         }
     }
 

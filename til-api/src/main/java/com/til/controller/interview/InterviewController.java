@@ -39,7 +39,7 @@ public class InterviewController {
     @GetMapping("/{code}")
     public ApiResponse<InterviewInfoResponse> getInterviewInfo(@CurrentUser AuthUserInfoDto userInfo,
         @PathVariable String code) {
-        InterviewInfoDto interviewInfoDto = interviewService.getInterviewInfo(userInfo.id(), code);
+        InterviewInfoDto interviewInfoDto = interviewService.getProcessingInterviewInfo(userInfo.id(), code);
 
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_GET_INTERVIEW_INFO, InterviewInfoResponse.of(
             interviewInfoDto));

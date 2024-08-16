@@ -2,22 +2,20 @@ package com.til.domain.interview.dto;
 
 import java.util.List;
 
-import com.til.domain.category.dto.CategoryDto;
-
 import lombok.Builder;
 
 @Builder
 public record InterviewInfoDto(
                                Long id,
-                               List<CategoryDto> categoryList,
+                               List<Long> categoryIdList,
                                List<InterviewProblemQuestionDto> problemList
 ) {
 
-    public static InterviewInfoDto of(Long interviewId, List<CategoryDto> categoryList,
+    public static InterviewInfoDto of(Long interviewId, List<Long> categoryIdList,
         List<InterviewProblemQuestionDto> problemList) {
         return InterviewInfoDto.builder()
             .id(interviewId)
-            .categoryList(categoryList)
+            .categoryIdList(categoryIdList)
             .problemList(problemList)
             .build();
     }
