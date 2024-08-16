@@ -21,7 +21,6 @@ import com.til.domain.common.exception.BaseException;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewCreateDto;
 import com.til.domain.interview.enums.InterviewErrorCode;
-import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewStatus;
 import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
@@ -79,44 +78,16 @@ public class InterviewServiceTest {
     }
 
     @Test
-    void 존재하지_않는_모의면접_조회시_예외를_던진다() {
+    void 진행중인_모의면접이_존재하지_않으면_예외를_던진다() {
         // given
-        given(interviewRepository.getByCode(anyString())).willThrow(new BaseException(
+        given(interviewRepository.getProcessingInterview(anyLong(), anyString())).willThrow(new BaseException(
             InterviewErrorCode.NOT_FOUND_INTERVIEW));
 
         // when & then
-        assertThatThrownBy(() -> interviewService.getInterviewInfo(1L, anyString()))
+        assertThatThrownBy(() -> interviewService.getProcessingInterviewInfo(anyLong(), anyString()))
             .isInstanceOf(BaseException.class)
             .extracting(error -> ((BaseException) error).getErrorCode())
             .isEqualTo(InterviewErrorCode.NOT_FOUND_INTERVIEW);
-    }
-
-    @Test
-    void 다른_사용자의_모의면접_조회시_예외를_던진다() {
-        // given
-        given(interviewRepository.getByCode(anyString())).willReturn(
-            createInterview(1L, InterviewStatus.PROCESSING)
-        );
-
-        // when & then
-        assertThatThrownBy(() -> interviewService.getInterviewInfo(2L, anyString()))
-            .isInstanceOf(BaseException.class)
-            .extracting(error -> ((BaseException) error).getErrorCode())
-            .isEqualTo(InterviewErrorCode.FAIL_GET_INTERVIEW);
-    }
-
-    @Test
-    void 모의면접_조회시_상태가_진행중이_아니면_예외를_던진다() {
-        // given
-        given(interviewRepository.getByCode(anyString())).willReturn(
-            createInterview(1L, InterviewStatus.DONE)
-        );
-
-        // when & then
-        assertThatThrownBy(() -> interviewService.getInterviewInfo(1L, anyString()))
-            .isInstanceOf(BaseException.class)
-            .extracting(error -> ((BaseException) error).getErrorCode())
-            .isEqualTo(InterviewErrorCode.FAIL_GET_INTERVIEW);
     }
 
     private InterviewCreateDto createInterviewCreateDto() {
@@ -125,15 +96,6 @@ public class InterviewServiceTest {
             .code(RandomValueGenerator.generateRandomId(11))
             .userId(1L)
             .categoryIdList(List.of(1L))
-            .build();
-    }
-
-    private Interview createInterview(Long userId, InterviewStatus status) {
-        return Interview.builder()
-            .id(1L)
-            .userId(userId)
-            .code("random_code")
-            .status(status)
             .build();
     }
 

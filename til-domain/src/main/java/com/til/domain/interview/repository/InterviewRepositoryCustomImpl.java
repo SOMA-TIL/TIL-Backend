@@ -34,10 +34,11 @@ public class InterviewRepositoryCustomImpl implements InterviewRepositoryCustom 
     }
 
     @Override
-    public Interview getByCode(String code) {
+    public Interview getProcessingInterview(Long userId, String code) {
         return Optional.ofNullable(
             queryFactory.selectFrom(interview)
-                .where(interview.code.eq(code))
+                .where(interview.code.eq(code), interview.userId.eq(userId), interview.status.eq(
+                    InterviewStatus.PROCESSING))
                 .fetchOne()
         ).orElseThrow(() -> new BaseException(InterviewErrorCode.NOT_FOUND_INTERVIEW));
     }
