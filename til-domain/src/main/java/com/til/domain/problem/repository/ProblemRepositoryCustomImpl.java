@@ -11,10 +11,14 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.til.domain.common.exception.BaseException;
@@ -43,6 +47,8 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     public Page<ProblemOverviewInfoDto> getProblemOverviewInfoList(Pageable pageable, ProblemSearchDto searchDto) {
         BooleanExpression searchCondition = getSearchCondition(searchDto);
 
+        OrderSpecifier<?> orderSpecifier = getOrderSpecifier(pageable);
+
         List<ProblemBasicInfoDto> problemList = queryFactory
             .select(Projections.constructor(ProblemBasicInfoDto.class,
                 problem.id,
@@ -53,7 +59,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             .where(searchCondition)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .orderBy(problem.id.desc()) // TODO : 정렬 기준 추가
+            .orderBy(orderSpecifier)
             .fetch();
 
         Map<Long, List<Long>> categoryInfo = queryFactory.from(problemCategory)
@@ -67,6 +73,15 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
 
         return new PageImpl<>(ProblemOverviewInfoDto.ofList(problemList, categoryInfo), pageable, getProblemCount(
             searchCondition));
+    }
+
+    private OrderSpecifier<?> getOrderSpecifier(Pageable pageable) {
+        Sort.Order order = pageable.getSort().iterator().next();
+        PathBuilder<Object> pathBuilder = new PathBuilder<>(problem.getType(), problem.getMetadata());
+        return new OrderSpecifier(
+            order.isAscending() ? Order.ASC : Order.DESC,
+            pathBuilder.get(order.getProperty())
+        );
     }
 
     private long getProblemCount(BooleanExpression searchCondition) {
