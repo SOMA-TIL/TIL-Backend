@@ -1,5 +1,7 @@
 package com.til.application.problem;
 
+import static com.til.domain.auth.dto.AuthUserInfoDto.isGuest;
+
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +29,10 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
     private final FavoriteProblemRepository favoriteProblemRepository;
 
-    public ProblemPageDto<ProblemOverviewInfoDto> getProblemOverviewList(PageParamDto pageParamDto,
-        ProblemSearchDto problemSearchDto) {
-        Page<ProblemOverviewInfoDto> problems = problemRepository.getProblemOverviewInfoList(pageParamDto.toPageable(),
-            problemSearchDto);
-        return ProblemPageDto.of(problems);
+    public ProblemPageDto<ProblemOverviewInfoDto> getProblemOverviewList(AuthUserInfoDto userInfo,
+        PageParamDto pageParamDto, ProblemSearchDto problemSearchDto) {
+        return isGuest(userInfo) ? getProblemPublicOverviewList(pageParamDto, problemSearchDto)
+            : getProblemOverviewListWithUserData(pageParamDto, problemSearchDto, userInfo.id());
     }
 
     public ProblemPageDto<Problem> getProblemList(PageParamDto pageParamDto) {
@@ -40,7 +41,7 @@ public class ProblemService {
     }
 
     public ProblemPublicInfoDto getProblemInfo(AuthUserInfoDto userInfo, Long problemId) {
-        return (userInfo == null) ? getProblemPublicInfo(problemId) : getProblemInfoWithUserData(userInfo.id(),
+        return isGuest(userInfo) ? getProblemPublicInfo(problemId) : getProblemInfoWithUserData(userInfo.id(),
             problemId);
     }
 
@@ -51,6 +52,19 @@ public class ProblemService {
     private ProblemPublicInfoDto getProblemInfoWithUserData(Long userId, Long problemId) {
         return getProblemPublicInfo(problemId)
             .setFavorite(favoriteProblemRepository.existsByUserIdAndProblemId(userId, problemId));
+    }
+
+    private ProblemPageDto<ProblemOverviewInfoDto> getProblemPublicOverviewList(PageParamDto pageParamDto,
+        ProblemSearchDto problemSearchDto) {
+        return ProblemPageDto.of(
+            problemRepository.getProblemPublicOverviewInfoList(pageParamDto.toPageable(), problemSearchDto));
+    }
+
+    private ProblemPageDto<ProblemOverviewInfoDto> getProblemOverviewListWithUserData(PageParamDto pageParamDto,
+        ProblemSearchDto problemSearchDto, Long userId) {
+        Page<ProblemOverviewInfoDto> problems = problemRepository.getProblemOverviewListWithUserData(
+            pageParamDto.toPageable(), problemSearchDto, userId);
+        return ProblemPageDto.of(problems);
     }
 
     @Transactional

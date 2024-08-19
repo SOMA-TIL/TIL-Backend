@@ -11,7 +11,10 @@ public interface ProblemRepositoryCustom {
 
     String getSolutionByProblemId(Long problemId);
 
-    Page<ProblemOverviewInfoDto> getProblemOverviewInfoList(Pageable pageable, ProblemSearchDto problemSearchDto);
+    Page<ProblemOverviewInfoDto> getProblemPublicOverviewInfoList(Pageable pageable, ProblemSearchDto problemSearchDto);
+
+    Page<ProblemOverviewInfoDto> getProblemOverviewListWithUserData(Pageable pageable,
+        ProblemSearchDto problemSearchDto, Long userId);
 
     ProblemPublicInfoDto getProblemPublicInfo(Long problemId);
 }

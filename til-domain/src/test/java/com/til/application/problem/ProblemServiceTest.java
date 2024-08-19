@@ -87,17 +87,15 @@ public class ProblemServiceTest {
             .categoryList(Collections.singletonList(1L))
             .build();
 
-        ProblemOverviewInfoDto problemOverviewInfoDto = new ProblemOverviewInfoDto(
-            1L, "test Problem", 1, Collections.singletonList(1L)
-        );
+        ProblemOverviewInfoDto problemOverviewInfoDto = createProblemOverviewInfo();
 
         Page<ProblemOverviewInfoDto> problemPage = new PageImpl<>(Collections.singletonList(problemOverviewInfoDto),
             PageRequest.of(0, 10), 1);
-        given(problemRepository.getProblemOverviewInfoList(any(PageRequest.class), any(ProblemSearchDto.class)))
+        given(problemRepository.getProblemPublicOverviewInfoList(any(PageRequest.class), any(ProblemSearchDto.class)))
             .willReturn(problemPage);
 
         // when
-        ProblemPageDto<ProblemOverviewInfoDto> result = problemService.getProblemOverviewList(pageParamDto,
+        ProblemPageDto<ProblemOverviewInfoDto> result = problemService.getProblemOverviewList(null, pageParamDto,
             problemSearchDto);
 
         // then
@@ -105,7 +103,7 @@ public class ProblemServiceTest {
         assertThat(result.problemList()).isNotNull();
 
         ProblemOverviewInfoDto dto = result.problemList().get(0);
-        assertThat(dto.title()).contains("test");
+        assertThat(dto.title()).contains("Sample Problem");
         assertThat(dto.level()).isEqualTo(1);
         assertThat(dto.categoryList()).containsExactly(1L);
     }
@@ -139,24 +137,6 @@ public class ProblemServiceTest {
         // then
         assertThat(thrown).isInstanceOf(BaseException.class)
             .hasMessage(ProblemErrorCode.NOT_FOUND_PROBLEM.getMessage());
-    }
-
-    private Problem createProblem() {
-        return Problem.builder()
-            .id(1L)
-            .title("Sample Problem")
-            .question("Sample Question")
-            .level(1)
-            .build();
-    }
-
-    private ProblemPublicInfoDto createProblemPublicInfo() {
-        return ProblemPublicInfoDto.builder()
-            .id(1L)
-            .title("Sample Problem")
-            .question("Sample Question")
-            .level(1)
-            .build();
     }
 
     @TestFactory
@@ -240,6 +220,33 @@ public class ProblemServiceTest {
                     .isEqualTo(ProblemErrorCode.NOT_FOUND_PROBLEM);
             })
         );
+    }
+
+    private static Problem createProblem() {
+        return Problem.builder()
+            .id(1L)
+            .title("Sample Problem")
+            .question("Sample Question")
+            .level(1)
+            .build();
+    }
+
+    private static ProblemPublicInfoDto createProblemPublicInfo() {
+        return ProblemPublicInfoDto.builder()
+            .id(1L)
+            .title("Sample Problem")
+            .question("Sample Question")
+            .level(1)
+            .build();
+    }
+
+    private static ProblemOverviewInfoDto createProblemOverviewInfo() {
+        return ProblemOverviewInfoDto.builder()
+            .id(1L)
+            .title("Sample Problem")
+            .level(1)
+            .categoryList(Collections.singletonList(1L))
+            .build();
     }
 
     private static FavoriteProblemDto createFavoriteProblemDto(boolean isFavorite) {

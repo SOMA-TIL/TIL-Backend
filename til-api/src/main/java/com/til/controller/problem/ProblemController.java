@@ -50,11 +50,12 @@ public class ProblemController {
     private static final Logger logger = LoggerFactory.getLogger(ProblemController.class);
 
     @GetMapping("")
-    public ApiResponse<ProblemPageResponse> getProblemList(
+    public ApiResponse<ProblemPageResponse> getProblemList(@CurrentUser(required = false) AuthUserInfoDto userInfo,
         @ModelAttribute PageParamRequest pageParamRequest, @ModelAttribute SearchProblemRequest searchProblemRequest) {
         pageParamRequest.validate();
-        ProblemPageDto<ProblemOverviewInfoDto> problemPageDto = problemService.getProblemOverviewList(pageParamRequest
-            .toServiceDto(), searchProblemRequest.toServiceDto());
+        ProblemPageDto<ProblemOverviewInfoDto> problemPageDto = problemService.getProblemOverviewList(userInfo,
+            pageParamRequest
+                .toServiceDto(), searchProblemRequest.toServiceDto());
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_LIST, ProblemPageResponse.of(problemPageDto
             .problemList(), problemPageDto.pageInfo()));
     }

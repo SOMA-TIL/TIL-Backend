@@ -3,16 +3,26 @@ package com.til.domain.problem.repository;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.types.dsl.Expressions.allOf;
 import static com.til.domain.category.model.QProblemCategory.problemCategory;
+import static com.til.domain.grading.model.QGrading.grading;
+import static com.til.domain.problem.model.QFavoriteProblem.favoriteProblem;
 import static com.til.domain.problem.model.QProblem.problem;
+import static com.til.domain.problem.model.QUserProblem.userProblem;
+import static com.til.domain.problem.repository.ProblemQueryCondition.isGradingStatus;
+import static com.til.domain.problem.repository.ProblemQueryCondition.isResultPassed;
+import static com.til.domain.problem.repository.ProblemQueryCondition.linkProblemWithUserFavorite;
+import static com.til.domain.problem.repository.ProblemQueryCondition.linkProblemWithUserProblem;
+import static com.til.domain.problem.repository.ProblemQueryCondition.linkUserProblemWithGrading;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -22,10 +32,12 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.til.domain.common.exception.BaseException;
+import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.problem.dto.ProblemBasicInfoDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.dto.ProblemSearchDto;
+import com.til.domain.problem.dto.ProblemUserStatusDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 
 import lombok.RequiredArgsConstructor;
@@ -44,10 +56,9 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     }
 
     @Override
-    public Page<ProblemOverviewInfoDto> getProblemOverviewInfoList(Pageable pageable, ProblemSearchDto searchDto) {
+    public Page<ProblemOverviewInfoDto> getProblemPublicOverviewInfoList(Pageable pageable,
+        ProblemSearchDto searchDto) {
         BooleanExpression searchCondition = getSearchCondition(searchDto);
-
-        OrderSpecifier<?> orderSpecifier = getOrderSpecifier(pageable);
 
         List<ProblemBasicInfoDto> problemList = queryFactory
             .select(Projections.constructor(ProblemBasicInfoDto.class,
@@ -59,7 +70,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             .where(searchCondition)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .orderBy(orderSpecifier)
+            .orderBy(getOrderSpecifier(pageable))
             .fetch();
 
         Map<Long, List<Long>> categoryInfo = queryFactory.from(problemCategory)
@@ -69,19 +80,72 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                     .as(GroupBy.list(problemCategory.categoryId))
             );
 
-        // TODO : 사용자 연관 정보 추가(PASS/FAIL, 즐겨찾기 여부 등)
-
         return new PageImpl<>(ProblemOverviewInfoDto.ofList(problemList, categoryInfo), pageable, getProblemCount(
             searchCondition));
     }
 
-    private OrderSpecifier<?> getOrderSpecifier(Pageable pageable) {
-        Sort.Order order = pageable.getSort().iterator().next();
-        PathBuilder<Object> pathBuilder = new PathBuilder<>(problem.getType(), problem.getMetadata());
-        return new OrderSpecifier(
-            order.isAscending() ? Order.ASC : Order.DESC,
-            pathBuilder.get(order.getProperty())
-        );
+    @Override
+    public Page<ProblemOverviewInfoDto> getProblemOverviewListWithUserData(Pageable pageable,
+        ProblemSearchDto searchDto,
+        Long userId) {
+        BooleanExpression searchCondition = getSearchCondition(searchDto);
+
+        List<Tuple> data = queryFactory
+            .select(
+                Projections.constructor(ProblemBasicInfoDto.class,
+                    problem.id,
+                    problem.title,
+                    problem.level
+                ),
+                Projections.constructor(ProblemUserStatusDto.class,
+                    favoriteProblem.id.count().gt(0),
+                    grading.result.count().gt(0)
+                )
+            )
+            .from(problem)
+            .where(searchCondition)
+            .leftJoin(userProblem).on(linkProblemWithUserProblem(userId), isGradingStatus(GradingStatus.COMPLETED))
+            .leftJoin(grading).on(linkUserProblemWithGrading(), isResultPassed())
+            .leftJoin(favoriteProblem).on(linkProblemWithUserFavorite(userId))
+            .groupBy(problem.id, problem.title, problem.level)
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(getOrderSpecifier(pageable))
+            .fetch();
+
+        List<Long> problemIdList = data.stream()
+            .map(tuple -> Objects.requireNonNull(tuple.get(0, ProblemBasicInfoDto.class)).id())
+            .toList();
+
+        Map<Long, List<Long>> categoryInfo = queryFactory.from(problemCategory)
+            .where(problemCategory.problemId.in(problemIdList))
+            .transform(
+                groupBy(problemCategory.problemId)
+                    .as(GroupBy.list(problemCategory.categoryId))
+            );
+
+        return new PageImpl<>(ProblemOverviewInfoDto.ofListFromTuple(data, categoryInfo), pageable,
+            getProblemCount(searchCondition));
+    }
+
+    @Override
+    public ProblemPublicInfoDto getProblemPublicInfo(Long problemId) {
+        return queryFactory.from(problem)
+            .leftJoin(problemCategory).on(problem.id.eq(problemCategory.problemId))
+            .where(problem.id.eq(problemId))
+            .transform(
+                groupBy(problem.id, problem.title, problem.question, problem.level)
+                    .list(Projections.constructor(ProblemPublicInfoDto.class,
+                        problem.id,
+                        problem.title,
+                        problem.question,
+                        problem.level,
+                        GroupBy.list(problemCategory.categoryId)
+                    ))
+            )
+            .stream()
+            .findFirst()
+            .orElseThrow(() -> new BaseException(ProblemErrorCode.NOT_FOUND_PROBLEM));
     }
 
     private long getProblemCount(BooleanExpression searchCondition) {
@@ -120,23 +184,12 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
         return text != null && !text.trim().isEmpty();
     }
 
-    @Override
-    public ProblemPublicInfoDto getProblemPublicInfo(Long problemId) {
-        return queryFactory.from(problem)
-            .leftJoin(problemCategory).on(problem.id.eq(problemCategory.problemId))
-            .where(problem.id.eq(problemId))
-            .transform(
-                groupBy(problem.id, problem.title, problem.question, problem.level)
-                    .list(Projections.constructor(ProblemPublicInfoDto.class,
-                        problem.id,
-                        problem.title,
-                        problem.question,
-                        problem.level,
-                        GroupBy.list(problemCategory.categoryId)
-                    ))
-            )
-            .stream()
-            .findFirst()
-            .orElseThrow(() -> new BaseException(ProblemErrorCode.NOT_FOUND_PROBLEM));
+    private OrderSpecifier<?> getOrderSpecifier(Pageable pageable) {
+        Sort.Order order = pageable.getSort().iterator().next();
+        PathBuilder<Object> pathBuilder = new PathBuilder<>(problem.getType(), problem.getMetadata());
+        return new OrderSpecifier(
+            order.isAscending() ? Order.ASC : Order.DESC,
+            pathBuilder.get(order.getProperty())
+        );
     }
 }
