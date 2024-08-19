@@ -99,6 +99,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                 ),
                 Projections.constructor(ProblemUserStatusDto.class,
                     favoriteProblem.id.count().gt(0),
+                    userProblem.id.count().gt(0),
                     grading.result.count().gt(0)
                 )
             )
