@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem, interview, grading, interview_category, interview_problem;
+DROP VIEW IF EXISTS problem_statistics;
 
 CREATE TABLE user
 (
@@ -104,3 +105,19 @@ CREATE TABLE interview_problem
     created_date  datetime(6) not null,
     modified_date datetime(6) not null
 );
+
+-- TEMPORARY VIEW FOR PROBLEM STATISTICS
+CREATE OR REPLACE VIEW problem_statistics AS
+SELECT sp.problem_id AS problem_id,
+       SUM(CASE WHEN g.result = 'PASS' THEN 1 ELSE 0 END) AS passed_count,
+       SUM(CASE WHEN g.result = 'FAIL' THEN 1 ELSE 0 END) AS failed_count,
+       SUM(CASE WHEN g.result IN ('PASS', 'FAIL') THEN 1 ELSE 0 END) AS attempted_count,
+       CASE
+           WHEN SUM(CASE WHEN g.result IN ('PASS', 'FAIL') THEN 1 ELSE 0 END) = 0 THEN 0
+           ELSE ROUND(SUM(CASE WHEN g.result = 'PASS' THEN 1 ELSE 0 END) * 100.0 / SUM(CASE WHEN g.result IN ('PASS', 'FAIL') THEN 1 ELSE 0 END), 1)
+           END AS pass_rate
+FROM solve_problem sp
+         JOIN grading g ON sp.id = g.target_id AND g.`type` = 'PROBLEM'
+WHERE sp.status = 'COMPLETED'
+GROUP BY sp.problem_id
+ORDER BY problem_id;
