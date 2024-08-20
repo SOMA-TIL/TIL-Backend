@@ -14,9 +14,11 @@ import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewCreateDto;
 import com.til.domain.interview.dto.InterviewInfoDto;
 import com.til.domain.interview.dto.InterviewProblemQuestionDto;
+import com.til.domain.interview.dto.InterviewSolveDto;
 import com.til.domain.interview.enums.InterviewErrorCode;
 import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewProblem;
+import com.til.domain.interview.model.InterviewProblemStatus;
 import com.til.domain.interview.model.InterviewStatus;
 import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
@@ -39,7 +41,7 @@ public class InterviewService {
 
     @Transactional
     public InterviewCodeDto createInterview(InterviewCreateDto interviewCreateDto) {
-        checkProcessingInterview(interviewCreateDto.userId());
+        checkProcessingInterviewByUserId(interviewCreateDto.userId());
 
         String code = createRandomId();
 
@@ -62,7 +64,20 @@ public class InterviewService {
         List<InterviewProblemQuestionDto> problemList = interviewProblemRepository
             .getInterviewProblemQuestionByInterviewId(interview.getId());
 
-        return InterviewInfoDto.of(interview.getId(), categoryIdList, problemList);
+        return InterviewInfoDto.of(categoryIdList, problemList);
+    }
+
+    @Transactional
+    public void solveInterviewProblem(InterviewSolveDto interviewSolveDto) {
+        Interview interview = interviewRepository.getProcessingInterview(interviewSolveDto.userId(), interviewSolveDto
+            .code());
+
+        checkInterviewProblemSolvable(interview.getId(), interviewSolveDto.sequence());
+
+        checkInterviewProblemSequence(interview.getId(), interviewSolveDto.sequence());
+
+        interviewProblemRepository.solveInterviewProblem(interview.getId(), interviewSolveDto.sequence(),
+            interviewSolveDto.answer());
     }
 
     private void checkDuplicateCode(String code) {
@@ -71,9 +86,22 @@ public class InterviewService {
         }
     }
 
-    private void checkProcessingInterview(Long userId) {
+    private void checkProcessingInterviewByUserId(Long userId) {
         if (interviewRepository.existsByUserIdAndStatus(userId, InterviewStatus.PROCESSING)) {
             throw new BaseException(InterviewErrorCode.ALREADY_PROCESSING_INTERVIEW);
+        }
+    }
+
+    private void checkInterviewProblemSolvable(Long interviewId, Integer sequence) {
+        if (!interviewProblemRepository.existsBySolvable(interviewId, sequence, InterviewProblemStatus.UNSOLVED)) {
+            throw new BaseException(InterviewErrorCode.NOT_FOUND_INTERVIEW_PROBLEM);
+        }
+    }
+
+    private void checkInterviewProblemSequence(Long interviewId, Integer sequence) {
+        if (interviewProblemRepository.existsBySequenceConsistency(interviewId, sequence,
+            InterviewProblemStatus.UNSOLVED)) {
+            throw new BaseException(InterviewErrorCode.INTERVIEW_SEQUENCE_INCONSISTENCY);
         }
     }
 

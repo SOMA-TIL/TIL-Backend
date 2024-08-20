@@ -2,6 +2,7 @@ package com.til.application.interview;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.anyString;
@@ -20,7 +21,9 @@ import com.til.domain.category.repository.ProblemCategoryRepository;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewCreateDto;
+import com.til.domain.interview.dto.InterviewSolveDto;
 import com.til.domain.interview.enums.InterviewErrorCode;
+import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewStatus;
 import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
@@ -90,12 +93,84 @@ public class InterviewServiceTest {
             .isEqualTo(InterviewErrorCode.NOT_FOUND_INTERVIEW);
     }
 
+    @Test
+    void 유효하지_않은_모의면접에_답변을_제출하면_예외를_던진다() {
+        // given
+        given(interviewRepository.getProcessingInterview(anyLong(), anyString()))
+            .willThrow(new BaseException(InterviewErrorCode.NOT_FOUND_INTERVIEW));
+
+        InterviewSolveDto interviewSolveDto = createInterviewSolveDto("code", 1, 1L);
+
+        // when & then
+        assertThatThrownBy(() -> interviewService.solveInterviewProblem(interviewSolveDto))
+            .isInstanceOf(BaseException.class)
+            .extracting(error -> ((BaseException) error).getErrorCode())
+            .isEqualTo(InterviewErrorCode.NOT_FOUND_INTERVIEW);
+    }
+
+    @Test
+    void 유효하지_않은_면접_문제에_답변을_제출하면_예외를_던진다() {
+        // given
+        given(interviewRepository.getProcessingInterview(anyLong(), anyString())).willReturn(
+            createInterview(InterviewStatus.PROCESSING)
+        );
+        given(interviewProblemRepository.existsBySolvable(anyLong(), anyInt(), any()))
+            .willThrow(new BaseException(InterviewErrorCode.NOT_FOUND_INTERVIEW_PROBLEM));
+
+        InterviewSolveDto interviewSolveDto = createInterviewSolveDto("code", 1, 1L);
+
+        // when & then
+        assertThatThrownBy(() -> interviewService.solveInterviewProblem(interviewSolveDto))
+            .isInstanceOf(BaseException.class)
+            .extracting(error -> ((BaseException) error).getErrorCode())
+            .isEqualTo(InterviewErrorCode.NOT_FOUND_INTERVIEW_PROBLEM);
+    }
+
+    @Test
+    void 면접_문제풀이의_순서_일관성이_깨지면_예외를_던진다() {
+        // given
+        given(interviewRepository.getProcessingInterview(anyLong(), anyString())).willReturn(
+            createInterview(InterviewStatus.PROCESSING)
+        );
+        given(interviewProblemRepository.existsBySolvable(anyLong(), anyInt(), any())).willReturn(true);
+        given(interviewProblemRepository.existsBySequenceConsistency(anyLong(), anyInt(), any())).willThrow(
+            new BaseException(InterviewErrorCode.INTERVIEW_SEQUENCE_INCONSISTENCY));
+
+        InterviewSolveDto interviewSolveDto = createInterviewSolveDto("code", 1, 1L);
+
+        // when & then
+        assertThatThrownBy(() -> interviewService.solveInterviewProblem(interviewSolveDto))
+            .isInstanceOf(BaseException.class)
+            .extracting(error -> ((BaseException) error).getErrorCode())
+            .isEqualTo(InterviewErrorCode.INTERVIEW_SEQUENCE_INCONSISTENCY);
+    }
+
+    private Interview createInterview(InterviewStatus status) {
+        return Interview.builder()
+            .id(1L)
+            .code("code")
+            .status(status)
+            .userId(1L)
+            .build();
+    }
+
     private InterviewCreateDto createInterviewCreateDto() {
         return InterviewCreateDto.builder()
             .status(InterviewStatus.PROCESSING)
             .code(RandomValueGenerator.generateRandomId(11))
             .userId(1L)
             .categoryIdList(List.of(1L))
+            .build();
+    }
+
+    private InterviewSolveDto createInterviewSolveDto(
+        String code, Integer sequence, Long userId
+    ) {
+        return InterviewSolveDto.builder()
+            .code(code)
+            .sequence(sequence)
+            .answer("random answer")
+            .userId(userId)
             .build();
     }
 
