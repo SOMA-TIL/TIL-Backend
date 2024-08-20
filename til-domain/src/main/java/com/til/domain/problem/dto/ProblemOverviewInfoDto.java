@@ -15,6 +15,8 @@ public record ProblemOverviewInfoDto(
                                      String title,
                                      Integer level,
                                      List<Long> categoryList,
+                                     Long finishCount,
+                                     Float passRate,
                                      @JsonInclude(JsonInclude.Include.NON_NULL) ProblemUserStatusDto userStatus
 ) {
 
@@ -23,6 +25,8 @@ public record ProblemOverviewInfoDto(
             .id(problemBasicInfoDto.id())
             .title(problemBasicInfoDto.title())
             .level(problemBasicInfoDto.level())
+            .finishCount(problemBasicInfoDto.finishCount())
+            .passRate(problemBasicInfoDto.passRate())
             .categoryList(categoryList)
             .build();
     }
@@ -33,6 +37,8 @@ public record ProblemOverviewInfoDto(
             .id(problemBasicInfoDto.id())
             .title(problemBasicInfoDto.title())
             .level(problemBasicInfoDto.level())
+            .finishCount(problemBasicInfoDto.finishCount())
+            .passRate(problemBasicInfoDto.passRate())
             .categoryList(categoryList)
             .userStatus(userStatus)
             .build();

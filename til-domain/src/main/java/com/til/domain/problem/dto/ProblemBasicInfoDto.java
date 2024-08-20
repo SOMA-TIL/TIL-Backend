@@ -8,7 +8,9 @@ import lombok.Builder;
 public record ProblemBasicInfoDto(
                                   Long id,
                                   String title,
-                                  Integer level
+                                  Integer level,
+                                  Long finishCount,
+                                  Float passRate
 ) {
 
     public static List<Long> getIdList(List<ProblemBasicInfoDto> problemBasicInfoDtoList) {
