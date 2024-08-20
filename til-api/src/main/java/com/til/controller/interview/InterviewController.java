@@ -1,6 +1,7 @@
 package com.til.controller.interview;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import com.til.application.interview.InterviewService;
 import com.til.common.annotation.CurrentUser;
 import com.til.common.response.ApiResponse;
 import com.til.controller.interview.request.InterviewCreateRequest;
+import com.til.controller.interview.request.InterviewSolveRequest;
 import com.til.controller.interview.response.InterviewCodeResponse;
 import com.til.controller.interview.response.InterviewInfoResponse;
 import com.til.domain.auth.dto.AuthUserInfoDto;
@@ -43,6 +45,15 @@ public class InterviewController {
 
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_GET_INTERVIEW_INFO, InterviewInfoResponse.of(
             interviewInfoDto));
+    }
+
+    @PatchMapping("/{code}/solve")
+    public ApiResponse<Void> solveInterviewProblem(@CurrentUser AuthUserInfoDto userInfo,
+        @PathVariable String code,
+        @RequestBody InterviewSolveRequest request) {
+        interviewService.solveInterviewProblem(request.toServiceDto(code, userInfo.id()));
+
+        return ApiResponse.ok(InterviewSuccessCode.SUCCESS_SOLVE_INTERVIEW_PROBLEM);
     }
 
 }
