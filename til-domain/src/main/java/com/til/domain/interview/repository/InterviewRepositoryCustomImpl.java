@@ -43,4 +43,12 @@ public class InterviewRepositoryCustomImpl implements InterviewRepositoryCustom 
         ).orElseThrow(() -> new BaseException(InterviewErrorCode.NOT_FOUND_INTERVIEW));
     }
 
+    @Override
+    public void updateInterviewStatus(Long id, InterviewStatus status) {
+        queryFactory.update(interview)
+            .set(interview.status, status)
+            .where(interview.id.eq(id))
+            .execute();
+
+    }
 }

@@ -10,6 +10,7 @@ import com.til.domain.category.dto.InterviewCategoryDto;
 import com.til.domain.category.repository.InterviewCategoryRepository;
 import com.til.domain.category.repository.ProblemCategoryRepository;
 import com.til.domain.common.exception.BaseException;
+import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewCreateDto;
 import com.til.domain.interview.dto.InterviewInfoDto;
@@ -80,6 +81,17 @@ public class InterviewService {
             interviewSolveDto.answer());
     }
 
+    @Transactional
+    public void submitInterview(Long userId, String code) {
+        Interview interview = interviewRepository.getProcessingInterview(userId, code);
+
+        checkInterviewProblemAllSolved(interview.getId());
+
+        interviewProblemRepository.updateProblemGradingStatusByInterviewId(interview.getId(), GradingStatus.PENDING);
+
+        interviewRepository.updateInterviewStatus(interview.getId(), InterviewStatus.PENDING);
+    }
+
     private void checkDuplicateCode(String code) {
         if (interviewRepository.existsByCode(code)) {
             throw new BaseException(InterviewErrorCode.FAIL_CREATE_INTERVIEW);
@@ -102,6 +114,12 @@ public class InterviewService {
         if (interviewProblemRepository.existsBySequenceConsistency(interviewId, sequence,
             InterviewProblemStatus.UNSOLVED)) {
             throw new BaseException(InterviewErrorCode.INTERVIEW_SEQUENCE_INCONSISTENCY);
+        }
+    }
+
+    private void checkInterviewProblemAllSolved(Long interviewId) {
+        if (interviewProblemRepository.existsByInterviewIdAndStatus(interviewId, InterviewProblemStatus.UNSOLVED)) {
+            throw new BaseException(InterviewErrorCode.FAIL_SUBMIT_INTERVIEW);
         }
     }
 

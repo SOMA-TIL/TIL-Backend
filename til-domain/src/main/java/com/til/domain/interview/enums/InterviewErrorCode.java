@@ -15,7 +15,8 @@ public enum InterviewErrorCode implements ErrorCode {
     ALREADY_PROCESSING_INTERVIEW(HttpStatus.BAD_REQUEST, "이미 진행중인 모의면접이 존재합니다."),
     NOT_FOUND_INTERVIEW(HttpStatus.NOT_FOUND, "존재하지 않는 모의면접입니다."),
     NOT_FOUND_INTERVIEW_PROBLEM(HttpStatus.NOT_FOUND, "존재하지 않는 모의면접 문제입니다."),
-    INTERVIEW_SEQUENCE_INCONSISTENCY(HttpStatus.BAD_REQUEST, "잘못된 모의면접 진행 순서입니다.");
+    INTERVIEW_SEQUENCE_INCONSISTENCY(HttpStatus.BAD_REQUEST, "잘못된 모의면접 진행 순서입니다."),
+    FAIL_SUBMIT_INTERVIEW(HttpStatus.BAD_REQUEST, "모의면접을 제출하지 못했습니다.");
 
     private final HttpStatus status;
     private final String message;

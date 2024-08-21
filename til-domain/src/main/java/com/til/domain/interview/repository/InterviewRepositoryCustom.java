@@ -10,4 +10,6 @@ public interface InterviewRepositoryCustom {
     boolean existsByUserIdAndStatus(Long userId, InterviewStatus status);
 
     Interview getProcessingInterview(Long userId, String code);
+
+    void updateInterviewStatus(Long id, InterviewStatus status);
 }
