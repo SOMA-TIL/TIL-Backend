@@ -56,4 +56,12 @@ public class InterviewController {
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_SOLVE_INTERVIEW_PROBLEM);
     }
 
+    @PostMapping("/{code}/submit")
+    public ApiResponse<Void> submitInterview(@CurrentUser AuthUserInfoDto userInfo,
+        @PathVariable String code) {
+        interviewService.submitInterview(userInfo.id(), code);
+        // todo: 비동기 채점 로직 추가
+        return ApiResponse.ok(InterviewSuccessCode.SUCCESS_SUBMIT_INTERVIEW);
+    }
+
 }

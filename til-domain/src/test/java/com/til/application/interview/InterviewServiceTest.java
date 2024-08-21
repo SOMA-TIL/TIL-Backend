@@ -145,6 +145,22 @@ public class InterviewServiceTest {
             .isEqualTo(InterviewErrorCode.INTERVIEW_SEQUENCE_INCONSISTENCY);
     }
 
+    @Test
+    void 면접_문제를_모두_풀이하지_않았는데_면접을_완료하면_예외를_던진다() {
+        // given
+        given(interviewRepository.getProcessingInterview(anyLong(), anyString())).willReturn(
+            createInterview(InterviewStatus.PROCESSING)
+        );
+        given(interviewProblemRepository.existsByInterviewIdAndStatus(anyLong(), any())).willThrow(new BaseException(
+            InterviewErrorCode.FAIL_SUBMIT_INTERVIEW));
+
+        // when & then
+        assertThatThrownBy(() -> interviewService.submitInterview(anyLong(), anyString()))
+            .isInstanceOf(BaseException.class)
+            .extracting(error -> ((BaseException) error).getErrorCode())
+            .isEqualTo(InterviewErrorCode.FAIL_SUBMIT_INTERVIEW);
+    }
+
     private Interview createInterview(InterviewStatus status) {
         return Interview.builder()
             .id(1L)

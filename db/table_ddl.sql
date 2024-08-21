@@ -67,7 +67,7 @@ CREATE TABLE interview
 (
     id            bigint auto_increment primary key,
     code          varchar(20)                     not null unique,
-    status        enum ('PROCESSING', 'DONE', 'ABORTED') not null,
+    status        enum ('PROCESSING', 'PENDING', 'DONE', 'ABORTED') not null,
     user_id       bigint                           not null,
     created_date  datetime(6)                      not null,
     modified_date datetime(6)                      not null
@@ -98,7 +98,8 @@ CREATE TABLE interview_problem
     id            bigint auto_increment not null primary key,
     answer        text          null,
     sequence      int       not null,
-    status        enum('UNSOLVED', 'SOLVED', 'PENDING', 'DONE') not null,
+    status        enum('UNSOLVED', 'SOLVED') not null,
+    grading_status enum('IDLE', 'PENDING', 'COMPLETED', 'ERROR') not null,
     interview_id  bigint    not null,
     problem_id    bigint    not null,
     created_date  datetime(6) not null,

@@ -1,6 +1,7 @@
 package com.til.domain.interview.model;
 
 import com.til.domain.common.model.BaseTimeEntity;
+import com.til.domain.grading.enums.GradingStatus;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -29,6 +30,10 @@ public class InterviewProblem extends BaseTimeEntity {
     @Column(nullable = false)
     private InterviewProblemStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private GradingStatus gradingStatus;
+
     @Column(nullable = false)
     private Long interviewId;
 
@@ -42,6 +47,7 @@ public class InterviewProblem extends BaseTimeEntity {
     ) {
         return InterviewProblem.builder()
             .status(InterviewProblemStatus.UNSOLVED)
+            .gradingStatus(GradingStatus.IDLE)
             .sequence(sequence)
             .interviewId(interviewId)
             .problemId(problemId)
