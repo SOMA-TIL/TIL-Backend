@@ -10,15 +10,27 @@ public record ProblemPublicInfoDto(
                                    String title,
                                    String question,
                                    Integer level,
+                                   Long finishCount,
+                                   Float passRate,
                                    List<Long> categoryList,
                                    boolean isFavorite
 ) {
 
-    public ProblemPublicInfoDto(Long id, String title, String question, Integer level, List<Long> categoryList) {
-        this(id, title, question, level, categoryList, false);
+    public ProblemPublicInfoDto(Long id, String title, String question, Integer level, Long finishCount, Float passRate,
+        List<Long> categoryList) {
+        this(id, title, question, level, finishCount, passRate, categoryList, false);
     }
 
     public ProblemPublicInfoDto setFavorite(boolean isFavorite) {
-        return new ProblemPublicInfoDto(id, title, question, level, categoryList, isFavorite);
+        return ProblemPublicInfoDto.builder()
+            .id(id)
+            .title(title)
+            .question(question)
+            .level(level)
+            .finishCount(finishCount)
+            .passRate(passRate)
+            .categoryList(categoryList)
+            .isFavorite(isFavorite)
+            .build();
     }
 }

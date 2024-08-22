@@ -3,6 +3,7 @@ package com.til.domain.problem.repository;
 import static com.til.domain.grading.model.QGrading.grading;
 import static com.til.domain.problem.model.QFavoriteProblem.favoriteProblem;
 import static com.til.domain.problem.model.QProblem.problem;
+import static com.til.domain.problem.model.QProblemStatistics.problemStatistics;
 import static com.til.domain.problem.model.QUserProblem.userProblem;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -29,6 +30,10 @@ public class ProblemQueryCondition {
     public static BooleanExpression linkProblemWithUserFavorite(Long userId) {
         return problem.id.eq(favoriteProblem.problemId)
             .and(favoriteProblem.userId.eq(userId));
+    }
+
+    public static BooleanExpression linkProblemWithStatistics() {
+        return problem.id.eq(problemStatistics.problemId);
     }
 
     public static BooleanExpression isGradingStatus(GradingStatus status) {

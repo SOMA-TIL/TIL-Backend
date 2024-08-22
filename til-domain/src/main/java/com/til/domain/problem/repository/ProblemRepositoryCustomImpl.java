@@ -6,9 +6,11 @@ import static com.til.domain.category.model.QProblemCategory.problemCategory;
 import static com.til.domain.grading.model.QGrading.grading;
 import static com.til.domain.problem.model.QFavoriteProblem.favoriteProblem;
 import static com.til.domain.problem.model.QProblem.problem;
+import static com.til.domain.problem.model.QProblemStatistics.problemStatistics;
 import static com.til.domain.problem.model.QUserProblem.userProblem;
 import static com.til.domain.problem.repository.ProblemQueryCondition.isGradingStatus;
 import static com.til.domain.problem.repository.ProblemQueryCondition.isResultPassed;
+import static com.til.domain.problem.repository.ProblemQueryCondition.linkProblemWithStatistics;
 import static com.til.domain.problem.repository.ProblemQueryCondition.linkProblemWithUserFavorite;
 import static com.til.domain.problem.repository.ProblemQueryCondition.linkProblemWithUserProblem;
 import static com.til.domain.problem.repository.ProblemQueryCondition.linkUserProblemWithGrading;
@@ -64,9 +66,12 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             .select(Projections.constructor(ProblemBasicInfoDto.class,
                 problem.id,
                 problem.title,
-                problem.level
+                problem.level,
+                problemStatistics.passedCount.coalesce(0L),
+                problemStatistics.passRate.coalesce(0F)
             ))
             .from(problem)
+            .leftJoin(problemStatistics).on(linkProblemWithStatistics())
             .where(searchCondition)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -95,7 +100,9 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                 Projections.constructor(ProblemBasicInfoDto.class,
                     problem.id,
                     problem.title,
-                    problem.level
+                    problem.level,
+                    problemStatistics.passedCount.coalesce(0L),
+                    problemStatistics.passRate.coalesce(0F)
                 ),
                 Projections.constructor(ProblemUserStatusDto.class,
                     favoriteProblem.id.count().gt(0),
@@ -104,6 +111,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                 )
             )
             .from(problem)
+            .leftJoin(problemStatistics).on(linkProblemWithStatistics())
             .where(searchCondition)
             .leftJoin(userProblem).on(linkProblemWithUserProblem(userId), isGradingStatus(GradingStatus.COMPLETED))
             .leftJoin(grading).on(linkUserProblemWithGrading(), isResultPassed())
@@ -132,6 +140,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     @Override
     public ProblemPublicInfoDto getProblemPublicInfo(Long problemId) {
         return queryFactory.from(problem)
+            .leftJoin(problemStatistics).on(linkProblemWithStatistics())
             .leftJoin(problemCategory).on(problem.id.eq(problemCategory.problemId))
             .where(problem.id.eq(problemId))
             .transform(
@@ -141,6 +150,8 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
                         problem.title,
                         problem.question,
                         problem.level,
+                        problemStatistics.passedCount.coalesce(0L),
+                        problemStatistics.passRate.coalesce(0F),
                         GroupBy.list(problemCategory.categoryId)
                     ))
             )
