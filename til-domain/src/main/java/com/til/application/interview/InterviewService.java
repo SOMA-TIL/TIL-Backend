@@ -65,7 +65,7 @@ public class InterviewService {
         List<InterviewProblemQuestionDto> problemList = interviewProblemRepository
             .getInterviewProblemQuestionByInterviewId(interview.getId());
 
-        return InterviewInfoDto.of(categoryIdList, problemList);
+        return InterviewInfoDto.of(interview.getCreatedDate(), categoryIdList, problemList);
     }
 
     @Transactional
