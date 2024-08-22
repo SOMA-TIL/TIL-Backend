@@ -27,7 +27,6 @@ import com.til.controller.problem.response.ProblemSubmitHistory;
 import com.til.controller.problem.response.SolveProblemResponse;
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.grading.dto.GradingResultDto;
-import com.til.domain.grading.enums.AnswerType;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.ProblemPublicInfoDto;
@@ -79,15 +78,14 @@ public class ProblemController {
         @RequestBody @Valid SolveProblemRequest solveProblemRequest) {
         SubmitStatusDto submitStatus = solveProblemService.solveProblem(
             solveProblemRequest.toServiceDto(userInfo.id(), id));
-        gradingService.makeGrading(AnswerType.PROBLEM, submitStatus.submitId());
+        gradingService.makeGradingUserProblem(submitStatus.submitId());
         return ApiResponse.ok(SolveProblemResponse.of(submitStatus));
     }
 
     @GetMapping("/{id}/result")
     public ApiResponse<ProblemResultResponse> getGradingResult(@CurrentUser AuthUserInfoDto userInfo,
         @PathVariable Long id, @RequestParam Long submitId) {
-        GradingResultDto gradingResult = gradingService.getGradingResult(userInfo.id(), AnswerType.PROBLEM, id,
-            submitId);
+        GradingResultDto gradingResult = gradingService.getUserProblemGradingResult(userInfo.id(), id, submitId);
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_SUBMIT_RESULT, ProblemResultResponse.of(gradingResult));
     }
 

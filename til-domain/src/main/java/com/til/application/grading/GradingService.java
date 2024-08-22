@@ -52,14 +52,14 @@ public class GradingService {
 
     @Async
     @Transactional
-    public void makeGrading(AnswerType type, Long targetId) {
-        GradingInputDataDto gradingInputDataDto = prepareGradingInputDataDto(type, targetId);
-        log.info("Grading input data : {}", gradingInputDataDto);
+    public void makeGradingUserProblem(Long targetId) {
+        GradingInputDataDto gradingInputData = prepareGradingInputFromUserProblem(targetId);
+        log.info("Grading input data : {}", gradingInputData);
 
-        CompletableFuture<GradingResultDto> gradingResultFuture = sendGradingRequest(gradingInputDataDto);
+        CompletableFuture<GradingResultDto> gradingResultFuture = sendGradingRequest(gradingInputData);
 
         gradingResultFuture.thenAccept(result -> {
-            gradingRepository.save(GradingResultDto.toEntity(type, targetId, result));
+            gradingRepository.save(GradingResultDto.toEntity(AnswerType.PROBLEM, targetId, result));
             userProblemRepository.updateStatus(targetId, GradingStatus.COMPLETED);
         }).exceptionally(e -> {
             userProblemRepository.updateStatus(targetId, GradingStatus.ERROR);
@@ -96,12 +96,15 @@ public class GradingService {
         });
     }
 
-    public GradingResultDto getGradingResult(Long userId, AnswerType type, Long sourceId, Long submitId) {
-        return isUserProblemType(type) ? gradingRepository.getResultFromUserProblem(userId, sourceId, submitId)
-            : gradingRepository.getResultFromInterviewProblem(userId, sourceId, submitId);
+    public GradingResultDto getUserProblemGradingResult(Long userId, Long sourceId, Long submitId) {
+        return gradingRepository.getResultFromUserProblem(userId, sourceId, submitId);
     }
 
-    private GradingInputDataDto prepareGradingInputDataDto(AnswerType type, Long targetId) {
+    public GradingResultDto getInterviewGradingResult(Long userId, Long interviewId) {
+        return gradingRepository.getResultFromInterview(userId, interviewId);
+    }
+
+    private GradingInputDataDto prepareGradingInputFromUserProblem(Long targetId) {
         return gradingRepository.getGradingInputDataFromUserProblem(targetId);
     }
 
@@ -123,9 +126,5 @@ public class GradingService {
                 throw new RuntimeException("Grading request failed", e);
             }
         });
-    }
-
-    private boolean isUserProblemType(AnswerType type) {
-        return type == AnswerType.PROBLEM;
     }
 }
