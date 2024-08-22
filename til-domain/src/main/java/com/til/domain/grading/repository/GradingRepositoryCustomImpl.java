@@ -79,7 +79,7 @@ public class GradingRepositoryCustomImpl implements GradingRepositoryCustom {
     }
 
     @Override
-    public GradingResultDto getResultFromInterviewProblem(Long userId, Long interviewId, Long targetId) {
+    public GradingResultDto getResultFromInterview(Long userId, Long interviewId) {
         return null;
     }
 }

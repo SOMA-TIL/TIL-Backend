@@ -13,5 +13,5 @@ public interface GradingRepositoryCustom {
 
     GradingResultDto getResultFromUserProblem(Long userId, Long problemId, Long submitId);
 
-    GradingResultDto getResultFromInterviewProblem(Long userId, Long interviewId, Long submitId);
+    GradingResultDto getResultFromInterview(Long userId, Long interviewId);
 }
