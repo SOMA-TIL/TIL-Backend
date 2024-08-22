@@ -82,7 +82,7 @@ public class InterviewService {
     }
 
     @Transactional
-    public void submitInterview(Long userId, String code) {
+    public Long submitInterview(Long userId, String code) {
         Interview interview = interviewRepository.getProcessingInterview(userId, code);
 
         checkInterviewProblemAllSolved(interview.getId());
@@ -90,6 +90,8 @@ public class InterviewService {
         interviewProblemRepository.updateProblemGradingStatusByInterviewId(interview.getId(), GradingStatus.PENDING);
 
         interviewRepository.updateInterviewStatus(interview.getId(), InterviewStatus.PENDING);
+
+        return interview.getId();
     }
 
     private void checkDuplicateCode(String code) {

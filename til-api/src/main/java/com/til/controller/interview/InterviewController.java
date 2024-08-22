@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.til.application.grading.GradingService;
 import com.til.application.interview.InterviewService;
 import com.til.common.annotation.CurrentUser;
 import com.til.common.response.ApiResponse;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class InterviewController {
 
     private final InterviewService interviewService;
+    private final GradingService gradingService;
 
     @PostMapping("/create")
     public ApiResponse<InterviewCodeResponse> createInterview(@CurrentUser AuthUserInfoDto userInfo,
@@ -59,8 +61,8 @@ public class InterviewController {
     @PostMapping("/{code}/submit")
     public ApiResponse<Void> submitInterview(@CurrentUser AuthUserInfoDto userInfo,
         @PathVariable String code) {
-        interviewService.submitInterview(userInfo.id(), code);
-        // todo: 비동기 채점 로직 추가
+        Long interviewId = interviewService.submitInterview(userInfo.id(), code);
+        gradingService.makeGradingInterview(interviewId);
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_SUBMIT_INTERVIEW);
     }
 

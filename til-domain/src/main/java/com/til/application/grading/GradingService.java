@@ -2,6 +2,8 @@ package com.til.application.grading;
 
 import static com.til.domain.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +17,9 @@ import com.til.domain.grading.dto.GradingResultDto;
 import com.til.domain.grading.enums.AnswerType;
 import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.grading.repository.GradingRepository;
+import com.til.domain.interview.model.InterviewStatus;
+import com.til.domain.interview.repository.InterviewProblemRepository;
+import com.til.domain.interview.repository.InterviewRepository;
 import com.til.domain.problem.repository.UserProblemRepository;
 
 import jakarta.annotation.PostConstruct;
@@ -35,6 +40,8 @@ public class GradingService {
 
     private final GradingRepository gradingRepository;
     private final UserProblemRepository userProblemRepository;
+    private final InterviewRepository interviewRepository;
+    private final InterviewProblemRepository interviewProblemRepository;
 
     private WebClient webClient;
 
@@ -60,15 +67,46 @@ public class GradingService {
         });
     }
 
+    @Async
+    @Transactional
+    public void makeGradingInterview(Long interviewId) {
+        Map<Long, GradingInputDataDto> gradingInputDataList = prepareGradingInputFromInterview(interviewId);
+        log.debug("Grading input data : {}", gradingInputDataList);
+
+        List<CompletableFuture<Void>> futures = gradingInputDataList.entrySet().stream()
+            .map(entry -> processInterviewGrading(entry.getKey(), entry.getValue()))
+            .toList();
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).whenComplete((result, throwable) -> {
+            if (throwable != null) {
+                interviewRepository.updateInterviewStatus(interviewId, InterviewStatus.ERROR);
+            } else {
+                interviewRepository.updateInterviewStatus(interviewId, InterviewStatus.DONE);
+            }
+        });
+    }
+
+    private CompletableFuture<Void> processInterviewGrading(Long targetId, GradingInputDataDto gradingInputDataDto) {
+        return sendGradingRequest(gradingInputDataDto).thenAccept(result -> {
+            gradingRepository.save(GradingResultDto.toEntity(AnswerType.INTERVIEW, targetId, result));
+            interviewProblemRepository.updateProblemGradingStatusById(targetId, GradingStatus.COMPLETED);
+        }).exceptionally(e -> {
+            interviewProblemRepository.updateProblemGradingStatusById(targetId, GradingStatus.ERROR);
+            return null;
+        });
+    }
+
     public GradingResultDto getGradingResult(Long userId, AnswerType type, Long sourceId, Long submitId) {
         return isUserProblemType(type) ? gradingRepository.getResultFromUserProblem(userId, sourceId, submitId)
             : gradingRepository.getResultFromInterviewProblem(userId, sourceId, submitId);
     }
 
     private GradingInputDataDto prepareGradingInputDataDto(AnswerType type, Long targetId) {
-        log.info("Prepare grading input data : type={}, targetId={}", type, targetId);
-        return isUserProblemType(type) ? gradingRepository.getGradingInputDataFromUserProblem(targetId)
-            : gradingRepository.getGradingInputDataFromInterviewProblem(targetId);
+        return gradingRepository.getGradingInputDataFromUserProblem(targetId);
+    }
+
+    private Map<Long, GradingInputDataDto> prepareGradingInputFromInterview(Long interviewId) {
+        return gradingRepository.getGradingInputDataFromInterview(interviewId);
     }
 
     private CompletableFuture<GradingResultDto> sendGradingRequest(GradingInputDataDto gradingInputDataDto) {

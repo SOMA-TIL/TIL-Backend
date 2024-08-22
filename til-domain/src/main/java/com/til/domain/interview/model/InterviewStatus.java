@@ -4,5 +4,6 @@ public enum InterviewStatus {
     PROCESSING,
     PENDING,
     DONE,
+    ERROR,
     ABORTED
 }

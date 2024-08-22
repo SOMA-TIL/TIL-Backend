@@ -4,6 +4,8 @@ import static com.til.domain.interview.model.QInterview.interview;
 
 import java.util.Optional;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.interview.enums.InterviewErrorCode;
@@ -44,6 +46,7 @@ public class InterviewRepositoryCustomImpl implements InterviewRepositoryCustom 
     }
 
     @Override
+    @Transactional
     public void updateInterviewStatus(Long id, InterviewStatus status) {
         queryFactory.update(interview)
             .set(interview.status, status)

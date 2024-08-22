@@ -9,4 +9,12 @@ public record GradingInputDataDto(
                                   String userAnswer
 ) {
 
+    public static GradingInputDataDto of(String question, String gradingCriteria, String userAnswer) {
+        return GradingInputDataDto
+            .builder()
+            .question(question)
+            .gradingCriteria(gradingCriteria)
+            .userAnswer(userAnswer)
+            .build();
+    }
 }

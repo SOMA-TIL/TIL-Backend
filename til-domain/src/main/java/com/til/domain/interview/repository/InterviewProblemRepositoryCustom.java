@@ -18,5 +18,7 @@ public interface InterviewProblemRepositoryCustom {
 
     boolean existsByInterviewIdAndStatus(Long interviewId, InterviewProblemStatus status);
 
+    void updateProblemGradingStatusById(Long id, GradingStatus gradingStatus);
+
     void updateProblemGradingStatusByInterviewId(Long interviewId, GradingStatus gradingStatus);
 }
