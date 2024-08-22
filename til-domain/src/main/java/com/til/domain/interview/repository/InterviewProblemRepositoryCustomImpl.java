@@ -5,6 +5,8 @@ import static com.til.domain.problem.model.QProblem.problem;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.til.domain.grading.enums.GradingStatus;
@@ -70,6 +72,15 @@ public class InterviewProblemRepositoryCustomImpl implements InterviewProblemRep
             .from(interviewProblem)
             .where(interviewProblem.interviewId.eq(interviewId), interviewProblem.status.eq(status))
             .fetchFirst() != null;
+    }
+
+    @Override
+    @Transactional
+    public void updateProblemGradingStatusById(Long id, GradingStatus gradingStatus) {
+        queryFactory.update(interviewProblem)
+            .set(interviewProblem.gradingStatus, gradingStatus)
+            .where(interviewProblem.id.eq(id))
+            .execute();
     }
 
     @Override
