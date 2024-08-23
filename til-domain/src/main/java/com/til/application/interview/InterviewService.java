@@ -68,6 +68,10 @@ public class InterviewService {
         return InterviewInfoDto.of(interview.getCreatedDate(), categoryIdList, problemList);
     }
 
+    public InterviewStatus getInterviewStatus(Long userId, String code) {
+        return interviewRepository.getInterviewStatus(userId, code);
+    }
+
     @Transactional
     public void solveInterviewProblem(InterviewSolveDto interviewSolveDto) {
         Interview interview = interviewRepository.getProcessingInterview(interviewSolveDto.userId(), interviewSolveDto

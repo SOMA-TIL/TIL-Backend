@@ -17,11 +17,13 @@ import com.til.controller.interview.request.InterviewSolveRequest;
 import com.til.controller.interview.response.InterviewCodeResponse;
 import com.til.controller.interview.response.InterviewInfoResponse;
 import com.til.controller.interview.response.InterviewResultResponse;
+import com.til.controller.interview.response.InterviewStatusResponse;
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.grading.dto.InterviewGradingResultDto;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewInfoDto;
 import com.til.domain.interview.enums.InterviewSuccessCode;
+import com.til.domain.interview.model.InterviewStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -73,5 +75,12 @@ public class InterviewController {
         @PathVariable String code) {
         InterviewGradingResultDto gradingResult = gradingService.getInterviewGradingResult(userInfo.id(), code);
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_GET_RESULT, InterviewResultResponse.of(gradingResult));
+    }
+
+    @GetMapping("/{code}/status")
+    public ApiResponse<InterviewStatusResponse> getStatus(@CurrentUser AuthUserInfoDto userInfo,
+        @PathVariable String code) {
+        InterviewStatus status = interviewService.getInterviewStatus(userInfo.id(), code);
+        return ApiResponse.ok(InterviewStatusResponse.of(status));
     }
 }
