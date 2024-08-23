@@ -96,6 +96,7 @@ public class GradingRepositoryCustomImpl implements GradingRepositoryCustom {
         List<GradingResultWithProblemInfoDto> result = queryFactory
             .select(Projections.constructor(GradingResultWithProblemInfoDto.class,
                 problem.question,
+                interviewProblem.answer,
                 grading.result,
                 grading.comment
             )).from(interviewProblem)
