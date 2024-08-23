@@ -88,7 +88,7 @@ public class GradingRepositoryCustomImpl implements GradingRepositoryCustom {
             .from(interview)
             .where(interview.id.eq(interviewId), interview.userId.eq(userId))
             .fetchOne();
-        System.out.println(">>>> status: " + status);
+
         if (status != InterviewStatus.DONE) {
             return InterviewGradingResultDto.of(status);
         }
@@ -102,6 +102,7 @@ public class GradingRepositoryCustomImpl implements GradingRepositoryCustom {
             .leftJoin(problem).on(interviewProblem.problemId.eq(problem.id))
             .leftJoin(grading).on(interviewProblem.id.eq(grading.targetId), grading.type.eq(AnswerType.INTERVIEW))
             .where(interviewProblem.interviewId.eq(interviewId))
+            .orderBy(interviewProblem.sequence.asc())
             .fetch();
 
         return InterviewGradingResultDto.of(status, result);
