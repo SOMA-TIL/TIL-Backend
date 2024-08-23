@@ -74,7 +74,8 @@ public class InterviewController {
     public ApiResponse<InterviewResultResponse> getResult(@CurrentUser AuthUserInfoDto userInfo,
         @PathVariable String code) {
         InterviewGradingResultDto gradingResult = gradingService.getInterviewGradingResult(userInfo.id(), code);
-        return ApiResponse.ok(InterviewSuccessCode.SUCCESS_GET_RESULT, InterviewResultResponse.of(gradingResult));
+        return ApiResponse.ok(InterviewSuccessCode.SUCCESS_GET_INTERVIEW_RESULT, InterviewResultResponse.of(
+            gradingResult));
     }
 
     @GetMapping("/{code}/status")
