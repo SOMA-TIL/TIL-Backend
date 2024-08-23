@@ -52,6 +52,7 @@ public class ProblemController {
     public ApiResponse<ProblemPageResponse> getProblemList(@CurrentUser(required = false) AuthUserInfoDto userInfo,
         @ModelAttribute PageParamRequest pageParamRequest, @ModelAttribute SearchProblemRequest searchProblemRequest) {
         pageParamRequest.validate();
+        logger.info("Received search request: {}", searchProblemRequest);
         ProblemPageDto<ProblemOverviewInfoDto> problemPageDto = problemService.getProblemOverviewList(userInfo,
             pageParamRequest
                 .toServiceDto(), searchProblemRequest.toServiceDto());

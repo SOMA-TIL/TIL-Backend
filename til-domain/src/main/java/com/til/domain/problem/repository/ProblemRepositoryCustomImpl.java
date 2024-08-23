@@ -8,6 +8,7 @@ import static com.til.domain.problem.model.QFavoriteProblem.favoriteProblem;
 import static com.til.domain.problem.model.QProblem.problem;
 import static com.til.domain.problem.model.QProblemStatistics.problemStatistics;
 import static com.til.domain.problem.model.QUserProblem.userProblem;
+import static com.til.domain.problem.repository.ProblemQueryCondition.getUserStatusCondition;
 import static com.til.domain.problem.repository.ProblemQueryCondition.isGradingStatus;
 import static com.til.domain.problem.repository.ProblemQueryCondition.isResultPassed;
 import static com.til.domain.problem.repository.ProblemQueryCondition.linkProblemWithStatistics;
@@ -32,6 +33,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.grading.enums.GradingStatus;
@@ -91,9 +93,9 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
 
     @Override
     public Page<ProblemOverviewInfoDto> getProblemOverviewListWithUserData(Pageable pageable,
-        ProblemSearchDto searchDto,
-        Long userId) {
+        ProblemSearchDto searchDto, Long userId) {
         BooleanExpression searchCondition = getSearchCondition(searchDto);
+        BooleanExpression userStatusCondition = getUserStatusCondition(searchDto.status());
 
         List<Tuple> data = queryFactory
             .select(
@@ -112,14 +114,15 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             )
             .from(problem)
             .leftJoin(problemStatistics).on(linkProblemWithStatistics())
-            .where(searchCondition)
             .leftJoin(userProblem).on(linkProblemWithUserProblem(userId), isGradingStatus(GradingStatus.COMPLETED))
             .leftJoin(grading).on(linkUserProblemWithGrading(), isResultPassed())
             .leftJoin(favoriteProblem).on(linkProblemWithUserFavorite(userId))
+            .where(searchCondition)
             .groupBy(problem.id, problem.title, problem.level)
+            .having(userStatusCondition)
+            .orderBy(getOrderSpecifier(pageable))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .orderBy(getOrderSpecifier(pageable))
             .fetch();
 
         List<Long> problemIdList = data.stream()
@@ -134,7 +137,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             );
 
         return new PageImpl<>(ProblemOverviewInfoDto.ofListFromTuple(data, categoryInfo), pageable,
-            getProblemCount(searchCondition));
+            getProblemCount(userId, searchCondition, userStatusCondition));
     }
 
     @Override
@@ -161,11 +164,26 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     }
 
     private long getProblemCount(BooleanExpression searchCondition) {
-        Long count = queryFactory.select((problem.count()))
+        Long count = queryFactory.select(problem.countDistinct())
             .from(problem)
             .where(searchCondition)
             .fetchOne();
         return count == null ? 0 : count;
+    }
+
+    private long getProblemCount(Long userId, BooleanExpression searchCondition,
+        BooleanExpression userStatusCondition) {
+        JPQLQuery<Long> subQuery = queryFactory.select(problem.id)
+            .from(problem)
+            .leftJoin(problemStatistics).on(linkProblemWithStatistics())
+            .leftJoin(userProblem).on(linkProblemWithUserProblem(userId), isGradingStatus(GradingStatus.COMPLETED))
+            .leftJoin(grading).on(linkUserProblemWithGrading(), isResultPassed())
+            .leftJoin(favoriteProblem).on(linkProblemWithUserFavorite(userId))
+            .where(searchCondition)
+            .groupBy(problem.id)
+            .having(userStatusCondition);
+
+        return subQuery.fetch().size();
     }
 
     private BooleanExpression getSearchCondition(ProblemSearchDto searchDto) {
@@ -173,8 +191,8 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             ? problem.title.containsIgnoreCase(searchDto.keyword())
             : null;
 
-        BooleanExpression levelCondition = searchDto.level() != null
-            ? problem.level.eq(searchDto.level())
+        BooleanExpression levelCondition = searchDto.levelList() != null && !searchDto.levelList().isEmpty()
+            ? problem.level.in(searchDto.levelList())
             : null;
 
         BooleanExpression categoryCondition = inCategories(searchDto.categoryList());
