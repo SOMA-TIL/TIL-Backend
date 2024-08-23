@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.til.domain.grading.dto.GradingInputDataDto;
 import com.til.domain.grading.dto.GradingResultDto;
+import com.til.domain.grading.dto.InterviewGradingResultDto;
 import com.til.domain.grading.enums.AnswerType;
 import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.grading.repository.GradingRepository;
@@ -100,7 +101,8 @@ public class GradingService {
         return gradingRepository.getResultFromUserProblem(userId, sourceId, submitId);
     }
 
-    public GradingResultDto getInterviewGradingResult(Long userId, Long interviewId) {
+    public InterviewGradingResultDto getInterviewGradingResult(Long userId, String interviewCode) {
+        Long interviewId = interviewRepository.getIdByUserIdAndCode(userId, interviewCode);
         return gradingRepository.getResultFromInterview(userId, interviewId);
     }
 

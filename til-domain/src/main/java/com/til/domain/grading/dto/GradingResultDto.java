@@ -5,6 +5,9 @@ import com.til.domain.grading.enums.GradingResult;
 import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.grading.model.Grading;
 
+import lombok.Builder;
+
+@Builder
 public record GradingResultDto(
                                GradingStatus status,
                                GradingResult result,
@@ -12,7 +15,11 @@ public record GradingResultDto(
 ) {
 
     public static GradingResultDto of(GradingStatus gradingStatus, GradingResult result, String comment) {
-        return new GradingResultDto(gradingStatus, result, comment);
+        return GradingResultDto.builder()
+            .status(gradingStatus)
+            .result(result)
+            .comment(comment)
+            .build();
     }
 
     public static Grading toEntity(AnswerType type, Long targetId, GradingResultDto gradingResultDto) {

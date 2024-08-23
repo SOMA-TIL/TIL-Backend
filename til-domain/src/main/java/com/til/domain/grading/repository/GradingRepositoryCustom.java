@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.til.domain.grading.dto.GradingInputDataDto;
 import com.til.domain.grading.dto.GradingResultDto;
+import com.til.domain.grading.dto.InterviewGradingResultDto;
 
 public interface GradingRepositoryCustom {
 
@@ -13,5 +14,5 @@ public interface GradingRepositoryCustom {
 
     GradingResultDto getResultFromUserProblem(Long userId, Long problemId, Long submitId);
 
-    GradingResultDto getResultFromInterview(Long userId, Long interviewId);
+    InterviewGradingResultDto getResultFromInterview(Long userId, Long interviewId);
 }

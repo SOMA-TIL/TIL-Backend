@@ -1,6 +1,7 @@
 package com.til.domain.grading.repository;
 
 import static com.til.domain.grading.model.QGrading.grading;
+import static com.til.domain.interview.model.QInterview.interview;
 import static com.til.domain.interview.model.QInterviewProblem.interviewProblem;
 import static com.til.domain.problem.model.QProblem.problem;
 import static com.til.domain.problem.model.QUserProblem.userProblem;
@@ -17,7 +18,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.til.domain.common.exception.BaseException;
 import com.til.domain.grading.dto.GradingInputDataDto;
 import com.til.domain.grading.dto.GradingResultDto;
+import com.til.domain.grading.dto.GradingResultWithProblemInfoDto;
+import com.til.domain.grading.dto.InterviewGradingResultDto;
 import com.til.domain.grading.enums.AnswerType;
+import com.til.domain.interview.model.InterviewStatus;
 import com.til.domain.problem.enums.ProblemErrorCode;
 
 import lombok.RequiredArgsConstructor;
@@ -79,7 +83,27 @@ public class GradingRepositoryCustomImpl implements GradingRepositoryCustom {
     }
 
     @Override
-    public GradingResultDto getResultFromInterview(Long userId, Long interviewId) {
-        return null;
+    public InterviewGradingResultDto getResultFromInterview(Long userId, Long interviewId) {
+        InterviewStatus status = queryFactory.select(interview.status)
+            .from(interview)
+            .where(interview.id.eq(interviewId), interview.userId.eq(userId))
+            .fetchOne();
+        System.out.println(">>>> status: " + status);
+        if (status != InterviewStatus.DONE) {
+            return InterviewGradingResultDto.of(status);
+        }
+
+        List<GradingResultWithProblemInfoDto> result = queryFactory
+            .select(Projections.constructor(GradingResultWithProblemInfoDto.class,
+                problem.question,
+                grading.result,
+                grading.comment
+            )).from(interviewProblem)
+            .leftJoin(problem).on(interviewProblem.problemId.eq(problem.id))
+            .leftJoin(grading).on(interviewProblem.id.eq(grading.targetId), grading.type.eq(AnswerType.INTERVIEW))
+            .where(interviewProblem.interviewId.eq(interviewId))
+            .fetch();
+
+        return InterviewGradingResultDto.of(status, result);
     }
 }
