@@ -185,7 +185,7 @@ public class InterviewServiceTest {
         return InterviewSolveDto.builder()
             .code(code)
             .sequence(sequence)
-            .answer("random answer")
+            .answer("random userAnswer")
             .userId(userId)
             .build();
     }
