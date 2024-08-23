@@ -16,7 +16,9 @@ import com.til.controller.interview.request.InterviewCreateRequest;
 import com.til.controller.interview.request.InterviewSolveRequest;
 import com.til.controller.interview.response.InterviewCodeResponse;
 import com.til.controller.interview.response.InterviewInfoResponse;
+import com.til.controller.interview.response.InterviewResultResponse;
 import com.til.domain.auth.dto.AuthUserInfoDto;
+import com.til.domain.grading.dto.InterviewGradingResultDto;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewInfoDto;
 import com.til.domain.interview.enums.InterviewSuccessCode;
@@ -66,4 +68,10 @@ public class InterviewController {
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_SUBMIT_INTERVIEW);
     }
 
+    @GetMapping("/{code}/result")
+    public ApiResponse<InterviewResultResponse> getResult(@CurrentUser AuthUserInfoDto userInfo,
+        @PathVariable String code) {
+        InterviewGradingResultDto gradingResult = gradingService.getInterviewGradingResult(userInfo.id(), code);
+        return ApiResponse.ok(InterviewSuccessCode.SUCCESS_GET_RESULT, InterviewResultResponse.of(gradingResult));
+    }
 }
