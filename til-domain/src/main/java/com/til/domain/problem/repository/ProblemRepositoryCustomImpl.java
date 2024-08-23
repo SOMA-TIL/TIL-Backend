@@ -15,6 +15,8 @@ import static com.til.domain.problem.repository.ProblemQueryCondition.linkProble
 import static com.til.domain.problem.repository.ProblemQueryCondition.linkProblemWithUserFavorite;
 import static com.til.domain.problem.repository.ProblemQueryCondition.linkProblemWithUserProblem;
 import static com.til.domain.problem.repository.ProblemQueryCondition.linkUserProblemWithGrading;
+import static com.til.utils.data.ListUtil.isNullOrEmpty;
+import static com.til.utils.data.StringUtil.hasText;
 
 import java.util.List;
 import java.util.Map;
@@ -187,31 +189,26 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     }
 
     private BooleanExpression getSearchCondition(ProblemSearchDto searchDto) {
-        BooleanExpression keywordCondition = hasText(searchDto.keyword())
-            ? problem.title.containsIgnoreCase(searchDto.keyword())
-            : null;
-
-        BooleanExpression levelCondition = searchDto.levelList() != null && !searchDto.levelList().isEmpty()
-            ? problem.level.in(searchDto.levelList())
-            : null;
-
-        BooleanExpression categoryCondition = inCategories(searchDto.categoryList());
-
-        return allOf(keywordCondition, levelCondition, categoryCondition);
+        return allOf(
+            getKeywordCondition(searchDto.keyword()),
+            getLevelCondition(searchDto.levelList()),
+            getCategoryCondition(searchDto.categoryList())
+        );
     }
 
-    private BooleanExpression inCategories(List<Long> categoryIds) {
-        if (categoryIds == null || categoryIds.isEmpty()) {
-            return null;
-        }
-        return JPAExpressions.selectFrom(problemCategory)
+    private BooleanExpression getKeywordCondition(String keyword) {
+        return hasText(keyword) ? problem.title.containsIgnoreCase(keyword) : null;
+    }
+
+    private static BooleanExpression getLevelCondition(List<Integer> levelList) {
+        return !isNullOrEmpty(levelList) ? problem.level.in(levelList) : null;
+    }
+
+    private BooleanExpression getCategoryCondition(List<Long> categoryList) {
+        return !isNullOrEmpty(categoryList) ? JPAExpressions.selectFrom(problemCategory)
             .where(problemCategory.problemId.eq(problem.id))
-            .where(problemCategory.categoryId.in(categoryIds))
-            .exists();
-    }
-
-    private boolean hasText(String text) {
-        return text != null && !text.trim().isEmpty();
+            .where(problemCategory.categoryId.in(categoryList))
+            .exists() : null;
     }
 
     private OrderSpecifier<?> getOrderSpecifier(Pageable pageable) {
