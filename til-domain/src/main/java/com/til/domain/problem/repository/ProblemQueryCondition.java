@@ -10,6 +10,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.til.domain.grading.enums.AnswerType;
 import com.til.domain.grading.enums.GradingResult;
 import com.til.domain.grading.enums.GradingStatus;
+import com.til.domain.problem.enums.ProblemUserStatus;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -42,5 +43,13 @@ public class ProblemQueryCondition {
 
     public static BooleanExpression isResultPassed() {
         return grading.result.eq(GradingResult.PASS);
+    }
+
+    public static BooleanExpression getUserStatusCondition(ProblemUserStatus userStatus) {
+        return (userStatus == null) ? null : switch (userStatus) {
+            case PASS -> userProblem.id.count().gt(0).and(grading.result.count().gt(0L));
+            case FAIL -> userProblem.id.count().gt(0).and(grading.result.count().eq(0L));
+            case NOT_ATTEMPTED -> userProblem.id.count().eq(0L);
+        };
     }
 }
