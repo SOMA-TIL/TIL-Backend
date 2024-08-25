@@ -1,5 +1,7 @@
 package com.til.controller.problem.request;
 
+import static com.til.utils.data.BooleanUtil.getOrFalse;
+
 import java.util.List;
 
 import com.til.domain.problem.dto.ProblemSearchDto;
@@ -10,7 +12,8 @@ public record SearchProblemRequest(
                                    Integer level,
                                    List<Long> categoryList,
                                    List<Integer> levelList,
-                                   ProblemUserStatus status
+                                   ProblemUserStatus status,
+                                   Boolean isFavorite
 ) {
 
     public ProblemSearchDto toServiceDto() {
@@ -20,6 +23,7 @@ public record SearchProblemRequest(
             .categoryList(this.categoryList)
             .levelList(this.levelList)
             .status(this.status)
+            .isFavorite(getOrFalse(this.isFavorite))
             .build();
     }
 }

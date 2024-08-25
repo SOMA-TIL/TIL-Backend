@@ -34,10 +34,12 @@ import com.til.domain.problem.enums.ProblemSuccessCode;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/problem")
+@Slf4j
 public class ProblemController {
 
     private final ProblemService problemService;
@@ -47,12 +49,12 @@ public class ProblemController {
     @GetMapping("")
     public ApiResponse<ProblemPageResponse> getProblemList(@CurrentUser(required = false) AuthUserInfoDto userInfo,
         @ModelAttribute PageParamRequest pageParamRequest, @ModelAttribute SearchProblemRequest searchProblemRequest) {
+        log.debug("searchProblemRequest: {}", searchProblemRequest);
         pageParamRequest.validate();
-        ProblemPageDto<ProblemOverviewInfoDto> problemPageDto = problemService.getProblemOverviewList(userInfo,
-            pageParamRequest
-                .toServiceDto(), searchProblemRequest.toServiceDto());
-        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_LIST, ProblemPageResponse.of(problemPageDto
-            .problemList(), problemPageDto.pageInfo()));
+        ProblemPageDto<ProblemOverviewInfoDto> problemPage = problemService.getProblemOverviewList(userInfo,
+            pageParamRequest.toServiceDto(), searchProblemRequest.toServiceDto());
+        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_LIST,
+            ProblemPageResponse.of(problemPage.problemList(), problemPage.pageInfo()));
     }
 
     @GetMapping("/{id}")
