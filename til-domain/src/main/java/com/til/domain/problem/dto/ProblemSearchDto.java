@@ -12,7 +12,8 @@ public record ProblemSearchDto(
                                Integer level,
                                List<Long> categoryList,
                                List<Integer> levelList,
-                               ProblemUserStatus status
+                               ProblemUserStatus status,
+                               boolean isFavorite
 ) {
 
 }

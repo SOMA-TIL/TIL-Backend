@@ -8,7 +8,8 @@ import static com.til.domain.problem.model.QFavoriteProblem.favoriteProblem;
 import static com.til.domain.problem.model.QProblem.problem;
 import static com.til.domain.problem.model.QProblemStatistics.problemStatistics;
 import static com.til.domain.problem.model.QUserProblem.userProblem;
-import static com.til.domain.problem.repository.ProblemQueryCondition.getUserStatusCondition;
+import static com.til.domain.problem.repository.ProblemQueryCondition.getProblemFavoriteCondition;
+import static com.til.domain.problem.repository.ProblemQueryCondition.getProblemUserStatusCondition;
 import static com.til.domain.problem.repository.ProblemQueryCondition.isGradingStatus;
 import static com.til.domain.problem.repository.ProblemQueryCondition.isResultPassed;
 import static com.til.domain.problem.repository.ProblemQueryCondition.linkProblemWithStatistics;
@@ -45,6 +46,7 @@ import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.dto.ProblemSearchDto;
 import com.til.domain.problem.dto.ProblemUserStatusDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
+import com.til.domain.problem.enums.ProblemUserStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -97,7 +99,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     public Page<ProblemOverviewInfoDto> getProblemOverviewListWithUserData(Pageable pageable,
         ProblemSearchDto searchDto, Long userId) {
         BooleanExpression searchCondition = getSearchCondition(searchDto);
-        BooleanExpression userStatusCondition = getUserStatusCondition(searchDto.status());
+        BooleanExpression userStatusCondition = getUserStatusCondition(searchDto.status(), searchDto.isFavorite());
 
         List<Tuple> data = queryFactory
             .select(
@@ -193,6 +195,13 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             getKeywordCondition(searchDto.keyword()),
             getLevelCondition(searchDto.levelList()),
             getCategoryCondition(searchDto.categoryList())
+        );
+    }
+
+    private BooleanExpression getUserStatusCondition(ProblemUserStatus userStatus, boolean isFavorite) {
+        return allOf(
+            getProblemUserStatusCondition(userStatus),
+            getProblemFavoriteCondition(isFavorite)
         );
     }
 

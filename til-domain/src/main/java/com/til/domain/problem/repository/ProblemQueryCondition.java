@@ -45,11 +45,15 @@ public class ProblemQueryCondition {
         return grading.result.eq(GradingResult.PASS);
     }
 
-    public static BooleanExpression getUserStatusCondition(ProblemUserStatus userStatus) {
+    public static BooleanExpression getProblemUserStatusCondition(ProblemUserStatus userStatus) {
         return (userStatus == null) ? null : switch (userStatus) {
             case PASS -> userProblem.id.count().gt(0).and(grading.result.count().gt(0L));
             case FAIL -> userProblem.id.count().gt(0).and(grading.result.count().eq(0L));
             case NOT_ATTEMPTED -> userProblem.id.count().eq(0L);
         };
+    }
+
+    public static BooleanExpression getProblemFavoriteCondition(boolean isFavorite) {
+        return isFavorite ? favoriteProblem.id.count().gt(0) : null;
     }
 }
