@@ -92,9 +92,9 @@ subprojects {
     sourceSets { // 서브 모듈에 해당하는 환경변수 경로 연결
         main {
             resources {
-                srcDir "${rootProject.projectDir}/configs/${project.name.split('-')[1]}"
-                srcDir "${rootProject.projectDir}/db"
-                srcDir "${rootProject.projectDir}/log4j2"
+                srcDir "${rootDir}/configs/${project.name.replaceFirst(/^til-/, '')}"
+                srcDir "${rootDir}/db"
+                srcDir "${rootDir}/log4j2"
             }
         }
     }
