@@ -5,9 +5,9 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.til.config.properties.JwtProperties;
 import com.til.domain.auth.enums.AuthErrorCode;
 import com.til.domain.auth.exception.TokenInvalidException;
 
@@ -20,20 +20,21 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class TokenProvider {
 
-    @Value("${jwt.secret}")
-    private String SECRET_KEY;
+    private final JwtProperties jwtProps;
 
     private SecretKey SIGN_KEY;
 
     @PostConstruct
     public void settingSecretKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProps.getSecret());
         this.SIGN_KEY = Keys.hmacShaKeyFor(keyBytes);
     }
 
