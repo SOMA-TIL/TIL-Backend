@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.til.config.properties.GradingApiProperties;
 import com.til.domain.grading.dto.GradingInputDataDto;
 import com.til.domain.grading.dto.GradingResultDto;
 import com.til.domain.grading.dto.InterviewGradingResultDto;
@@ -33,11 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GradingService {
 
-    @Value("${grading-service.api.url}")
-    private String GRADING_API_URL;
-
-    @Value("${grading-service.api.key}")
-    private String GRADING_API_KEY;
+    private final GradingApiProperties gradingApiProps;
 
     private final GradingRepository gradingRepository;
     private final UserProblemRepository userProblemRepository;
@@ -48,7 +44,7 @@ public class GradingService {
 
     @PostConstruct
     public void init() {
-        this.webClient = WebClient.builder().baseUrl(GRADING_API_URL).build();
+        this.webClient = WebClient.builder().baseUrl(gradingApiProps.getUrl()).build();
     }
 
     @Async
@@ -118,7 +114,7 @@ public class GradingService {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return webClient.post()
-                    .header(AUTHORIZATION_HEADER, GRADING_API_KEY)
+                    .header(AUTHORIZATION_HEADER, gradingApiProps.getKey())
                     .bodyValue(gradingInputDataDto)
                     .retrieve()
                     .bodyToMono(GradingResultDto.class)

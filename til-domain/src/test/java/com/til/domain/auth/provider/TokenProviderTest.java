@@ -32,7 +32,6 @@ class TokenProviderTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(tokenProvider, "SECRET_KEY", SECRET_KEY);
         ReflectionTestUtils.setField(tokenProvider, "SIGN_KEY", Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY)));
     }
 
