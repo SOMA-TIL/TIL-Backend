@@ -26,6 +26,8 @@ public record PageParamRequest(
     }
 
     public PageParamDto toServiceDto() {
+        this.validate();
+
         return PageParamDto.builder()
             .page(this.page)
             .size(this.size)
@@ -34,7 +36,7 @@ public record PageParamRequest(
             .build();
     }
 
-    public void validate() {
+    private void validate() {
         if (page < 0) {
             throw new BaseException(BaseErrorCode.INVALID_PAGE_REQUEST);
         }
