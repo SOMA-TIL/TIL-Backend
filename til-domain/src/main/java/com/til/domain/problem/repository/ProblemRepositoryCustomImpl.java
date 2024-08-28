@@ -222,10 +222,20 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
 
     private OrderSpecifier<?> getOrderSpecifier(Pageable pageable) {
         Sort.Order order = pageable.getSort().iterator().next();
-        PathBuilder<Object> pathBuilder = new PathBuilder<>(problem.getType(), problem.getMetadata());
+        String property = order.getProperty();
+        PathBuilder<?> pathBuilder;
+
+        if ("id".equals(property) || "title".equals(property) || "level".equals(property)) {
+            pathBuilder = new PathBuilder<>(problem.getType(), "problem");
+        } else if ("passedCount".equals(property) || "passRate".equals(property) || "attemptCount".equals(property)) {
+            pathBuilder = new PathBuilder<>(problemStatistics.getType(), "problemStatistics");
+        } else {
+            throw new IllegalArgumentException("정렬할 수 없는 속성입니다: " + property);
+        }
+
         return new OrderSpecifier(
             order.isAscending() ? Order.ASC : Order.DESC,
-            pathBuilder.get(order.getProperty())
+            pathBuilder.get(property)
         );
     }
 }
