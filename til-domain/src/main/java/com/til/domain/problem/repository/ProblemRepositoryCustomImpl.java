@@ -46,6 +46,7 @@ import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.dto.ProblemSearchDto;
 import com.til.domain.problem.dto.ProblemUserStatusDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
+import com.til.domain.problem.enums.ProblemSortCriteria;
 import com.til.domain.problem.enums.ProblemUserStatus;
 
 import lombok.RequiredArgsConstructor;
@@ -223,14 +224,15 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     private OrderSpecifier<?> getOrderSpecifier(Pageable pageable) {
         Sort.Order order = pageable.getSort().iterator().next();
         String property = order.getProperty();
-        PathBuilder<?> pathBuilder;
 
-        if ("id".equals(property) || "title".equals(property) || "level".equals(property)) {
+        ProblemSortCriteria sortCriteria = ProblemSortCriteria.fromString(property);
+
+        PathBuilder<?> pathBuilder;
+        if (sortCriteria == ProblemSortCriteria.ID || sortCriteria == ProblemSortCriteria.TITLE || sortCriteria
+            == ProblemSortCriteria.LEVEL) {
             pathBuilder = new PathBuilder<>(problem.getType(), "problem");
-        } else if ("passedCount".equals(property) || "passRate".equals(property) || "attemptCount".equals(property)) {
-            pathBuilder = new PathBuilder<>(problemStatistics.getType(), "problemStatistics");
         } else {
-            throw new IllegalArgumentException("정렬할 수 없는 속성입니다: " + property);
+            pathBuilder = new PathBuilder<>(problemStatistics.getType(), "problemStatistics");
         }
 
         return new OrderSpecifier(
