@@ -14,6 +14,10 @@ public enum ProblemSortCriteria {
         this.fieldName = fieldName;
     }
 
+    public String getFieldName() {
+        return fieldName;
+    }
+
     public static ProblemSortCriteria fromString(String fieldName) {
         for (ProblemSortCriteria field : ProblemSortCriteria.values()) {
             if (field.fieldName.equalsIgnoreCase(fieldName)) {
