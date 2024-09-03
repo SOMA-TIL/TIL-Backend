@@ -5,12 +5,12 @@ import static com.til.domain.auth.enums.AuthConstants.BEARER_TYPE;
 import java.util.Map;
 import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.til.config.db.RedisManager;
+import com.til.config.properties.JwtProperties;
 import com.til.domain.auth.dto.AuthTokenDto;
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.auth.enums.AuthErrorCode;
@@ -26,19 +26,15 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AuthService {
 
+    private final JwtProperties jwtProps;
+
     private final TokenProvider tokenProvider;
     private final RedisManager redisManager;
-
-    @Value("${jwt.access.expiration}")
-    private Long ACCESS_EXPIRE_DURATION;
-
-    @Value("${jwt.refresh.expiration}")
-    private Long REFRESH_EXPIRE_DURATION;
 
     public AuthTokenDto createToken(AuthUserInfoDto authUserInfoDto) {
         String accessToken = generateToken(authUserInfoDto, TokenType.ACCESS);
         String refreshToken = generateToken(authUserInfoDto, TokenType.REFRESH);
-        redisManager.setData(generateKeyForRedis(authUserInfoDto.id()), refreshToken, REFRESH_EXPIRE_DURATION);
+        redisManager.setData(generateKeyForRedis(authUserInfoDto.id()), refreshToken, jwtProps.getRefreshExpiration());
 
         return AuthTokenDto.of(accessToken, refreshToken);
     }
@@ -99,7 +95,7 @@ public class AuthService {
     }
 
     private Long getExpireDuration(TokenType tokenType) {
-        return tokenType == TokenType.ACCESS ? ACCESS_EXPIRE_DURATION : REFRESH_EXPIRE_DURATION;
+        return tokenType == TokenType.ACCESS ? jwtProps.getAccessExpiration() : jwtProps.getRefreshExpiration();
     }
 
     private static String generateKeyForRedis(Long id) {

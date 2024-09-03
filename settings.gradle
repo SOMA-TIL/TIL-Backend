@@ -1,4 +1,6 @@
 rootProject.name = 'TIL-Backend'
+
+include 'til-admin-api'
 include 'til-api'
 include 'til-domain'
 include 'til-batch'

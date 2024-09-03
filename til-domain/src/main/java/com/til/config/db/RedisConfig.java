@@ -1,6 +1,5 @@
 package com.til.config.db;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -10,25 +9,23 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import com.til.config.properties.RedisProperties;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableRedisRepositories
+@RequiredArgsConstructor
 public class RedisConfig {
 
-    @Value("${spring.data.redis.host}")
-    private String HOST;
-
-    @Value("${spring.data.redis.port}")
-    private int PORT;
-
-    @Value("${spring.data.redis.password}")
-    private String PASSWORD;
+    private final RedisProperties redisProps;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
-        redisConfiguration.setHostName(HOST);
-        redisConfiguration.setPort(PORT);
-        redisConfiguration.setPassword(PASSWORD);
+        redisConfiguration.setHostName(redisProps.getHost());
+        redisConfiguration.setPort(redisProps.getPort());
+        redisConfiguration.setPassword(redisProps.getPassword());
 
         return new LettuceConnectionFactory(redisConfiguration);
     }

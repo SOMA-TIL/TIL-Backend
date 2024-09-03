@@ -3,6 +3,7 @@ package com.til.common.page;
 import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.common.enums.BaseErrorCode;
 import com.til.domain.common.exception.BaseException;
+import com.til.domain.problem.enums.ProblemSortCriteria;
 
 import lombok.Builder;
 
@@ -18,7 +19,7 @@ public record PageParamRequest(
         page = page != null ? page : 0;
         size = size != null ? size : 10;
         sort = sort != null ? sort : "id";
-        order = order != null ? order : "asc";
+        order = order != null ? order : "desc";
     }
 
     public static PageParamRequest of(Integer page, Integer size, String sort, String order) {
@@ -26,6 +27,8 @@ public record PageParamRequest(
     }
 
     public PageParamDto toServiceDto() {
+        this.validate();
+
         return PageParamDto.builder()
             .page(this.page)
             .size(this.size)
@@ -34,15 +37,27 @@ public record PageParamRequest(
             .build();
     }
 
-    public void validate() {
+    private void validate() {
         if (page < 0) {
             throw new BaseException(BaseErrorCode.INVALID_PAGE_REQUEST);
         }
         if (size <= 0) {
             throw new BaseException(BaseErrorCode.INVALID_PAGE_REQUEST);
         }
+        if (!isValidSortField(sort)) {
+            throw new BaseException(BaseErrorCode.INVALID_PAGE_REQUEST);
+        }
         if (!isValidOrder(order)) {
             throw new BaseException(BaseErrorCode.INVALID_PAGE_REQUEST);
+        }
+    }
+
+    private boolean isValidSortField(String sort) {
+        try {
+            ProblemSortCriteria.fromString(sort);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
         }
     }
 

@@ -19,6 +19,7 @@ import static com.til.domain.problem.repository.ProblemQueryCondition.linkUserPr
 import static com.til.utils.data.ListUtil.isNullOrEmpty;
 import static com.til.utils.data.StringUtil.hasText;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,6 +47,7 @@ import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.dto.ProblemSearchDto;
 import com.til.domain.problem.dto.ProblemUserStatusDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
+import com.til.domain.problem.enums.ProblemSortCriteria;
 import com.til.domain.problem.enums.ProblemUserStatus;
 
 import lombok.RequiredArgsConstructor;
@@ -67,6 +69,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
     public Page<ProblemOverviewInfoDto> getProblemPublicOverviewInfoList(Pageable pageable,
         ProblemSearchDto searchDto) {
         BooleanExpression searchCondition = getSearchCondition(searchDto);
+        List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable);
 
         List<ProblemBasicInfoDto> problemList = queryFactory
             .select(Projections.constructor(ProblemBasicInfoDto.class,
@@ -81,7 +84,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             .where(searchCondition)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .orderBy(getOrderSpecifier(pageable))
+            .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
             .fetch();
 
         Map<Long, List<Long>> categoryInfo = queryFactory.from(problemCategory)
@@ -100,6 +103,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
         ProblemSearchDto searchDto, Long userId) {
         BooleanExpression searchCondition = getSearchCondition(searchDto);
         BooleanExpression userStatusCondition = getUserStatusCondition(searchDto.status(), searchDto.isFavorite());
+        List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable);
 
         List<Tuple> data = queryFactory
             .select(
@@ -124,7 +128,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             .where(searchCondition)
             .groupBy(problem.id, problem.title, problem.level)
             .having(userStatusCondition)
-            .orderBy(getOrderSpecifier(pageable))
+            .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -220,12 +224,32 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             .exists() : null;
     }
 
-    private OrderSpecifier<?> getOrderSpecifier(Pageable pageable) {
+    private List<OrderSpecifier<?>> getOrderSpecifiers(Pageable pageable) {
+        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
         Sort.Order order = pageable.getSort().iterator().next();
-        PathBuilder<Object> pathBuilder = new PathBuilder<>(problem.getType(), problem.getMetadata());
-        return new OrderSpecifier(
+        String property = order.getProperty();
+
+        ProblemSortCriteria sortCriteria = ProblemSortCriteria.fromString(property);
+
+        PathBuilder<?> pathBuilder;
+        if (sortCriteria == ProblemSortCriteria.ID || sortCriteria == ProblemSortCriteria.TITLE || sortCriteria
+            == ProblemSortCriteria.LEVEL) {
+            pathBuilder = new PathBuilder<>(problem.getType(), "problem");
+        } else {
+            pathBuilder = new PathBuilder<>(problemStatistics.getType(), "problemStatistics");
+        }
+
+        orderSpecifiers.add(new OrderSpecifier(
             order.isAscending() ? Order.ASC : Order.DESC,
-            pathBuilder.get(order.getProperty())
-        );
+            pathBuilder.get(property)
+        ));
+
+        if (sortCriteria != ProblemSortCriteria.ID) {
+            PathBuilder<?> idPathBuilder = new PathBuilder<>(problem.getType(), "problem");
+            orderSpecifiers.add(new OrderSpecifier(Order.DESC, idPathBuilder.get(ProblemSortCriteria.ID
+                .getFieldName())));
+        }
+
+        return orderSpecifiers;
     }
 }
