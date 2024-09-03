@@ -3,148 +3,330 @@ INSERT INTO user (id, email, nickname, password, platform, role, status, created
 VALUES
     -- admin (password1234)
     (1, "admin@gmail.com", "admin", "$2a$10$Yq0ykHrhZpyTaU8qRlQ2gO/tt2wGH/.2PDhTWz2rbGhp6JBq3zj9G", "TIL", "ADMIN", "ACTIVE", now(), now()),
-    -- status tester (password1234)
-    (2, "active@gmail.com", "활성테스터", "$2a$10$HLIp6eyR1TBj8p4ym8R4lujjoK9/YmYQ.S7vQnE.tvTUv66c3KEI2", "TIL", "USER", "ACTIVE", now(), now()),
-    (3, "inactive@gmail.com", "비활성테스터", "$2a$10$.PP19y7.Sh219cTjIjf0IONl86qw.jjzgqrN5ys/Rq9YQ/jAoF8oS", "TIL", "USER", "INACTIVE", now(), now()),
-    (4, "stop@gmail.com", "멈춤테스터", "$2a$10$O3su9ESC2LihHEYb9ju7Pe5fw28Ymk9f6UexKTrFKNaxbyFyGr7k2", "TIL", "USER", "STOP", now(), now()),
-    (5, "deleted@gmail.com", "삭제됨테스터", "$2a$10$Sh87ZPuSpa1esDabT5TTOOaSaq77bgRhDQOxcbhNiX35xPfLLpRNW", "TIL", "USER", "DELETED", now(), now()),
     -- platform tester (password1234)
-    (6, "til@gmail.com", "TIL테스터", "$2a$10$KVjNfNIjrXmpy7kOBVTgLearEEL9X0RFokw0rMWuObSq4fCEhhO9i", "TIL", "USER", "ACTIVE", now(), now()),
-    (7, "google@gmail.com", "구글테스터", "password1234", "GOOGLE", "USER", "ACTIVE", now(), now()),
-    (8, "naver@naver.com", "네이버테스터", "password1234", "NAVER", "USER", "ACTIVE", now(), now()),
-    (9, "kakao@gmail.com", "카카오테스터", "password1234", "KAKAO", "USER", "ACTIVE", now(), now()),
-    -- dummy users (password1, password2, ..., password12)
-    (10, "user1@gmail.com", "유저1", "$2a$10$i6v4UBbjOMYckcEtKU.sHuJKQzembjPezQ4uVeB5AuUDabO8/aP3C", "TIL", "USER", "ACTIVE", now(), now()),
-    (11, "user2@gmail.com", "유저2", "password1234", "GOOGLE", "USER", "ACTIVE", now(), now()),
-    (12, "user3@naver.com", "유저3", "password1234", "NAVER", "USER", "ACTIVE", now(), now()),
-    (13, "user4@kakao.com", "유저4", "password1234", "KAKAO", "USER", "ACTIVE", now(), now()),
-    (14, "user5@gmail.com", "유저5", "$2a$10$HJ0EsvgmaY295EpETWBLaem.t5uNJqczTrb09rRGW4Jb23lSkNIre", "TIL", "USER", "ACTIVE", now(), now()),
-    (15, "user6@gmail.com", "유저6", "password1234", "GOOGLE", "USER", "ACTIVE", now(), now()),
-    (16, "user7@naver.com", "유저7", "password1234", "NAVER", "USER", "ACTIVE", now(), now()),
-    (17, "user8@kakao.com", "유저8", "password1234", "KAKAO", "USER", "ACTIVE", now(), now()),
-    (18, "user9@gmail.com", "유저9", "$2a$10$r6iR7iJ/ZwO1/8sbho2Gu.IKTkdvWlzedGI4IOj2eS02iFLlSiEDi", "TIL", "USER", "ACTIVE", now(), now()),
-    (19, "user10@gmail.com", "유저10", "password1234", "GOOGLE", "USER", "ACTIVE", now(), now()),
-    (20, "user11@naver.com", "유저11", "password1234", "NAVER", "USER", "ACTIVE", now(), now()),
-    (21, "user12@kakao.com", "유저12", "password1234", "KAKAO", "USER", "ACTIVE", now(), now());
-
+    (2, "til@gmail.com", "TIL유저", "$2a$10$KVjNfNIjrXmpy7kOBVTgLearEEL9X0RFokw0rMWuObSq4fCEhhO9i", "TIL", "USER", "ACTIVE", now(), now()),
+    -- dummy users (password1234)
+    (3, "clean@gmail.com", "클린유저", "$2a$10$fnpPs0EsKo18BVECVeQWP.N3MXgD3vWI0bBNx3Vt1DdLkIW4yX/ay", "TIL", "USER", "ACTIVE", now(), now());
 
 -- =================== category ===================
 INSERT INTO category (id, tag, created_date, modified_date)
 VALUES
-    -- 네트워크
-    (1, "네트워크", now(), now()),
-    (2, "HTTP", now(), now()),
-    (3, "OSI 7계층", now(), now()),
-    (4, "Transport 계층", now(), now()),
-    -- 데이터베이스
-    (5, "데이터베이스", now(), now()),
-    (6, "트랜잭션", now(), now()),
-    (7, "인덱스", now(), now()),
-    -- 자료구조
-    (8, "자료구조", now(), now()),
-    (9, "해시", now(), now()),
-    (10, "이진 탐색 트리", now(), now()),
-    (11, "연결 리스트", now(), now()),
-    -- 운영체제
-    (12, "운영체제", now(), now()),
-    (13, "프로세스와 스레드", now(), now()),
-    (14, "동시성", now(), now()),
-    (15, "페이징", now(), now()),
-    -- 디자인 패턴
-    (16, "디자인패턴", now(), now()),
-    -- 알고리즘
-    (17, "알고리즘", now(), now()),
-    (18, "정렬", now(), now()),
-    (19, "그래프", now(), now()),
-    (20, "탐색", now(), now());
-
-
+    (1, "자료구조", now(), now()),
+    (2, "운영체제", now(), now()),
+    (3, "네트워크", now(), now()),
+    (4, "데이터베이스", now(), now());
 
 -- =================== problem ===================
 INSERT INTO problem (id, title, question, solution, grading, level, created_date, modified_date)
 VALUES
-    (1, "Array vs LinkedList", "배열(Array)과 연결 리스트(LinkedList)의 데이터 접근 및 데이터 추가/삭제 관점에서 각각의 특성과 장단점을 비교해 주세요.",
-     "배열은 메모리에 연속적으로 저장되어 인덱스를 통해 빠르게 접근할 수 있지만, 크기가 고정되어 있고 삽입 및 삭제가 비효율적입니다. 반면, 연결 리스트는 노드들이 포인터로 연결된 구조로, 크기를 동적으로 조정할 수 있고 삽입 및 삭제가 효율적이지만, 인덱스를 통한 직접 접근이 불가능하며 추가적인 메모리를 필요로 합니다.",
-     "- 데이터 추가/삭제 관점에서 장단점을 설명했는가", 1, now(), now()),
-    (2, "객체지향 프로그래밍의 특징", "객체지향 프로그래밍의 대표적인 4가지 특징이 무엇인지 말하고 특징 2개를 골라서 설명해주세요.",
-     "객체지향 프로그래밍의 특징으로는 데이터 보호를 위한 캡슐화, 기능을 단순화하는 추상화, 코드 재사용성을 높이는 상속, 다양한 객체의 유연한 동작을 가능하게 하는 다형성이 있습니다.",
-     "- 4가지 특징을 모두 언급했는가\n- 두 가지 선택한 특징에 대해 구체적으로 설명했는가", 1, now(), now()),
-    (3, "Stack vs Queue", "스택(Stack)과 큐(Queue)의 작동 방식과 주요 차이점을 설명해주세요.",
-     "스택은 LIFO(Last In, First Out) 구조로, 마지막에 추가된 요소가 먼저 제거됩니다. 주요 연산으로는 push와 pop이 있습니다. 큐는 FIFO(First In, First Out) 구조로, 먼저 추가된 요소가 먼저 제거됩니다. 주요 연산으로는 enqueue와 dequeue가 있습니다.",
-     "- 스택과 큐의 작동 방식의 차이를 설명했는가", 1, now(), now()),
-    (4, "트리 자료구조", "트리(Tree) 자료구조의 특성과 이진 트리(Binary Tree)의 특징을 설명해주세요.",
-     "트리는 계층적 구조를 가지며, 노드들이 부모-자식 관계를 가집니다. 이진 트리는 각 노드가 최대 두 개의 자식 노드를 가지는 트리 구조로, 검색, 삽입, 삭제 연산이 효율적입니다.",
-     "- 트리의 기본 구조를 설명했는가\n- 이진 트리의 특징과 장점을 설명했는가", 1, now(), now()),
-    (5, "HashMap vs TreeMap", "HashMap과 TreeMap의 차이점과 각각의 장단점을 설명해주세요.",
-     "HashMap은 키-값 쌍을 해시테이블로 구현하여 빠른 검색 속도를 자랑하지만, 순서가 보장되지 않습니다. TreeMap은 키-값 쌍을 이진 검색 트리로 구현하여 순서가 보장되지만, 검색 속도가 상대적으로 느립니다.",
-     "- 두 자료구조의 주요 차이점을 설명했는가\n- 각각의 장단점을 언급했는가", 2, now(), now()),
-    (6, "정렬 알고리즘 비교", "버블 정렬(Bubble Sort)과 퀵 정렬(Quick Sort)의 작동 원리와 성능 차이를 설명해주세요.",
-     "버블 정렬은 인접한 두 요소를 비교하여 정렬하는 단순한 알고리즘으로, 시간 복잡도는 O(n^2)입니다. 퀵 정렬은 분할 정복 알고리즘을 사용하여 피벗을 기준으로 정렬하며, 평균 시간 복잡도는 O(n log n)입니다.",
-     "- 두 정렬 알고리즘의 작동 원리를 설명했는가\n- 시간 복잡도를 언급했는가", 1, now(), now()),
-    (7, "그래프 탐색 알고리즘", "깊이 우선 탐색(DFS)과 너비 우선 탐색(BFS)의 작동 방식과 차이점을 설명해주세요.",
-     "깊이 우선 탐색(DFS)은 재귀적 혹은 스택을 이용해 그래프의 끝까지 탐색한 후 돌아옵니다. 너비 우선 탐색(BFS)은 큐를 이용해 시작 노드로부터 가까운 노드부터 탐색합니다.",
-     "- DFS와 BFS의 작동 방식을 설명했는가", 1, now(), now()),
-    (8, "데이터베이스 정규화", "데이터베이스 정규화의 목적과 정규화 과정의 주요 단계를 설명해주세요.",
-     "정규화는 데이터 중복을 최소화하고 데이터 무결성을 유지하기 위해 수행됩니다. 주요 단계로는 1차 정규화(1NF), 2차 정규화(2NF), 3차 정규화(3NF)가 있습니다.",
-     "- 정규화의 목적을 설명했는가\n- 각 정규형의 특징을 언급했는가", 3, now(), now()),
-    (9, "API 설계 원칙", "RESTful API 설계의 기본 원칙과 장점을 설명해주세요.",
-     "RESTful API는 클라이언트-서버 구조, 무상태성, 캐시 처리, 계층 구조 등의 원칙을 따릅니다.",
-     "- RESTful API의 기본 원칙을 설명했는가", 2, now(), now()),
-    (10, "소프트웨어 개발 방법론", "애자일(Agile) 방법론과 폭포수(Waterfall) 방법론의 차이점을 설명해주세요.",
-     "애자일 방법론은 유연하고 반복적인 개발 주기를 강조하며, 폭포수 방법론은 단계별로 순차적으로 진행됩니다.",
-     "- 애자일과 폭포수 방법론의 주요 차이점을 설명했는가", 1, now(), now());
+    (1,
+      "Array vs  LinkedList",
+      "배열(Array)과 연결 리스트(LinkedList)의 데이터 접근 및 데이터 추가/삭제 관점에서 각각의 특성과 장단점을 비교해 주세요.",
+      "배열(Array)과 연결 리스트(LinkedList)는 데이터 구조의 기본 형태로 각각의 특성과 장단점이 있습니다. 배열은 메모리 상에 연속적으로 저장된 요소들의 집합으로, 인덱스를 통해 O(1) 시간 복잡도로 빠르게 접근할 수 있습니다. 그러나 배열의 크기는 고정되어 있어, 새로운 요소를 추가할 때는 배열을 재할당해야 하며, 요소의 삽입 및 삭제는 O(n) 시간 복잡도를 가지므로 비효율적입니다.
+        반면, 연결 리스트는 각 요소가 노드로 구성되어 있으며, 각 노드는 데이터와 다음 노드를 가리키는 포인터를 포함합니다. 연결 리스트는 크기를 동적으로 변경할 수 있어 요소의 삽입 및 삭제가 O(1) 시간 복잡도로 가능하지만, 인덱스를 통한 직접 접근이 불가능하여 특정 요소에 접근하기 위해 O(n) 시간이 걸립니다. 또한 각 노드에 포인터를 저장해야 하므로 추가적인 메모리 사용이 필요합니다.",
+      "- 데이터 접근 관점에서 각 특성과 장단점을 언급했는가
+        - 데이터 추가 관점에서 각 특성과 장단점을 언급했는가
+        - 데이터 삭제 관점에서 각 특성과 장단점을 언급했는가",
+      1, now(), now()),
+    (2,
+      "해시",
+      "자료구조에서 해시의 개념, 해시 충돌의 개념, 해시 충돌을 해결하기 위한 방법을 2가지 설명해주세요.",
+      "해시 (Hash): 해시는 자료구조에서 데이터를 고유한 키를 통해 저장하고 검색하는 방법입니다. 해시 함수는 입력 데이터를 고정된 크기의 해시 값으로 변환하는 함수로, 이 해시 값을 이용해 데이터를 저장할 위치를 결정합니다.
+        해시 충돌: 동일한 해시 값을 갖는 서로 다른 입력이 발생하여 저장할 위치가 중복되는 경우입니다.
+        해시 충돌 해결 방법
+        1. 체이닝(Chaining):해시 테이블의 각 인덱스에 연결 리스트를 사용하여 충돌을 처리합니다. 동일한 해시 값을 가진 데이터는 해당 인덱스의 연결 리스트에 추가됩니다. 이 방법은 간단하고 유연하지만, 연결 리스트가 길어질 경우 검색 성능이 저하될 수 있습니다.
+        2. 오픈 어드레싱(Open Addressing): 해시 테이블 내에서 충돌이 발생할 경우, 다른 빈 슬롯을 찾아 데이터를 저장하는 방법입니다.대표적인 기법으로는 선형 탐사(Linear Probing), 이차 탐사(Quadratic Probing), 더블 해싱(Double Hashing) 등이 있습니다.이 방법은 메모리를 효율적으로 사용하지만, 해시 테이블이 가득 차면 성능이 저하될 수 있습니다.
+        3. 해시 함수 개선: 해시 함수 자체를 개선하여 충돌 발생 확률을 줄이는 방법입니다. 다양한 해시 함수 알고리즘을 사용하여 입력 데이터의 분포를 고르게 만드는 것이 중요합니다.
+        4. 재해싱(Rehashing): 해시 테이블의 크기를 늘려 충돌을 줄이는 방법입니다. 데이터가 많이 저장되면 해시 테이블을 확장하고, 기존 데이터를 새로운 해시 테이블에 재배치합니다. 이 방법은 성능을 개선할 수 있지만, 재해싱 과정에서 일시적인 성능 저하가 발생할 수 있습니다.",
+      "- 해시, 해시 충돌의 개념을 설명했는가?
+        - 해시 충돌을 해결하기 위한 방법을 2가지 설명했는가?",
+      1, now(), now()),
+    (3,
+      "균형 트리",
+      "균형 트리의 일종인 AVL Tree, Red-Black Tree, B-Tree의 간략한 특징과 사용되는 곳을 설명해주세요.",
+      "1. AVL Tree
+        특징: 각 노드의 왼쪽과 오른쪽 서브트리의 높이 차이가 최대 1로 유지됩니다.높이를 기반으로 균형을 맞추기 위해 회전 연산을 사용합니다.
+        사용되는 곳: 검색이 빈번하고 삽입과 삭제가 적은 경우에 적합합니다.데이터베이스 인덱스나 메모리 내 데이터 구조에서 사용됩니다.
+
+        2. Red-Black Tree
+        특징: 각 노드에 색상(레드 또는 블랙)을 부여하여 균형을 유지합니다.여러 규칙(루트는 블랙, 레드 노드는 연속되지 않음 등)을 통해 균형을 보장합니다.
+        사용되는 곳: 삽입과 삭제가 빈번한 경우에 적합합니다. C++의 STL에서 std::map, std::set 등의 자료구조에 사용됩니다.
+
+        3. B-Tree
+        특징: 다차원적이고 각 노드가 여러 개의 자식 노드를 가질 수 있는 트리입니다.노드에 여러 개의 키를 저장하며, 자식 노드 수가 정해져 있습니다.
+        사용되는 곳: 대량의 데이터를 처리하는 데이터베이스 시스템과 파일 시스템에서 사용됩니다.MySQL, PostgreSQL과 같은 관계형 데이터베이스의 인덱스 구조로 활용됩니다.",
+      "- AVL Tree의 특징과 사용되는 곳을 설명했는가?
+        - Red-Black Tree의 특징과 사용되는 곳을 설명했는가?
+        - B-Tree의 특징과 사용되는 곳을 설명했는가?",
+      1, now(), now()),
+    (4,
+    "스택과 큐",
+    "Stack과 Queue의 실사용 예시를 각 자료구조의 작동 원리와 함께 간단히 설명해주세요.",
+    "스택의 실사용 예로는 웹 브라우저의 뒤로 가기 기능이 있습니다. 사용자가 웹 페이지를 탐색할 때, 방문한 페이지의 URL이 스택에 저장되며, [뒤로 가기] 버튼을 클릭하면 스택에서 가장 최근에 방문한 페이지가 제거되어 그 페이지로 이동하게 됩니다. 이는 후입선출(LIFO) 구조를 활용하여 마지막에 방문한 페이지를 쉽게 복원할 수 있게 합니다.
+      큐의 실사용 예로는 프린터 작업 관리가 있습니다. 여러 사용자가 프린터에 인쇄 작업을 요청할 때, 요청된 작업은 큐에 저장되며, 프린터는 큐에서 가장 먼저 들어온 작업부터 인쇄합니다. 이렇게 선입선출(FIFO) 방식으로 작업이 처리됨으로써 공정하게 인쇄 작업이 이루어집니다.",
+    "- 스택과 큐의 정의 및 작동 원리가 정확하게 설명되었는가
+      - 실사용 예가 관련 개념과 잘 연결되어 있는가",
+    1, now(), now()),
+    (5,
+    "배열(List)",
+    "Array(List)의 가장 큰 특징과 그로 인해 발생하는 장점과 단점에 대해 설명해주세요.",
+    "Array의 가장 큰 특징은 순차적으로 데이터를 저장한다는 점입니다.데이터에 순서가 있기 때문에 0부터 시작하는 index가 존재하며, index를 사용해 특정 요소를 찾고 조작이 가능하다는 것이 Array의 장점입니다.순차적으로 존재하는 데이터의 중간에 요소가 삽입되거나 삭제되는 경우 그 뒤의 모든 요소들을 한 칸씩 뒤로 밀거나 당겨줘야 하는 단점도 있습니다.이러한 이유로 Array는 정보가 자주 삭제되거나 추가되는 데이터를 담기에는 적절치 않습니다.",
+    "- Array의 특징을 정확하게 설명하는가?
+      - Array의 장단점을 각각 정확하게 설명하였는가?",
+    1, now(), now()),
+    (6,
+    "운영체제의 목적",
+    "운영체제의 주요 목적은?",
+    "운영체제는 컴퓨터 시스템 자원(CPU, Memory 등)을 효율적으로 관리해 시스템 효율성을 높이는 목적과 컴퓨터 시스템을 사용자로 하여금 편리하게 사용하도록 지원하는 사용자 편의성의 목적을 가진다.",
+    "- 운영체제의 주요 목적 2가지를 정확하게 설명하는가? ",
+    1, now(), now()),
+    (7,
+    "캐시 메모리",
+    "캐시 메모리의 개념과 교체 정책 세 가지를 설명해주세요.",
+    "캐시 메모리는 CPU와 메인 메모리 사이에 위치한 고속의 소형 메모리입니다. 캐시 메모리는 CPU가 자주 접근하는 데이터를 일시적으로 저장하여 CPU가 메모리보다 더 빠른 캐시 메모리에서 이를 읽을 수 있도록 하여 성능을 향상시킵니다. 캐시 메모리는 L1, L2, L3와 같은 계층 구조로 되어 있으며, 적중률을 높여 성능을 최적화하는 것이 중요합니다.
+      FIFO: 가장 먼저 들어간 데이터를 교체합니다.
+      LRU: 가장 오랫동안 사용되지 않은 데이터를 교체합니다.
+      LFU: 사용 횟수가 가장 적은 데이터를 교체합니다.",
+    "- 캐시 메모리에 대한 정의와 주요 개념을 서술했는가?
+      - 교체 정책 3가지를 설명했는가?",
+    1, now(), now()),
+    (8,
+    "데드락 개념과 발생 조건",
+    "데드락의 개념과 발생 조건 4가지를 설명해주세요.",
+    "데드락은 운영체제에서 여러 프로세스나 스레드가 서로 자원을 기다리며 무한정 대기하는 상황을 말합니다.
+      ### 데드락의 발생 조건
+      1. 상호 배제 (Mutual Exclusion): 자원은 한 번에 하나의 프로세스만 점유할 수 있습니다.
+      2. 점유 대기 (Hold and Wait): 이미 자원을 점유하고 있는 프로세스가 추가로 다른 자원을 요청하면서, 그 자원이 할당될 때까지 점유한 자원을 해제하지 않고 대기 상태로 머무릅니다.
+      3. 비선점 (No Preemption): 다른 프로세스가 이미 점유한 자원을 강제로 뺏을 수 없습니다. 자원을 점유한 프로세스가 자발적으로 자원을 해제할 때까지 기다려야 합니다.
+      4. 순환 대기 (Circular Wait): 대기 상태의 프로세스들이 원형으로 연결되어, 각 프로세스가 다음 프로세스가 점유한 자원을 기다리는 상황입니다. 예를 들어, 프로세스 A는 B의 자원을, B는 C의 자원을, C는 A의 자원을 기다리는 상태가 됩니다.",
+    "- 데드락의 개념에 대해 설명했는가?
+      - 발생 조건 4가지를 모두 설명했는가?",
+    1, now(), now()),
+    (9,
+    "데드락 해결 방법",
+    "데드락의 해결 방법 4가지와 각 방법의 예시를 설명해주세요.",
+    "1. 예방 (Prevention): 데드락 발생 조건 중 하나 이상을 제거하여 데드락이 발생하지 않도록 합니다. 예를 들어, 자원을 한 번에 하나씩만 요청하도록 제한하거나, 자원을 강제로 선점할 수 있게 만드는 방법이 있습니다. 예시로, 자원을 요청하기 전에 모든 자원을 할당받을 수 있을 때만 요청하도록 하는 방식이 있습니다.
+      2. 회피 (Avoidance): 시스템이 자원 할당 시 데드락 상황을 미리 예측하고, 발생하지 않도록 자원을 할당합니다. 대표적인 알고리즘으로 은행가 알고리즘(Banker’s Algorithm)이 있으며, 이는 모든 자원의 상태를 추적하여 안전한 상태에서만 자원을 할당합니다.
+      3. 탐지 (Detection): 시스템에서 데드락이 발생했는지 감지하여 그에 대한 조치를 취합니다. 예를 들어, 데드락 탐지 알고리즘을 통해 주기적으로 시스템 상태를 확인하고, 데드락이 발생하면 관련된 프로세스를 종료하거나 자원을 강제로 회수할 수 있습니다.
+      4. 회복 (Recovery): 데드락이 발생한 후 시스템을 정상 상태로 복원합니다. 예시로, 데드락 상태에 있는 프로세스를 강제 종료하여 자원을 회수하거나, 프로세스의 작업을 중단하고 나중에 다시 시도하게 하는 방법이 있습니다.",
+    "- 데드락의 해결 방법 4가지를 설명했는가?
+      - 각 해결 방법의 예시를 설명했는가?",
+    1, now(), now()),
+    (10,
+    "컨텍스트 스위칭",
+    "컨텍스트 스위칭에 대해서 설명하고, 왜 컨텍스트 스위칭이 필요한지 설명해주세요.",
+    "컨텍스트 스위칭은 운영 체제가 CPU의 작업을 하나의 프로세스에서 다른 프로세스로 전환하는 과정을 말합니다. 이 과정에서는 현재 실행 중인 프로세스의 상태(레지스터, 프로그램 카운터, 메모리 등)를 저장하고, 다음 실행할 프로세스의 상태를 복원합니다.
+      컨텍스트 스위칭이 필요한 이유는 여러 프로세스가 동시에 실행되도록 하여 시스템 자원을 효율적으로 활용하고, 사용자에게 더 나은 반응성을 제공하기 위함입니다. 이를 통해 운영 체제는 멀티태스킹을 지원하며, CPU 사용률을 극대화하고, 다양한 작업을 동시에 처리할 수 있게 됩니다.",
+    "- 컨텍스트 스위칭 개념에 대해 설명했는가?
+      - 컨텍스트 스위칭의 필요성에 대해 설명했는가?",
+    1, now(), now()),
+    (11,
+    "TCP",
+    "TCP의 특징, 장단점, 사용 예시를 설명하세요.",
+    "TCP (전송 제어 프로토콜)
+      특징
+      연결 지향: TCP는 데이터 전송 전에 연결을 설정하고, 데이터 전송이 완료된 후 연결을 종료합니다.
+      신뢰성: 데이터가 손실되거나 손상되지 않도록 보장합니다. 전송된 데이터의 순서를 보장하고, 오류 검출 및 수정 기능이 포함되어 있습니다.
+      흐름 제어: 수신자의 처리 능력에 맞춰 데이터 전송 속도를 조절합니다.
+      장점: 데이터 전송의 신뢰성이 높고, 순서가 보장됩니다.복잡한 애플리케이션에서 데이터의 일관성을 유지할 수 있습니다.
+      단점: 연결 설정과 종료 과정이 필요하여 오버헤드가 큽니다.상대적으로 느린 전송 속도를 가집니다.
+      사용 예시: 웹 브라우징(HTTP/HTTPS), 이메일 전송(SMTP, IMAP), 파일 전송(FTP)",
+    "- TCP의 특징, 장단점이 설명됐는가?
+      - TCP의 사용 예시가 1개 이상 설명됐는가?",
+    1, now(), now()),
+    (12,
+    "UDP",
+    "UDP의 특징, 장단점, 사용 예시를 설명하세요.",
+    "UDP (사용자 데이터그램 프로토콜)
+      특징
+      비연결 지향: 연결 설정 없이 데이터를 전송하며, 각 데이터그램이 독립적으로 처리됩니다.
+      신뢰성 없음: 데이터 전송의 순서나 무결성을 보장하지 않습니다. 손실된 데이터에 대한 재전송도 없습니다.
+      낮은 오버헤드: 헤더 크기가 작고, 연결 설정이 필요 없으므로 빠른 전송이 가능합니다.
+      장점: 빠른 데이터 전송이 가능하여 실시간 애플리케이션에 적합합니다. 오버헤드가 적어 대량의 데이터를 전송할 수 있습니다.
+      단점: 신뢰성이 떨어지며, 데이터 손실이나 순서 변경이 발생할 수 있습니다. 데이터의 일관성을 유지하기 어렵습니다.
+      사용 예시: 비디오 스트리밍 (예: YouTube), 온라인 게임 VoIP (Voice over IP)",
+    "- UDP의 특징, 장단점이 설명됐는가?
+      - UDP의 사용 예시가 1개 이상 설명됐는가?",
+    1, now(), now()),
+    (13,
+    "HTTP 프로토콜",
+    "HTTP 프로토콜의 특징과 장단점에 대해 설명해주세요.",
+    "HTTP(Hyper Text Transfer Protocol)이란 데이터를 주고 받기 위한 프로토콜이며, 서버/클라이언트 모델을 따릅니다.
+      HTTP는 상태 정보를 저장하지 않는 Stateless의 특징과 클라이언트의 요청에 맞는 응답을 보낸 후 연결을 끊는 Connectionless의 특징을 가지고 있습니다.
+      • 장점
+          ◦ 통신간의 연결 상태 처리나 상태 정보를 관리할 필요가 없어 서버 디자인이 간단하다.
+          ◦ 각각의 HTTP 요청에 독립적으로 응답만 보내주면 OK
+      • 단점
+          ◦ 이전 통신의 정보를 모르기 때문에 매번 인증을 해줘야 한다.
+          ◦ 이를 해결하기 위해 쿠키(cookie)나 세션(session)을 사용해서 데이터를 처리한다.",
+    "- HTTP의 특징을 설명했는가?
+      - HTTP의 장점, 단점을 각각 1가지 이상 설명했는가? ",
+    1, now(), now()),
+    (14,
+    "MAC(Media Access Control)",
+    "MAC(Media Access Control)에 대해 개념과 사용목적에 대해 설명해주세요.",
+    "랜카드에 하나의 고유한 주소를 부여함으로써, 네트워크 상에서 서로를 구분하고 통신할 하드웨어 장비를 식별할 수 있도록 하는 고유한(고정적인) 일종의 하드웨어 주소이다.
+      MAC 주소는 로컬 네트워크(LAN) 내에서 데이터 링크 계층의 장치 식별을 위해 사용됩니다. 스위치와 같은 네트워크 장치는 이 주소를 사용하여 올바른 장치로 데이터를 전달합니다.",
+    "- 개념을 정확하게 설명하는가?
+      - 사용하는 목적을 정확하게 설명하는가? ",
+    1, now(), now()),
+    (15,
+    "CORS(Cross-Origin Resource Sharing)",
+    "CORS(Cross-Origin Resource Sharing)란 개념과 동작원리에 대해 설명해주세요",
+    "브라우저에서는 보안적인 이유로 cross-origin HTTP 요청들을 제한합니다. 그래서 cross-origin 요청을 하려면 서버의 동의가 필요합니다. 만약 서버가 동의한다면 브라우저에서는 요청을 허락하고, 동의하지 않는다면 브라우저에서 거절합니다.
+      이러한 허락을 구하고 거절하는 메커니즘을 HTTP-header를 이용해서 가능한데, 이를 CORS(Cross-Origin Resource Sharing)라고 부릅니다. 그래서 브라우저에서 cross-origin 요청을 안전하게 할 수 있도록 하는 메커니즘입니다.
+      브라우저의 CORS 동작원리
+          1. 브라우저는 요청 헤더에 Origin이라는 필드에 본인 출처를 넣어서 보낸다.(cookie를 사용하는 보안과 관련된 것은 credentials 헤더를 true로 보내줘야 한다.)
+          2. 서버는 응답 헤더에 Access-Control-Allow-Origin에 본인이 허용하는 출처를 담아서 응답하게 된다.(cookie와 같은 보안과 관련된 것은 Access-Control-Allow-Credentials를 true로 응답해야 한다.)
+          3. 브라우저는 Origin과 Access-Control-Allow-Origin을 비교하고, 맞는지 틀린지 검사만 한다.
+          4. 맞으면 그대로 응답을 사용하고, 틀리다면 에러를 뱉고 응답을 버린다.",
+    "- 개념을 정확하게 설명했는가?
+      - 동작원리를 단계 별로 설명했는가? ",
+    1, now(), now()),
+    (16,
+    "비관적 락",
+    "비관적 락의 개념과 특징, 사용 사례에 대해 설명하세요.",
+    "개념: 비관적 락은 데이터에 대한 접근을 제어하기 위해 항상 락을 사용하는 방식으로, 데이터에 다른 트랜잭션이 동시에 접근하지 못하도록 락을 걸어, 충돌을 방지합니다.
+      특징
+      락 획득: 트랜잭션이 데이터에 접근하기 전에 락을 획득해야 하며, 다른 트랜잭션은 해당 데이터에 접근할 수 없습니다.
+      경쟁 조건 방지: 데이터의 일관성을 보장하지만, 성능 저하가 발생할 수 있습니다. 특히, 대기 시간이 길어질 수 있습니다.
+      사용 사례: 데이터 충돌 가능성이 높은 환경에서 사용되며, 주로 은행 시스템이나 재고 관리 시스템 등에서 많이 활용됩니다.",
+    "- 비관적 락의 개념과 특징이 설명됐는가?
+      - 비관적 락의 사용 사례가 1개 이상 설명됐는가?",
+    1, now(), now()),
+    (17,
+    "낙관적 락",
+    "낙관적 락의 개념과 특징, 사용 사례에 대해 설명하세요.",
+    "개념: 낙관적 락은 데이터에 대한 접근을 제어할 때, 다른 트랜잭션이 데이터를 변경하지 않을 것이라고 가정하여 트랜잭션이 완료될 때까지 락을 걸지 않고, 최종적으로 데이터의 일관성을 확인합니다.
+      특징
+      버전 관리: 일반적으로 각 데이터 레코드에 버전 번호 또는 타임스탬프를 두어, 변경 시 이를 비교하여 충돌 여부를 판단합니다.
+      충돌 시 처리: 트랜잭션이 완료되기 전에 데이터가 변경되었으면, 해당 트랜잭션은 실패하고 다시 시도해야 합니다. 따라서 성능이 향상될 수 있습니다.
+      사용 사례: 데이터 충돌 가능성이 낮은 환경에서 사용되며, SNS 어플리케이션이나 구글 문서와 같은 실시간 협업 도구에서 활용합니다.",
+    "- 낙관적 락의 개념과 특징이 설명됐는가?
+      - 낙관적 락의 사용 사례가 1개 이상 설명됐는가?",
+    1, now(), now()),
+    (18,
+    "트랜잭션",
+    "데이터베이스의 트랜잭션과 그 특징 4가지를 각각 한 문장으로 설명하세요.",
+    "트랜잭션
+      트랜잭션은 데이터베이스에서 일련의 작업을 하나의 단위로 묶어 처리하여 데이터의 일관성과 무결성을 유지하는 과정입니다.
+      특징
+      1. 원자성 (Atomicity): 트랜잭션 내의 모든 작업은 성공적으로 완료되거나, 하나라도 실패하면 모두 취소되어야 합니다.
+      2. 일관성 (Consistency): 트랜잭션이 완료된 후 데이터베이스는 유효한 상태를 유지해야 하며, 데이터의 무결성이 보장되어야 합니다.
+      3. 고립성 (Isolation): 동시에 실행되는 트랜잭션은 서로의 작업에 영향을 미치지 않아야 하며, 독립적으로 처리되어야 합니다.
+      4. 지속성 (Durability): 성공적으로 완료된 트랜잭션의 결과는 시스템 장애가 발생하더라도 영구적으로 저장되어야 합니다.",
+    "- 트랜잭션과 사용 이유가 설명됐는가?
+      - 트랜잭션의 특징 4가지가 설명됐는가?",
+    1, now(), now()),
+    (19,
+    "데이터베이스 뷰",
+    "데이터베이스 뷰란 무엇이며, 일반 테이블과 어떤 차이점이 있나요?",
+    "데이터베이스 뷰는 하나 이상의 테이블에서 유도된 가상의 테이블로, 특정 쿼리의 결과를 저장하여 사용자가 쉽게 접근할 수 있도록 해줍니다. 뷰는 실제 데이터를 저장하지 않으며, 기본 테이블의 데이터를 실시간으로 반영합니다. 일반 테이블과의 주요 차이점은 뷰는 저장된 데이터가 없고, 쿼리를 통해 동적으로 생성된 결과를 보여준다는 점입니다. 또한, 뷰를 사용하면 특정 열이나 행만 노출시켜 데이터 접근을 제한할 수 있어 보안과 데이터 관리에 유리합니다. 반면, 일반 테이블은 데이터를 물리적으로 저장하며, CRUD(Create, Read, Update, Delete) 작업을 직접 수행할 수 있습니다.",
+    "- 데이터베이스 뷰의 정의와 일반 테이블과의 차이점이 정확하게 설명되었는가?",
+    1, now(), now()),
+    (20,
+    "RDB와 NoSQL",
+    "RDB와 NoSQL의 차이에 대해서 설명하실 수 있나요?",
+    "RDB(관계형 데이터베이스)와 NoSQL(비관계형 데이터베이스)의 주요 차이는 다음과 같습니다. RDB는 데이터를 테이블 형식으로 저장하고 엄격한 스키마를 요구하며, ACID 속성을 준수하여 데이터의 일관성을 보장합니다. 반면, NoSQL은 다양한 데이터 형식을 지원하고 유연한 스키마를 가지며, 수평적 확장이 용이하고 BASE 모델을 따릅니다. RDB는 금융 시스템과 같이 데이터 일관성이 중요한 애플리케이션에 적합한 반면, NoSQL은 소셜 미디어와 빅데이터 분석 등 대규모 비정형 데이터를 처리하는 데 유리합니다.",
+    "- RDB와 NoSQL의 정의를 설명했는가?
+      - RDB와 NoSQL의 주요 차이점이 정확하게 설명되었는가?",
+    1, now(), now());
 
 -- =================== problem_category ===================
 INSERT INTO problem_category (problem_id, category_id, created_date, modified_date)
-VALUES (1, 8, now(), now()),
-       (1, 11, now(), now()),
-       (2, 16, now(), now()),
-       (3, 8, now(), now()),
-       (4, 8, now(), now()),
-       (5, 8, now(), now()),
-       (5, 9, now(), now()),
-       (6, 17, now(), now()),
-       (6, 18, now(), now()),
-       (7, 17, now(), now()),
-       (7, 19, now(), now()),
-       (8, 5, now(), now()),
-       (9, 16, now(), now()),
-       (10, 16, now(), now());
-
+VALUES
+    (1, 1, now(), now()),
+    (2, 1, now(), now()),
+    (3, 1, now(), now()),
+    (4, 1, now(), now()),
+    (5, 1, now(), now()),
+    (6, 2, now(), now()),
+    (7, 2, now(), now()),
+    (8, 2, now(), now()),
+    (9, 2, now(), now()),
+    (10, 2, now(), now()),
+    (11, 3, now(), now()),
+    (12, 3, now(), now()),
+    (13, 3, now(), now()),
+    (14, 3, now(), now()),
+    (15, 3, now(), now()),
+    (16, 4, now(), now()),
+    (17, 4, now(), now()),
+    (18, 4, now(), now()),
+    (19, 4, now(), now()),
+    (20, 4, now(), now());
 
 -- =================== favorite_problem ===================
 INSERT INTO favorite_problem (user_id, problem_id, created_date, modified_date)
-VALUES ((SELECT id FROM user WHERE email = "til@gmail.com"), 1, now(), now()),
-       ((SELECT id FROM user WHERE email = "til@gmail.com"), 7, now(), now()),
-       ((SELECT id FROM user WHERE email = "til@gmail.com"), 10, now(), now());
+VALUES
+    ((SELECT id FROM user WHERE email = "til@gmail.com"), 1, now(), now()),
+    ((SELECT id FROM user WHERE email = "til@gmail.com"), 6, now(), now()),
+    ((SELECT id FROM user WHERE email = "til@gmail.com"), 11, now(), now()),
+    ((SELECT id FROM user WHERE email = "til@gmail.com"), 16, now(), now());
 
 -- =================== solve_problem ===================
 INSERT INTO solve_problem (id, problem_id, user_id, answer, status, created_date, modified_date)
 VALUES
     (1, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 첫번째 답변 제출", "COMPLETED", now(), now()),
-    (2, 4, (SELECT id FROM user WHERE email = "til@gmail.com"), "4번 문제 첫번째 답변 제출", "COMPLETED", now(), now()),
-    (3, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 두번째 답변 제출", "COMPLETED", now(), now()),
-    (4, 1, (SELECT id FROM user WHERE email = "user2@gmail.com"), "1번 문제 첫번째 답변 제출", "PENDING", now(), now()),
-    (5, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 세번째 답변 제출", "COMPLETED", now(), now()),
-    (6, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 네번째 답변 제출", "COMPLETED", now(), now()),
-    (7, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 다섯번째 답변 제출", "COMPLETED", now(), now()),
-    (8, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 여섯번째 답변 제출", "COMPLETED", now(), now());
+    (2, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 두번째 답변 제출", "COMPLETED", now(), now()),
+    (3, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 세번째 답변 제출", "COMPLETED", now(), now()),
+    (4, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 네번째 답변 제출", "COMPLETED", now(), now()),
+    (5, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 다섯번째 답변 제출", "COMPLETED", now(), now()),
+    (6, 1, (SELECT id FROM user WHERE email = "til@gmail.com"), "1번 문제 여섯번째 답변 제출", "COMPLETED", now(), now()),
+    (7, 6, (SELECT id FROM user WHERE email = "til@gmail.com"), "6번 문제 첫번째 답변 제출", "COMPLETED", now(), now());
 
 
--- =================== grading ===================
+-- =================== grading(problem) ===================
 INSERT INTO grading (type, target_id, result, comment, created_date, modified_date)
 VALUES
     ("PROBLEM", 1, "PASS", "1번 문제 첫번째 답변 채점 결과 피드백", now(), now()),
-    ("PROBLEM", 2, "FAIL", "4번 문제 첫번째 답변 채점 결과 피드백", now(), now()),
-    ("PROBLEM", 3, "FAIL", "1번 문제 두번째 답변 채점 결과 피드백", now(), now()),
-    ("PROBLEM", 5, "PASS", "1번 문제 세번째 답변 채점 결과 피드백", now(), now()),
-    ("PROBLEM", 6, "PASS", "1번 문제 네번째 답변 채점 결과 피드백", now(), now()),
-    ("PROBLEM", 7, "PASS", "1번 문제 다섯번째 답변 채점 결과 피드백", now(), now()),
-    ("PROBLEM", 8, "PASS", "1번 문제 여섯번째 답변 채점 결과 피드백", now(), now());
+    ("PROBLEM", 2, "FAIL", "1번 문제 두번째 답변 채점 결과 피드백", now(), now()),
+    ("PROBLEM", 3, "PASS", "1번 문제 세번째 답변 채점 결과 피드백", now(), now()),
+    ("PROBLEM", 4, "PASS", "1번 문제 네번째 답변 채점 결과 피드백", now(), now()),
+    ("PROBLEM", 5, "PASS", "1번 문제 다섯번째 답변 채점 결과 피드백", now(), now()),
+    ("PROBLEM", 6, "PASS", "1번 문제 여섯번째 답변 채점 결과 피드백", now(), now()),
+    ("PROBLEM", 7, "FAIL", "6번 문제 첫번째 답변 채점 결과 피드백", now(), now());
+
 
 -- =================== interview ===================
-INSERT INTO interview (code, status, user_id, created_date, modified_date)
+INSERT INTO interview (id, code, status, user_id, created_date, modified_date)
 VALUES
-    ("qr6Os81rvNc", "DONE", 6, now(), now()),
-    ("R4hyQw5OqYo", "PROCESSING", 10, now(), now()),
-    ("_vTW7QV5Dsk", "ABORTED", 14, now(), now());
+    (1, "qr6Os81rvNc", "DONE", (SELECT id FROM user WHERE email = "til@gmail.com"), now(), now()),
+    (2, "R4hyQw5OqYo", "DONE", (SELECT id FROM user WHERE email = "til@gmail.com"), now(), now());
+
+
+-- =================== interview_category ===================
+INSERT INTO interview_category (id, interview_id, category_id, created_date, modified_date)
+VALUES
+    (1, 1, 1, now(), now()),
+    (2, 2, 2, now(), now());
+
+
+-- =================== interview_problem ===================
+INSERT INTO interview_problem (id, answer, sequence, status, grading_status, interview_id, problem_id, created_date, modified_date)
+VALUES
+    (1, "1번 인터뷰 시퀀스 1번 문제 답변", 1, "SOLVED", "COMPLETED", 1, 1, now(), now()),
+    (2, "1번 인터뷰 시퀀스 2번 문제 답변", 2, "SOLVED", "COMPLETED", 1, 2, now(), now()),
+    (3, "1번 인터뷰 시퀀스 3번 문제 답변", 3, "SOLVED", "COMPLETED", 1, 3, now(), now()),
+    (4, "1번 인터뷰 시퀀스 4번 문제 답변", 4, "SOLVED", "COMPLETED", 1, 4, now(), now()),
+    (5, "1번 인터뷰 시퀀스 5번 문제 답변", 5, "SOLVED", "COMPLETED", 1, 5, now(), now()),
+    (6, "2번 인터뷰 시퀀스 1번 문제 답변", 1, "SOLVED", "COMPLETED", 2, 6, now(), now()),
+    (7, "2번 인터뷰 시퀀스 2번 문제 답변", 2, "SOLVED", "COMPLETED", 2, 7, now(), now()),
+    (8, "2번 인터뷰 시퀀스 3번 문제 답변", 3, "SOLVED", "COMPLETED", 2, 8, now(), now()),
+    (9, "2번 인터뷰 시퀀스 4번 문제 답변", 4, "SOLVED", "COMPLETED", 2, 9, now(), now()),
+    (10, "2번 인터뷰 시퀀스 5번 문제 답변", 5, "SOLVED", "COMPLETED", 2, 10, now(), now());
+
+
+-- =================== grading(interview) ===================
+INSERT INTO grading (type, target_id, result, comment, created_date, modified_date)
+VALUES
+    ("INTERVIEW", 1, "PASS", "1번 인터뷰 문제 시퀀스 1번 문제 답변 채점 결과 피드백", now(), now()),
+    ("INTERVIEW", 2, "FAIL", "1번 인터뷰 문제 시퀀스 2번 문제 답변 채점 결과 피드백", now(), now()),
+    ("INTERVIEW", 3, "PASS", "1번 인터뷰 문제 시퀀스 3번 문제 답변 채점 결과 피드백", now(), now()),
+    ("INTERVIEW", 4, "PASS", "1번 인터뷰 문제 시퀀스 4번 문제 답변 채점 결과 피드백", now(), now()),
+    ("INTERVIEW", 5, "PASS", "1번 인터뷰 문제 시퀀스 5번 문제 답변 채점 결과 피드백", now(), now()),
+    ("INTERVIEW", 6, "PASS", "2번 인터뷰 문제 시퀀스 1번 문제 답변 채점 결과 피드백", now(), now()),
+    ("INTERVIEW", 7, "FAIL", "2번 인터뷰 문제 시퀀스 2번 문제 답변 채점 결과 피드백", now(), now()),
+    ("INTERVIEW", 8, "PASS", "2번 인터뷰 문제 시퀀스 3번 문제 답변 채점 결과 피드백", now(), now()),
+    ("INTERVIEW", 9, "PASS", "2번 인터뷰 문제 시퀀스 4번 문제 답변 채점 결과 피드백", now(), now()),
+    ("INTERVIEW", 10, "PASS", "2번 인터뷰 문제 시퀀스 5번 문제 답변 채점 결과 피드백", now(), now());
