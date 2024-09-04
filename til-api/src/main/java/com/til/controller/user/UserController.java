@@ -16,6 +16,7 @@ import com.til.controller.user.request.UserJoinRequest;
 import com.til.controller.user.request.UserLoginRequest;
 import com.til.controller.user.request.UserNicknameRequest;
 import com.til.controller.user.request.UserPasswordRequest;
+import com.til.controller.user.response.UserInfoResponse;
 import com.til.controller.user.response.UserLoginResponse;
 import com.til.domain.auth.dto.AuthTokenDto;
 import com.til.domain.auth.dto.AuthUserInfoDto;
@@ -70,5 +71,10 @@ public class UserController {
         @RequestBody @Valid UserPasswordRequest request) {
         userService.changePassword(userInfo.id(), request.toServiceDto());
         return ApiResponse.ok(UserSuccessCode.SUCCESS_CHANGE_PASSWORD);
+    }
+
+    @GetMapping("/my-info")
+    public ApiResponse<UserInfoResponse> getUserInfo(@CurrentUser AuthUserInfoDto userInfo) {
+        return ApiResponse.ok(UserInfoResponse.of(userService.getUserInfo(userInfo.id())));
     }
 }

@@ -4,8 +4,10 @@ import static com.til.domain.user.model.QUser.user;
 
 import java.util.Optional;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.til.domain.common.exception.BaseException;
+import com.til.domain.user.dto.UserInfoDto;
 import com.til.domain.user.enums.UserErrorCode;
 import com.til.domain.user.model.User;
 
@@ -37,6 +39,16 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         return Optional.ofNullable(
             queryFactory.selectFrom(user)
                 .where(user.email.eq(email))
+                .fetchOne()
+        ).orElseThrow(() -> new BaseException(UserErrorCode.NOT_FOUND_USER));
+    }
+
+    @Override
+    public UserInfoDto getUserInfoById(Long id) {
+        return Optional.ofNullable(
+            queryFactory.select(Projections.constructor(UserInfoDto.class, user.email, user.nickname))
+                .from(user)
+                .where(user.id.eq(id))
                 .fetchOne()
         ).orElseThrow(() -> new BaseException(UserErrorCode.NOT_FOUND_USER));
     }

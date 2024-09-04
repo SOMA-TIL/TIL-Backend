@@ -1,5 +1,6 @@
 package com.til.domain.user.repository;
 
+import com.til.domain.user.dto.UserInfoDto;
 import com.til.domain.user.model.User;
 
 public interface UserRepositoryCustom {
@@ -9,6 +10,8 @@ public interface UserRepositoryCustom {
     boolean existsByNickname(String nickname);
 
     User getByEmail(String email);
+
+    UserInfoDto getUserInfoById(Long id);
 
     String getPasswordById(Long id);
 
