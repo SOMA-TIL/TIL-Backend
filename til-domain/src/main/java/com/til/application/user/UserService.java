@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.common.exception.BaseException;
+import com.til.domain.user.dto.UserInfoDto;
 import com.til.domain.user.dto.UserJoinDto;
 import com.til.domain.user.dto.UserLoginDto;
 import com.til.domain.user.dto.UserPasswordDto;
@@ -32,6 +33,10 @@ public class UserService {
 
         User user = userJoinDto.toEntityWithEncodedPassword(encodePassword(userJoinDto.password()));
         userRepository.save(user);
+    }
+
+    public UserInfoDto getUserInfo(Long id) {
+        return userRepository.getUserInfoById(id);
     }
 
     public AuthUserInfoDto login(UserLoginDto userLoginDto) {

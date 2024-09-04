@@ -110,6 +110,18 @@ class UserServiceTest {
             .isEqualTo(UserErrorCode.ALREADY_EXISTS_NICKNAME);
     }
 
+    @Test
+    void 사용자_정보_조회시_사용자가_존재하지_않으면_예외를_던진다() {
+        // given
+        given(userRepository.getUserInfoById(anyLong())).willThrow(new BaseException(UserErrorCode.NOT_FOUND_USER));
+
+        // when & then
+        assertThatThrownBy(() -> userService.getUserInfo(1L))
+            .isInstanceOf(BaseException.class)
+            .extracting(error -> ((BaseException) error).getErrorCode())
+            .isEqualTo(UserErrorCode.NOT_FOUND_USER);
+    }
+
     private UserJoinDto createUserJoinDto() {
         return UserJoinDto.builder()
             .email("test@til.com")
