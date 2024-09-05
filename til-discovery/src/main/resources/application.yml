@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: til-discovery
+  security:
+    user:
+      name: admin
+      password: til@admin
+server:
+  port: 8761
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false

@@ -1,3 +1,4 @@
+
 HELP.md
 .gradle
 build/
@@ -6,6 +7,7 @@ build/
 !**/src/test/**/build/
 **/src/main/resources/**
 !**/src/main/resources/*-template.yml
+!til-discovery/src/main/resources/application.yml
 
 ### STS ###
 .apt_generated
