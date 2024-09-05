@@ -17,6 +17,12 @@ allprojects {
     version = '0.0.1-SNAPSHOT'
     sourceCompatibility = '17'
 
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
     repositories {
         mavenCentral()
     }
@@ -36,12 +42,6 @@ allprojects {
 
 // 서브 프로젝트 전체에 적용
 subprojects {
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
-        }
-    }
-
     apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'org.springframework.boot'
@@ -55,10 +55,6 @@ subprojects {
         configureEach {
             exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
         }
-    }
-
-    repositories {
-        mavenCentral()
     }
 
     dependencies { // 공통적으로 사용할 의존성 목록
