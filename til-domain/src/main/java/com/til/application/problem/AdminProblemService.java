@@ -53,6 +53,13 @@ public class AdminProblemService {
         }
     }
 
+    @Transactional
+    public void deleteProblem(Long problemId) {
+        validateProblemExists(problemId);
+        problemCategoryRepository.deleteByProblemId(problemId);
+        problemRepository.deleteById(problemId);
+    }
+
     private void validateProblemExists(Long problemId) {
         boolean isExist = problemRepository.existsById(problemId);
         if (!isExist) {
