@@ -1,5 +1,6 @@
 package com.til.controller.problem;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import com.til.application.problem.AdminProblemService;
 import com.til.common.http.auth.annotation.CurrentUser;
@@ -40,6 +41,13 @@ public class ProblemController {
         @RequestBody @Valid UpdateProblemRequest updateProblemRequest) {
         log.debug("문제 수정 요청 - 관리자 ID: {}, 문제 ID: {}", adminInfo.id(), id);
         adminProblemService.updateProblem(updateProblemRequest.toServiceDto(id));
+        return ApiResponse.ok();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteProblem(@CurrentAdmin AuthUserInfoDto adminInfo, @PathVariable Long id) {
+        log.debug("문제 삭제 요청 - 관리자 ID: {}", adminInfo.id());
+        adminProblemService.deleteProblem(id);
         return ApiResponse.ok();
     }
 }
