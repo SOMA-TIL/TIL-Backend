@@ -1,10 +1,12 @@
 package com.til.domain.category.enums;
 
+import org.springframework.http.HttpStatus;
+
 import com.til.domain.common.enums.ErrorCode;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)

@@ -2,12 +2,11 @@ package com.til.domain.problem.dto;
 
 import java.util.List;
 
-import com.til.domain.problem.model.Problem;
-
 import lombok.Builder;
 
 @Builder
-public record AdminCreateProblemDto(
+public record AdminUpdateProblemDto(
+                                    Long id,
                                     String title,
                                     String question,
                                     String solution,
@@ -15,14 +14,4 @@ public record AdminCreateProblemDto(
                                     Integer level,
                                     List<Long> categoryIdList
 ) {
-
-    public Problem toEntity() {
-        return Problem.builder()
-            .title(title)
-            .question(question)
-            .solution(solution)
-            .grading(grading)
-            .level(level)
-            .build();
-    }
 }
