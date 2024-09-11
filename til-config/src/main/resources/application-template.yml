@@ -1,0 +1,21 @@
+server:
+  port: ${포트 번호}
+
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${private repo 주소}
+          default-label: ${브랜치명}
+          search-paths: '{application}'
+          ignore-local-ssh-settings: true # 로컬 git 설정 무시
+          passphrase: { 비대칭 키 생성 시 입력 값 } // 생략 가능
+          private-key: |
+            -----BEGIN EC PRIVATE KEY-----
+            
+            ... KEY 값
+            
+            -----END EC PRIVATE KEY-----

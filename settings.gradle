@@ -4,4 +4,5 @@ include 'til-admin-api'
 include 'til-api'
 include 'til-domain'
 include 'til-batch'
-include 'til-discovery'
+include 'til-discovery' // Eureka Server
+include 'til-config' // Config Server
