@@ -14,7 +14,6 @@ import com.til.application.problem.ProblemService;
 import com.til.application.problem.SolveProblemService;
 import com.til.common.annotation.CurrentUser;
 import com.til.common.page.PageParamRequest;
-import com.til.common.response.ApiResponse;
 import com.til.controller.problem.request.FavoriteProblemRequest;
 import com.til.controller.problem.request.SearchProblemRequest;
 import com.til.controller.problem.request.SolveProblemRequest;
@@ -31,6 +30,7 @@ import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.dto.SubmitResultDto;
 import com.til.domain.problem.dto.SubmitStatusDto;
 import com.til.domain.problem.enums.ProblemSuccessCode;
+import com.til.http.response.ApiResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

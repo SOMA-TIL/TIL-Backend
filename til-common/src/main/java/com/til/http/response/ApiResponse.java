@@ -1,8 +1,8 @@
-package com.til.common.response;
+package com.til.http.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.til.domain.common.enums.BaseSuccessCode;
-import com.til.domain.common.enums.SuccessCode;
+import com.til.http.response.enums.BaseSuccessCode;
+import com.til.http.response.enums.SuccessCode;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.til.domain.common.enums;
+package com.til.http.response.enums;
 
 import org.springframework.http.HttpStatus;
 

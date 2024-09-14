@@ -1,4 +1,4 @@
-package com.til.domain.common.exception;
+package com.til.exception;
 
 import com.til.http.response.enums.ErrorCode;
 

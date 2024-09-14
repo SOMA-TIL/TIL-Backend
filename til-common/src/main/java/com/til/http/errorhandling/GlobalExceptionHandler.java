@@ -1,4 +1,4 @@
-package com.til.config.errorhandling;
+package com.til.http.errorhandling;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,9 +14,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.til.domain.common.enums.BaseErrorCode;
-import com.til.domain.common.exception.BaseException;
-import com.til.domain.common.exception.InvalidDtoException;
+import com.til.exception.BaseException;
+import com.til.exception.InvalidDtoException;
+import com.til.http.response.enums.BaseErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
 

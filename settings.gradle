@@ -1,8 +1,12 @@
 rootProject.name = 'TIL-Backend'
 
+include 'til-common' // 공통 모듈
+include 'til-domain' // 도메인 모듈
+
 include 'til-admin-api'
 include 'til-api'
-include 'til-domain'
+
 include 'til-batch'
 include 'til-discovery' // Eureka Server
 include 'til-config' // Config Server
+
