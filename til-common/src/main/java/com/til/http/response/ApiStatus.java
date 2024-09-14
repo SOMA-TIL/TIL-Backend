@@ -1,7 +1,7 @@
-package com.til.common.response;
+package com.til.http.response;
 
-import com.til.domain.common.enums.ErrorCode;
-import com.til.domain.common.enums.SuccessCode;
+import com.til.http.response.enums.ErrorCode;
+import com.til.http.response.enums.SuccessCode;
 
 import lombok.Getter;
 

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.til.application.auth.AuthService;
 import com.til.application.user.UserService;
 import com.til.common.annotation.CurrentUser;
-import com.til.common.response.ApiResponse;
 import com.til.controller.user.request.UserJoinRequest;
 import com.til.controller.user.request.UserLoginRequest;
 import com.til.controller.user.request.UserNicknameRequest;
@@ -21,6 +20,7 @@ import com.til.controller.user.response.UserLoginResponse;
 import com.til.domain.auth.dto.AuthTokenDto;
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.user.enums.UserSuccessCode;
+import com.til.http.response.ApiResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.til.domain.auth.enums;
 
-import com.til.domain.common.enums.SuccessCode;
+import com.til.http.response.enums.SuccessCode;
 
 import lombok.AccessLevel;
 import lombok.Getter;
