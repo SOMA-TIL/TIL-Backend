@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.til.application.category.CategoryService;
+import com.til.common.http.response.ApiResponse;
 import com.til.controller.category.response.CategoryListResponse;
 import com.til.domain.category.dto.CategoryDto;
 import com.til.domain.category.enums.CategorySuccessCode;
-import com.til.http.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 

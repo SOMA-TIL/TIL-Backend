@@ -1,12 +1,14 @@
-package com.til.config.properties;
+package com.til.common.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Configuration
+@Primary
 @ConfigurationProperties(prefix = "jwt")
 @Setter
 public class JwtProperties {

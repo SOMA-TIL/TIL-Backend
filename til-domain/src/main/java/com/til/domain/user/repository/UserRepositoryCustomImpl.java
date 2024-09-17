@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.til.domain.common.exception.BaseException;
+import com.til.common.exception.BaseException;
 import com.til.domain.user.dto.UserInfoDto;
 import com.til.domain.user.enums.UserErrorCode;
 import com.til.domain.user.model.User;

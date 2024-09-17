@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.til.application.grading.GradingService;
 import com.til.application.interview.InterviewService;
 import com.til.common.annotation.CurrentUser;
+import com.til.common.http.response.ApiResponse;
 import com.til.controller.interview.request.InterviewCreateRequest;
 import com.til.controller.interview.request.InterviewSolveRequest;
 import com.til.controller.interview.response.InterviewCodeResponse;
@@ -23,7 +24,6 @@ import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewInfoDto;
 import com.til.domain.interview.enums.InterviewSuccessCode;
 import com.til.domain.interview.model.InterviewStatus;
-import com.til.http.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 

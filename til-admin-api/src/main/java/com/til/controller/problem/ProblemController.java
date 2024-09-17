@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.til.common.annotation.CurrentAdmin;
+import com.til.common.http.response.ApiResponse;
 import com.til.domain.auth.dto.AuthUserInfoDto;
-import com.til.http.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

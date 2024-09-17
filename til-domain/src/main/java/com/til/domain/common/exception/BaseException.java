@@ -1,6 +1,6 @@
 package com.til.domain.common.exception;
 
-import com.til.http.response.enums.ErrorCode;
+import com.til.common.http.response.enums.ErrorCode;
 
 import lombok.Getter;
 

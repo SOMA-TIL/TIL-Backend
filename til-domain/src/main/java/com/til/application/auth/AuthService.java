@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.til.common.config.properties.JwtProperties;
 import com.til.config.db.RedisManager;
-import com.til.config.properties.JwtProperties;
 import com.til.domain.auth.dto.AuthTokenDto;
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.auth.enums.AuthErrorCode;

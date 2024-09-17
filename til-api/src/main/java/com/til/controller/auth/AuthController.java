@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.til.application.auth.AuthService;
+import com.til.common.http.response.ApiResponse;
 import com.til.controller.auth.response.AuthTokenResponse;
 import com.til.domain.auth.dto.AuthTokenDto;
 import com.til.domain.auth.enums.AuthSuccessCode;
-import com.til.http.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 

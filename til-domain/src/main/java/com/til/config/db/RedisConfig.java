@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.til.config.properties.RedisProperties;
+import com.til.common.config.properties.RedisProperties;
 
 import lombok.RequiredArgsConstructor;
 
