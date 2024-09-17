@@ -1,7 +1,7 @@
-package com.til.http.errorhandling;
+package com.til.common.http.errorhandling;
 
-import com.til.http.response.ApiStatus;
-import com.til.http.response.enums.ErrorCode;
+import com.til.common.http.response.ApiStatus;
+import com.til.common.http.response.enums.ErrorCode;
 
 import lombok.Getter;
 

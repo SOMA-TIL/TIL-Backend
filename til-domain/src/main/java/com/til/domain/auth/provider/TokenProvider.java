@@ -7,7 +7,7 @@ import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Component;
 
-import com.til.config.properties.JwtProperties;
+import com.til.common.config.properties.JwtProperties;
 import com.til.domain.auth.enums.AuthErrorCode;
 import com.til.domain.auth.exception.TokenInvalidException;
 

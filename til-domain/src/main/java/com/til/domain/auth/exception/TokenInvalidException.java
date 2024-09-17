@@ -1,7 +1,7 @@
 package com.til.domain.auth.exception;
 
-import com.til.exception.BaseException;
-import com.til.http.response.enums.ErrorCode;
+import com.til.common.exception.BaseException;
+import com.til.common.http.response.enums.ErrorCode;
 
 public class TokenInvalidException extends BaseException {
 

@@ -1,4 +1,4 @@
-package com.til.exception;
+package com.til.common.exception;
 
 public class InvalidDtoException extends RuntimeException {
 

@@ -15,11 +15,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.til.application.auth.AuthService;
+import com.til.common.http.errorhandling.ErrorResponse;
+import com.til.common.http.response.enums.BaseErrorCode;
 import com.til.config.AppConfig;
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.user.model.Role;
-import com.til.http.errorhandling.ErrorResponse;
-import com.til.http.response.enums.BaseErrorCode;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

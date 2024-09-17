@@ -2,7 +2,7 @@ package com.til.domain.interview.enums;
 
 import org.springframework.http.HttpStatus;
 
-import com.til.http.response.enums.ErrorCode;
+import com.til.common.http.response.enums.ErrorCode;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

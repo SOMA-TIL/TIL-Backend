@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.til.config.properties.GradingApiProperties;
+import com.til.common.config.properties.GradingApiProperties;
 import com.til.domain.grading.dto.GradingInputDataDto;
 import com.til.domain.grading.dto.GradingResultDto;
 import com.til.domain.grading.dto.InterviewGradingResultDto;
