@@ -9,4 +9,5 @@ include 'til-api'
 include 'til-batch'
 include 'til-discovery' // Eureka Server
 include 'til-config' // Config Server
-
+include 'til-gateway' // API gateway
+include 'til-auth' // Auth Server
