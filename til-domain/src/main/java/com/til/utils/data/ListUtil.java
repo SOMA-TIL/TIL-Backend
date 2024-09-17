@@ -11,4 +11,8 @@ public class ListUtil {
     public static <T> boolean isNullOrEmpty(List<T> list) {
         return list == null || list.isEmpty();
     }
+
+    public static <T> boolean isContain(List<T> list, T element) {
+        return list.contains(element);
+    }
 }

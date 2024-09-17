@@ -1,0 +1,45 @@
+server:
+  port: 8000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+
+spring:
+  application:
+    name: gateway-service
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      routes:
+        - id: user-login
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/user/login
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user/login, /auth/user-login
+        - id: admin-login
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/admin/login
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/admin/login, /auth/admin-login
+        - id: ADMIN-SERVICE
+          uri: lb://ADMIN-SERVICE
+          predicates:
+            - Path=/admin/**
+          filters:
+            - name: AuthorizationHeaderFilter # 필터
+              args: # 필터에 전달할 인자 설정
+                requiredRole:
+                  - ADMIN
+                  - USER
+            - RewritePath=/admin/(?<segment>.*), /$\{segment}
+jwt:
+  secret: ${JWT SECRET KEY}
