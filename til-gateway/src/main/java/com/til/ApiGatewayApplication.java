@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.Import;
 
+import com.til.common.http.cors.ReactiveCorsConfig;
 import com.til.common.http.security.SecurityWebFluxConfig;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
@@ -17,7 +18,7 @@ import com.til.common.http.security.SecurityWebFluxConfig;
     @ComponentScan("com.til.domain.auth"),
     @ComponentScan("com.til.filter"),
 })
-@Import({SecurityWebFluxConfig.class, CorsConfig.class})
+@Import({SecurityWebFluxConfig.class, ReactiveCorsConfig.class})
 public class ApiGatewayApplication {
 
     public static void main(String[] args) {

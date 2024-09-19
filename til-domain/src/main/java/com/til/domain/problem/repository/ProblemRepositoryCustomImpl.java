@@ -2,6 +2,8 @@ package com.til.domain.problem.repository;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.types.dsl.Expressions.allOf;
+import static com.til.common.utils.data.ListUtil.isNullOrEmpty;
+import static com.til.common.utils.data.StringUtil.hasText;
 import static com.til.domain.category.model.QProblemCategory.problemCategory;
 import static com.til.domain.grading.model.QGrading.grading;
 import static com.til.domain.problem.model.QFavoriteProblem.favoriteProblem;
@@ -16,8 +18,6 @@ import static com.til.domain.problem.repository.ProblemQueryCondition.linkProble
 import static com.til.domain.problem.repository.ProblemQueryCondition.linkProblemWithUserFavorite;
 import static com.til.domain.problem.repository.ProblemQueryCondition.linkProblemWithUserProblem;
 import static com.til.domain.problem.repository.ProblemQueryCondition.linkUserProblemWithGrading;
-import static com.til.utils.data.ListUtil.isNullOrEmpty;
-import static com.til.utils.data.StringUtil.hasText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.til.domain.common.exception.BaseException;
+import com.til.common.exception.BaseException;
 import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.problem.dto.ProblemBasicInfoDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;

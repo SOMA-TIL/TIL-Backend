@@ -1,6 +1,6 @@
 package com.til.controller.problem.request;
 
-import static com.til.utils.data.BooleanUtil.getOrFalse;
+import static com.til.common.utils.data.BooleanUtil.getOrFalse;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.til.utils.random;
+package com.til.common.utils.random;
 
 import static org.assertj.core.api.Assertions.*;
 

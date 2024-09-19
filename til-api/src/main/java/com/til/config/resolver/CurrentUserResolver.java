@@ -15,9 +15,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.til.application.auth.AuthService;
 import com.til.common.annotation.CurrentUser;
-import com.til.config.AppConfig;
 import com.til.domain.auth.dto.AuthUserInfoDto;
-import com.til.domain.user.model.Role;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CurrentUserResolver implements HandlerMethodArgumentResolver {
 
-    private final AppConfig appConfig;
     private final AuthService authService;
 
     @Override
@@ -46,10 +43,6 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
         @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         CurrentUser currentUserAnnotation = parameter.getParameterAnnotation(CurrentUser.class);
         boolean required = currentUserAnnotation != null && currentUserAnnotation.required();
-
-        if (!appConfig.isJwtFilterEnabled()) { // for test
-            return AuthUserInfoDto.builder().id(6L).role(Role.USER).build();
-        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.til.domain.common.exception.BaseException;
+import com.til.common.exception.BaseException;
 import com.til.domain.problem.dto.SolveProblemDto;
 import com.til.domain.problem.dto.SubmitHistoryDto;
 import com.til.domain.problem.dto.SubmitResultDto;

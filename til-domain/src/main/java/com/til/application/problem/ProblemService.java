@@ -6,9 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.til.common.exception.BaseException;
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.common.dto.PageParamDto;
-import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.dto.FavoriteProblemDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;

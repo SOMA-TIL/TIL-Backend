@@ -6,10 +6,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.til.common.exception.BaseException;
+import com.til.common.utils.random.RandomValueGenerator;
 import com.til.domain.category.dto.InterviewCategoryDto;
 import com.til.domain.category.repository.InterviewCategoryRepository;
 import com.til.domain.category.repository.ProblemCategoryRepository;
-import com.til.domain.common.exception.BaseException;
 import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewCreateDto;
@@ -23,7 +24,6 @@ import com.til.domain.interview.model.InterviewProblemStatus;
 import com.til.domain.interview.model.InterviewStatus;
 import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
-import com.til.utils.random.RandomValueGenerator;
 
 import lombok.RequiredArgsConstructor;
 

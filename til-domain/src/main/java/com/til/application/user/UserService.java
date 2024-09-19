@@ -4,8 +4,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.til.common.exception.BaseException;
 import com.til.domain.auth.dto.AuthUserInfoDto;
-import com.til.domain.common.exception.BaseException;
 import com.til.domain.user.dto.UserInfoDto;
 import com.til.domain.user.dto.UserJoinDto;
 import com.til.domain.user.dto.UserLoginDto;
