@@ -1,9 +1,9 @@
 package com.til.filter;
 
+import static com.til.common.utils.data.ListUtil.isContain;
+import static com.til.common.utils.data.ListUtil.isNullOrEmpty;
 import static com.til.domain.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
 import static com.til.domain.auth.enums.AuthConstants.BEARER_TYPE;
-import static com.til.utils.data.ListUtil.isContain;
-import static com.til.utils.data.ListUtil.isNullOrEmpty;
 
 import java.util.List;
 

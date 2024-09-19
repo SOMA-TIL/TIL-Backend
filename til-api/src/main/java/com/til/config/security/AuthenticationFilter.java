@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.til.application.auth.AuthService;
 import com.til.common.http.errorhandling.ErrorResponse;
 import com.til.common.http.response.enums.BaseErrorCode;
-import com.til.config.AppConfig;
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.user.model.Role;
 
@@ -34,13 +33,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AuthenticationFilter extends OncePerRequestFilter {
 
-    private final AppConfig appConfig;
     private final AuthService authService;
     private final ObjectMapper objectMapper;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !appConfig.isJwtFilterEnabled() || PathPermission.isPublicPath(request.getRequestURI());
+        return PathPermission.isPublicPath(request.getRequestURI());
     }
 
     @Override

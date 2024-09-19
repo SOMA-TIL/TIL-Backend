@@ -1,4 +1,4 @@
-package com.til.domain.common.model;
+package com.til.config.model;
 
 import java.time.LocalDateTime;
 

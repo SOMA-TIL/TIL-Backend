@@ -16,9 +16,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.til.common.exception.BaseException;
+import com.til.common.utils.random.RandomValueGenerator;
 import com.til.domain.category.repository.InterviewCategoryRepository;
 import com.til.domain.category.repository.ProblemCategoryRepository;
-import com.til.domain.common.exception.BaseException;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewCreateDto;
 import com.til.domain.interview.dto.InterviewSolveDto;
@@ -27,7 +28,6 @@ import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewStatus;
 import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
-import com.til.utils.random.RandomValueGenerator;
 
 @ExtendWith(MockitoExtension.class)
 public class InterviewServiceTest {

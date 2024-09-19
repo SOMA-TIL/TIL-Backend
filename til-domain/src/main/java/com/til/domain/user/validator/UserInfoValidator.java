@@ -2,7 +2,7 @@ package com.til.domain.user.validator;
 
 import org.springframework.stereotype.Component;
 
-import com.til.domain.common.exception.InvalidDtoException;
+import com.til.common.exception.InvalidDtoException;
 
 @Component
 public class UserInfoValidator {

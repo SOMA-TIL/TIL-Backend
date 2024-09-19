@@ -1,4 +1,4 @@
-package com.til.config.utils;
+package com.til.common.config.helper;
 
 import static java.util.Base64.*;
 

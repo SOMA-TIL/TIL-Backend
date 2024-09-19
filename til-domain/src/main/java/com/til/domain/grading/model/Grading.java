@@ -1,6 +1,6 @@
 package com.til.domain.grading.model;
 
-import com.til.domain.common.model.BaseTimeEntity;
+import com.til.config.model.BaseTimeEntity;
 import com.til.domain.grading.enums.AnswerType;
 import com.til.domain.grading.enums.GradingResult;
 

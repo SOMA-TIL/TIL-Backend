@@ -1,4 +1,4 @@
-package com.til.utils.random;
+package com.til.common.utils.random;
 
 import java.security.SecureRandom;
 import java.util.Base64;

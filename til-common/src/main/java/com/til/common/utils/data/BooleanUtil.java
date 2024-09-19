@@ -1,4 +1,4 @@
-package com.til.utils.data;
+package com.til.common.utils.data;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

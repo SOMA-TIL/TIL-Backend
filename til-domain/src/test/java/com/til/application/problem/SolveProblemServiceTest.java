@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.til.domain.common.exception.BaseException;
+import com.til.common.exception.BaseException;
 import com.til.domain.grading.enums.GradingStatus;
 import com.til.domain.problem.dto.SolveProblemDto;
 import com.til.domain.problem.dto.SubmitResultDto;
