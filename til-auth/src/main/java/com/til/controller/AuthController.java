@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.til.application.auth.AuthService;
+import com.til.application.user.AdminUserService;
 import com.til.application.user.UserService;
 import com.til.common.http.response.ApiResponse;
 import com.til.controller.request.LoginRequest;
@@ -30,10 +31,19 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserService userService;
+    private final AdminUserService adminUserService;
 
     @PostMapping("/user-login")
     public ApiResponse<UserLoginResponse> login(@RequestBody @Valid LoginRequest request) {
         AuthUserInfoDto userInfoDto = userService.login(request.toServiceDto());
+        AuthTokenDto token = authService.createToken(userInfoDto);
+
+        return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGIN, UserLoginResponse.of(userInfoDto, token));
+    }
+
+    @PostMapping("/admin-login")
+    public ApiResponse<UserLoginResponse> admin(@RequestBody @Valid LoginRequest request) {
+        AuthUserInfoDto userInfoDto = adminUserService.login(request.toServiceDto());
         AuthTokenDto token = authService.createToken(userInfoDto);
 
         return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGIN, UserLoginResponse.of(userInfoDto, token));
