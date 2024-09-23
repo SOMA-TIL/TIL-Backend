@@ -1,10 +1,10 @@
 package com.til.application.user;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.til.common.exception.BaseException;
+import com.til.common.http.security.PasswordManager;
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.user.dto.UserInfoDto;
 import com.til.domain.user.dto.UserJoinDto;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordManager passwordManager;
 
     private final UserInfoValidator userInfoValidator;
 
@@ -31,7 +31,7 @@ public class UserService {
     public void join(UserJoinDto userJoinDto) {
         checkJoinInfo(userJoinDto);
 
-        User user = userJoinDto.toEntityWithEncodedPassword(encodePassword(userJoinDto.password()));
+        User user = userJoinDto.toEntityWithEncodedPassword(passwordManager.encodePassword(userJoinDto.password()));
         userRepository.save(user);
     }
 
@@ -41,7 +41,7 @@ public class UserService {
 
     public AuthUserInfoDto login(UserLoginDto userLoginDto) {
         User user = userRepository.getByEmail(userLoginDto.email());
-        if (passwordDoesNotMatch(userLoginDto.password(), user.getPassword())) {
+        if (passwordManager.passwordDoesNotMatch(userLoginDto.password(), user.getPassword())) {
             throw new BaseException(UserErrorCode.FAILED_LOGIN);
         }
 
@@ -70,7 +70,7 @@ public class UserService {
     @Transactional
     public void changePassword(Long userId, UserPasswordDto userPasswordDto) {
         checkUpdatePasswordInfo(userId, userPasswordDto);
-        userRepository.updatePassword(userId, encodePassword(userPasswordDto.newPassword()));
+        userRepository.updatePassword(userId, passwordManager.encodePassword(userPasswordDto.newPassword()));
     }
 
     private void checkJoinInfo(UserJoinDto userJoinDto) {
@@ -81,19 +81,11 @@ public class UserService {
 
     private void checkUpdatePasswordInfo(Long userId, UserPasswordDto userPasswordDto) {
         userInfoValidator.validatePassword(userPasswordDto.newPassword());
-        if (passwordDoesNotMatch(userPasswordDto.password(), userRepository.getPasswordById(userId))) {
+        if (passwordManager.passwordDoesNotMatch(userPasswordDto.password(), userRepository.getPasswordById(userId))) {
             throw new BaseException(UserErrorCode.NOT_MATCH_PASSWORD);
         }
         if (userPasswordDto.password().equals(userPasswordDto.newPassword())) {
             throw new BaseException(UserErrorCode.SAME_PASSWORD);
         }
-    }
-
-    private boolean passwordDoesNotMatch(String rawPassword, String encodedPassword) {
-        return !passwordEncoder.matches(rawPassword, encodedPassword);
-    }
-
-    private String encodePassword(String password) {
-        return passwordEncoder.encode(password);
     }
 }

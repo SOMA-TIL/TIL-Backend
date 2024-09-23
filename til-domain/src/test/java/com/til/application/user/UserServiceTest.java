@@ -10,9 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.til.common.exception.BaseException;
+import com.til.common.http.security.PasswordManager;
 import com.til.domain.user.dto.UserJoinDto;
 import com.til.domain.user.dto.UserLoginDto;
 import com.til.domain.user.dto.UserPasswordDto;
@@ -30,7 +30,7 @@ class UserServiceTest {
     private UserInfoValidator userInfoValidator;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private PasswordManager passwordManager;
 
     @Mock
     private UserRepository userRepository;
@@ -76,7 +76,7 @@ class UserServiceTest {
     void 비밀번호_변경시_기존_비밀번호_정보가_유효하지_않으면_예외를_던진다() {
         // given
         given(userRepository.getPasswordById(anyLong())).willReturn("otherPassword");
-        given(passwordEncoder.matches(anyString(), anyString())).willReturn(false);
+        given(passwordManager.passwordDoesNotMatch(anyString(), anyString())).willReturn(true);
 
         // when & then
         assertThatThrownBy(() -> userService.changePassword(1L, createUserPasswordDto("pass1234", "new12345")))
@@ -89,7 +89,7 @@ class UserServiceTest {
     void 비밀번호_변경시_새로운_비밀번호가_기존_비밀번호와_같으면_예외를_던진다() {
         // given
         given(userRepository.getPasswordById(anyLong())).willReturn("pass1234");
-        given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
+        given(passwordManager.passwordDoesNotMatch(anyString(), anyString())).willReturn(false);
 
         // when & then
         assertThatThrownBy(() -> userService.changePassword(1L, createUserPasswordDto("pass1234", "pass1234")))
