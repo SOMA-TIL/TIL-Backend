@@ -1,9 +1,9 @@
 package com.til.filter;
 
+import static com.til.common.http.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
+import static com.til.common.http.auth.enums.AuthConstants.BEARER_TYPE;
 import static com.til.common.utils.data.ListUtil.isContain;
 import static com.til.common.utils.data.ListUtil.isNullOrEmpty;
-import static com.til.domain.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
-import static com.til.domain.auth.enums.AuthConstants.BEARER_TYPE;
 
 import java.util.List;
 
@@ -57,14 +57,20 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Conf
             ServerHttpRequest request = exchange.getRequest();
             String token = getTokenFromHeader(request);
 
-            if (!isValidateToken(token)) {
+            if (token != null && !isValidateToken(token)) {
                 return handleUnAuthorized(exchange);
             }
 
+            if (token == null && !config.isRequired()) {
+                return chain.filter(exchange);
+            }
+
             AuthUserInfoDto info = AuthUserInfoDto.of(tokenProvider.parseClaims(token));
-            if (!isContain(config.getRequiredRole(), info.role())) {
+            if (config.isRequired() && !isContain(config.getRequiredRole(), info.role())) {
                 return handleUnAuthorized(exchange);
             }
+
+            request.mutate().header("X-USER-ID", info.id().toString());
 
             return chain.filter(exchange);
         };
