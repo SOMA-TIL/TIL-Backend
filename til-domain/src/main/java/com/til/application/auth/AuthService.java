@@ -1,6 +1,6 @@
 package com.til.application.auth;
 
-import static com.til.domain.auth.enums.AuthConstants.BEARER_TYPE;
+import static com.til.common.http.auth.enums.AuthConstants.BEARER_TYPE;
 
 import java.util.Map;
 import java.util.Objects;

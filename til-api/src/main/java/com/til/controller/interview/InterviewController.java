@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.til.application.grading.GradingService;
 import com.til.application.interview.InterviewService;
-import com.til.common.annotation.CurrentUser;
+import com.til.common.http.auth.annotation.CurrentUser;
 import com.til.common.http.response.ApiResponse;
 import com.til.controller.interview.request.InterviewCreateRequest;
 import com.til.controller.interview.request.InterviewSolveRequest;
@@ -18,7 +18,6 @@ import com.til.controller.interview.response.InterviewCodeResponse;
 import com.til.controller.interview.response.InterviewInfoResponse;
 import com.til.controller.interview.response.InterviewResultResponse;
 import com.til.controller.interview.response.InterviewStatusResponse;
-import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.grading.dto.InterviewGradingResultDto;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewInfoDto;
@@ -36,52 +35,47 @@ public class InterviewController {
     private final GradingService gradingService;
 
     @PostMapping("/create")
-    public ApiResponse<InterviewCodeResponse> createInterview(@CurrentUser AuthUserInfoDto userInfo,
+    public ApiResponse<InterviewCodeResponse> createInterview(@CurrentUser Long userId,
         @RequestBody InterviewCreateRequest request) {
-        InterviewCodeDto interviewCodeDto = interviewService.createInterview(request.toServiceDto(userInfo.id()));
+        InterviewCodeDto interviewCodeDto = interviewService.createInterview(request.toServiceDto(userId));
 
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_INTERVIEW_CREATION, InterviewCodeResponse.of(
             interviewCodeDto));
     }
 
     @GetMapping("/{code}")
-    public ApiResponse<InterviewInfoResponse> getInterviewInfo(@CurrentUser AuthUserInfoDto userInfo,
-        @PathVariable String code) {
-        InterviewInfoDto interviewInfoDto = interviewService.getProcessingInterviewInfo(userInfo.id(), code);
+    public ApiResponse<InterviewInfoResponse> getInterviewInfo(@CurrentUser Long userId, @PathVariable String code) {
+        InterviewInfoDto interviewInfoDto = interviewService.getProcessingInterviewInfo(userId, code);
 
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_GET_INTERVIEW_INFO, InterviewInfoResponse.of(
             interviewInfoDto));
     }
 
     @PatchMapping("/{code}/solve")
-    public ApiResponse<Void> solveInterviewProblem(@CurrentUser AuthUserInfoDto userInfo,
-        @PathVariable String code,
+    public ApiResponse<Void> solveInterviewProblem(@CurrentUser Long userId, @PathVariable String code,
         @RequestBody InterviewSolveRequest request) {
-        interviewService.solveInterviewProblem(request.toServiceDto(code, userInfo.id()));
+        interviewService.solveInterviewProblem(request.toServiceDto(code, userId));
 
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_SOLVE_INTERVIEW_PROBLEM);
     }
 
     @PostMapping("/{code}/submit")
-    public ApiResponse<Void> submitInterview(@CurrentUser AuthUserInfoDto userInfo,
-        @PathVariable String code) {
-        Long interviewId = interviewService.submitInterview(userInfo.id(), code);
+    public ApiResponse<Void> submitInterview(@CurrentUser Long userId, @PathVariable String code) {
+        Long interviewId = interviewService.submitInterview(userId, code);
         gradingService.makeGradingInterview(interviewId);
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_SUBMIT_INTERVIEW);
     }
 
     @GetMapping("/{code}/result")
-    public ApiResponse<InterviewResultResponse> getResult(@CurrentUser AuthUserInfoDto userInfo,
-        @PathVariable String code) {
-        InterviewGradingResultDto gradingResult = gradingService.getInterviewGradingResult(userInfo.id(), code);
+    public ApiResponse<InterviewResultResponse> getResult(@CurrentUser Long userId, @PathVariable String code) {
+        InterviewGradingResultDto gradingResult = gradingService.getInterviewGradingResult(userId, code);
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_GET_INTERVIEW_RESULT, InterviewResultResponse.of(
             gradingResult));
     }
 
     @GetMapping("/{code}/status")
-    public ApiResponse<InterviewStatusResponse> getStatus(@CurrentUser AuthUserInfoDto userInfo,
-        @PathVariable String code) {
-        InterviewStatus status = interviewService.getInterviewStatus(userInfo.id(), code);
+    public ApiResponse<InterviewStatusResponse> getStatus(@CurrentUser Long userId, @PathVariable String code) {
+        InterviewStatus status = interviewService.getInterviewStatus(userId, code);
         return ApiResponse.ok(InterviewStatusResponse.of(status));
     }
 }

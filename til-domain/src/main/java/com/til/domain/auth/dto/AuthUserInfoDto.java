@@ -46,8 +46,4 @@ public record AuthUserInfoDto(
             .role(role)
             .build();
     }
-
-    public static boolean isGuest(AuthUserInfoDto authUserInfoDto) {
-        return authUserInfoDto == null;
-    }
 }

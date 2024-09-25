@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.til.application.grading.GradingService;
 import com.til.application.problem.ProblemService;
 import com.til.application.problem.SolveProblemService;
-import com.til.common.annotation.CurrentUser;
+import com.til.common.http.auth.annotation.CurrentUser;
 import com.til.common.http.response.ApiResponse;
 import com.til.common.page.PageParamRequest;
 import com.til.controller.problem.request.FavoriteProblemRequest;
@@ -23,7 +23,6 @@ import com.til.controller.problem.response.ProblemPageResponse;
 import com.til.controller.problem.response.ProblemResultResponse;
 import com.til.controller.problem.response.ProblemSubmitHistory;
 import com.til.controller.problem.response.SolveProblemResponse;
-import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.grading.dto.GradingResultDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
@@ -47,10 +46,10 @@ public class ProblemController {
     private final GradingService gradingService;
 
     @GetMapping("")
-    public ApiResponse<ProblemPageResponse> getProblemList(@CurrentUser(required = false) AuthUserInfoDto userInfo,
+    public ApiResponse<ProblemPageResponse> getProblemList(@CurrentUser(required = false) Long userId,
         @ModelAttribute PageParamRequest pageParamRequest, @ModelAttribute SearchProblemRequest searchProblemRequest) {
         log.debug("searchProblemRequest: {}", searchProblemRequest);
-        ProblemPageDto<ProblemOverviewInfoDto> problemPage = problemService.getProblemOverviewList(userInfo,
+        ProblemPageDto<ProblemOverviewInfoDto> problemPage = problemService.getProblemOverviewList(userId,
             pageParamRequest.toServiceDto(), searchProblemRequest.toServiceDto());
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_LIST,
             ProblemPageResponse.of(problemPage.problemList(), problemPage.pageInfo()));
@@ -58,38 +57,37 @@ public class ProblemController {
 
     @GetMapping("/{id}")
     public ApiResponse<ProblemInfoResponse> getProblemInfo(
-        @CurrentUser(required = false) AuthUserInfoDto userInfo, @PathVariable Long id) {
-        ProblemPublicInfoDto problemPublicInfo = problemService.getProblemInfo(userInfo, id);
+        @CurrentUser(required = false) Long userId, @PathVariable Long id) {
+        ProblemPublicInfoDto problemPublicInfo = problemService.getProblemInfo(userId, id);
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_INFO, ProblemInfoResponse.of(problemPublicInfo));
     }
 
     @PostMapping("/{id}/favorite")
-    public ApiResponse<Void> favoriteProblem(@CurrentUser AuthUserInfoDto userInfo, @PathVariable Long id,
+    public ApiResponse<Void> favoriteProblem(@CurrentUser Long userId, @PathVariable Long id,
         @RequestBody FavoriteProblemRequest favoriteProblemRequest) {
-        problemService.toggleFavorite(favoriteProblemRequest.toServiceDto(userInfo.id(), id));
+        problemService.toggleFavorite(favoriteProblemRequest.toServiceDto(userId, id));
         return ApiResponse.ok();
     }
 
     @PostMapping("/{id}/solve")
-    public ApiResponse<SolveProblemResponse> submitAnswer(@CurrentUser AuthUserInfoDto userInfo, @PathVariable Long id,
+    public ApiResponse<SolveProblemResponse> submitAnswer(@CurrentUser Long userId, @PathVariable Long id,
         @RequestBody @Valid SolveProblemRequest solveProblemRequest) {
         SubmitStatusDto submitStatus = solveProblemService.solveProblem(
-            solveProblemRequest.toServiceDto(userInfo.id(), id));
+            solveProblemRequest.toServiceDto(userId, id));
         gradingService.makeGradingUserProblem(submitStatus.submitId());
         return ApiResponse.ok(SolveProblemResponse.of(submitStatus));
     }
 
     @GetMapping("/{id}/result")
-    public ApiResponse<ProblemResultResponse> getGradingResult(@CurrentUser AuthUserInfoDto userInfo,
-        @PathVariable Long id, @RequestParam Long submitId) {
-        GradingResultDto gradingResult = gradingService.getUserProblemGradingResult(userInfo.id(), id, submitId);
+    public ApiResponse<ProblemResultResponse> getGradingResult(@CurrentUser Long userId, @PathVariable Long id,
+        @RequestParam Long submitId) {
+        GradingResultDto gradingResult = gradingService.getUserProblemGradingResult(userId, id, submitId);
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_SUBMIT_RESULT, ProblemResultResponse.of(gradingResult));
     }
 
     @GetMapping("/{id}/history")
-    public ApiResponse<ProblemSubmitHistory> getProblemSubmitHistory(@CurrentUser AuthUserInfoDto userInfo,
-        @PathVariable Long id) {
-        SubmitResultDto submitResult = solveProblemService.getProblemSubmitResult(userInfo.id(), id);
+    public ApiResponse<ProblemSubmitHistory> getProblemSubmitHistory(@CurrentUser Long userId, @PathVariable Long id) {
+        SubmitResultDto submitResult = solveProblemService.getProblemSubmitResult(userId, id);
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_SUBMIT_HISTORY, ProblemSubmitHistory.of(submitResult));
     }
 }

@@ -2,6 +2,7 @@ package com.til.filter;
 
 import static com.til.common.http.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
 import static com.til.common.http.auth.enums.AuthConstants.BEARER_TYPE;
+import static com.til.common.http.auth.enums.AuthConstants.X_USER_ID;
 import static com.til.common.utils.data.ListUtil.isContain;
 import static com.til.common.utils.data.ListUtil.isNullOrEmpty;
 
@@ -70,7 +71,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Conf
                 return handleUnAuthorized(exchange);
             }
 
-            request.mutate().header("X-USER-ID", info.id().toString());
+            request.mutate().header(X_USER_ID, info.id().toString());
 
             return chain.filter(exchange);
         };

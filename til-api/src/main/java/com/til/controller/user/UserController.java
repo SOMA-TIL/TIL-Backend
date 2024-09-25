@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.til.application.auth.AuthService;
 import com.til.application.user.UserService;
-import com.til.common.annotation.CurrentUser;
+import com.til.common.http.auth.annotation.CurrentUser;
 import com.til.common.http.response.ApiResponse;
 import com.til.controller.user.request.UserJoinRequest;
 import com.til.controller.user.request.UserLoginRequest;
@@ -48,8 +48,8 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public ApiResponse<Void> logout(@CurrentUser AuthUserInfoDto userInfo) {
-        authService.deleteToken(userInfo.id());
+    public ApiResponse<Void> logout(@CurrentUser Long userId) {
+        authService.deleteToken(userId);
         return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGOUT);
     }
 
@@ -60,21 +60,19 @@ public class UserController {
     }
 
     @PatchMapping("/change-nickname")
-    public ApiResponse<Void> changeNickname(@CurrentUser AuthUserInfoDto userInfo,
-        @RequestBody @Valid UserNicknameRequest request) {
-        userService.changeNickname(userInfo.id(), request.nickname());
+    public ApiResponse<Void> changeNickname(@CurrentUser Long userId, @RequestBody @Valid UserNicknameRequest request) {
+        userService.changeNickname(userId, request.nickname());
         return ApiResponse.ok(UserSuccessCode.SUCCESS_CHANGE_NICKNAME);
     }
 
     @PatchMapping("/change-password")
-    public ApiResponse<Void> changePassword(@CurrentUser AuthUserInfoDto userInfo,
-        @RequestBody @Valid UserPasswordRequest request) {
-        userService.changePassword(userInfo.id(), request.toServiceDto());
+    public ApiResponse<Void> changePassword(@CurrentUser Long userId, @RequestBody @Valid UserPasswordRequest request) {
+        userService.changePassword(userId, request.toServiceDto());
         return ApiResponse.ok(UserSuccessCode.SUCCESS_CHANGE_PASSWORD);
     }
 
     @GetMapping("/my-info")
-    public ApiResponse<UserInfoResponse> getUserInfo(@CurrentUser AuthUserInfoDto userInfo) {
-        return ApiResponse.ok(UserInfoResponse.of(userService.getUserInfo(userInfo.id())));
+    public ApiResponse<UserInfoResponse> getUserInfo(@CurrentUser Long userId) {
+        return ApiResponse.ok(UserInfoResponse.of(userService.getUserInfo(userId)));
     }
 }
