@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 
 import com.til.common.http.cors.BasicCorsConfig;
-import com.til.config.resolver.CurrentUserResolver;
+import com.til.common.http.resolver.CurrentUserResolver;
 
 import lombok.RequiredArgsConstructor;
 

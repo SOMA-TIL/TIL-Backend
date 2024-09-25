@@ -5,11 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 import com.til.common.http.errorhandling.GlobalExceptionHandler;
+import com.til.common.http.security.SecurityConfig;
 
 import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication
-@Import(GlobalExceptionHandler.class)
+@Import({SecurityConfig.class, GlobalExceptionHandler.class})
 public class AdminApiApplication {
 
     // ----Test Code----

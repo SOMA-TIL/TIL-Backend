@@ -1,6 +1,6 @@
 package com.til.controller;
 
-import static com.til.domain.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
+import static com.til.common.http.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

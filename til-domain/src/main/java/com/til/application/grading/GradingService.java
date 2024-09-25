@@ -1,6 +1,6 @@
 package com.til.application.grading;
 
-import static com.til.domain.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
+import static com.til.common.http.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
 
 import java.util.List;
 import java.util.Map;

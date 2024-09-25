@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 
 import com.til.common.http.cors.BasicCorsConfig;
-import com.til.config.resolver.CurrentAdminResolver;
+import com.til.common.http.resolver.CurrentUserResolver;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,9 +14,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebConfig extends BasicCorsConfig {
 
-    private final CurrentAdminResolver currentAdminResolver;
+    private final CurrentUserResolver currentUserResolver;
 
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(currentAdminResolver);
+        resolvers.add(currentUserResolver);
     }
 }

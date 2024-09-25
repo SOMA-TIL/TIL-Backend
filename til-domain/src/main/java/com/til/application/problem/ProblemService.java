@@ -1,13 +1,10 @@
 package com.til.application.problem;
 
-import static com.til.domain.auth.dto.AuthUserInfoDto.isGuest;
-
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.til.common.exception.BaseException;
-import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.problem.dto.FavoriteProblemDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
@@ -29,10 +26,10 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
     private final FavoriteProblemRepository favoriteProblemRepository;
 
-    public ProblemPageDto<ProblemOverviewInfoDto> getProblemOverviewList(AuthUserInfoDto userInfo,
-        PageParamDto pageParamDto, ProblemSearchDto problemSearchDto) {
-        return isGuest(userInfo) ? getProblemPublicOverviewList(pageParamDto, problemSearchDto)
-            : getProblemOverviewListWithUserData(pageParamDto, problemSearchDto, userInfo.id());
+    public ProblemPageDto<ProblemOverviewInfoDto> getProblemOverviewList(Long userId, PageParamDto pageParamDto,
+        ProblemSearchDto problemSearchDto) {
+        return isGuest(userId) ? getProblemPublicOverviewList(pageParamDto, problemSearchDto)
+            : getProblemOverviewListWithUserData(pageParamDto, problemSearchDto, userId);
     }
 
     public ProblemPageDto<Problem> getProblemList(PageParamDto pageParamDto) {
@@ -40,9 +37,8 @@ public class ProblemService {
         return ProblemPageDto.of(problems);
     }
 
-    public ProblemPublicInfoDto getProblemInfo(AuthUserInfoDto userInfo, Long problemId) {
-        return isGuest(userInfo) ? getProblemPublicInfo(problemId) : getProblemInfoWithUserData(userInfo.id(),
-            problemId);
+    public ProblemPublicInfoDto getProblemInfo(Long userId, Long problemId) {
+        return isGuest(userId) ? getProblemPublicInfo(problemId) : getProblemInfoWithUserData(userId, problemId);
     }
 
     private ProblemPublicInfoDto getProblemPublicInfo(Long problemId) {
@@ -97,5 +93,9 @@ public class ProblemService {
             throw new BaseException(ProblemErrorCode.NOT_FOUND_FAVORITE_PROBLEM);
         }
         favoriteProblemRepository.deleteByUserIdAndProblemId(favoriteDto.userId(), favoriteDto.problemId());
+    }
+
+    private boolean isGuest(Long userId) {
+        return userId == null;
     }
 }
