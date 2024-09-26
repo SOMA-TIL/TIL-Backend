@@ -13,13 +13,9 @@ import com.til.application.user.UserService;
 import com.til.common.http.auth.annotation.CurrentUser;
 import com.til.common.http.response.ApiResponse;
 import com.til.controller.user.request.UserJoinRequest;
-import com.til.controller.user.request.UserLoginRequest;
 import com.til.controller.user.request.UserNicknameRequest;
 import com.til.controller.user.request.UserPasswordRequest;
 import com.til.controller.user.response.UserInfoResponse;
-import com.til.controller.user.response.UserLoginResponse;
-import com.til.domain.auth.dto.AuthTokenDto;
-import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.user.enums.UserSuccessCode;
 
 import jakarta.validation.Valid;
@@ -37,20 +33,6 @@ public class UserController {
     public ApiResponse<Void> join(@RequestBody @Valid UserJoinRequest request) {
         userService.join(request.toServiceDto());
         return ApiResponse.ok(UserSuccessCode.SUCCESS_JOIN);
-    }
-
-    @PostMapping("/login")
-    public ApiResponse<UserLoginResponse> login(@RequestBody @Valid UserLoginRequest request) {
-        AuthUserInfoDto userInfoDto = userService.login(request.toServiceDto());
-        AuthTokenDto token = authService.createToken(userInfoDto);
-
-        return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGIN, UserLoginResponse.of(userInfoDto, token));
-    }
-
-    @GetMapping("/logout")
-    public ApiResponse<Void> logout(@CurrentUser Long userId) {
-        authService.deleteToken(userId);
-        return ApiResponse.ok(UserSuccessCode.SUCCESS_LOGOUT);
     }
 
     @GetMapping("/check-nickname/{nickname}")
