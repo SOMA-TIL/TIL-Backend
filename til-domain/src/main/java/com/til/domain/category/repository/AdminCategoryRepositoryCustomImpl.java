@@ -3,9 +3,9 @@ package com.til.domain.category.repository;
 import java.util.List;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.til.common.exception.BaseException;
 import com.til.domain.category.enums.CategoryErrorCode;
 import com.til.domain.category.model.QCategory;
-import com.til.domain.common.exception.BaseException;
 
 import lombok.RequiredArgsConstructor;
 
