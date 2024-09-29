@@ -2,12 +2,12 @@ package com.til.domain.problem.repository;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.types.dsl.Expressions.allOf;
+import static com.til.common.utils.data.ListUtil.isNullOrEmpty;
+import static com.til.common.utils.data.StringUtil.hasText;
 import static com.til.domain.category.model.QProblemCategory.problemCategory;
 import static com.til.domain.problem.model.QProblem.problem;
 import static com.til.domain.problem.model.QProblemStatistics.problemStatistics;
 import static com.til.domain.problem.repository.ProblemQueryCondition.*;
-import static com.til.utils.data.ListUtil.isNullOrEmpty;
-import static com.til.utils.data.StringUtil.hasText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
-import com.til.domain.common.exception.BaseException;
+import com.til.common.exception.BaseException;
 import com.til.domain.problem.dto.*;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.enums.ProblemSortCriteria;

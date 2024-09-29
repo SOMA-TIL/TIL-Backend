@@ -1,8 +1,8 @@
 package com.til.common.page;
 
+import com.til.common.exception.BaseException;
+import com.til.common.http.response.enums.BaseErrorCode;
 import com.til.domain.common.dto.PageParamDto;
-import com.til.domain.common.enums.BaseErrorCode;
-import com.til.domain.common.exception.BaseException;
 import com.til.domain.problem.enums.ProblemSortCriteria;
 
 import lombok.Builder;

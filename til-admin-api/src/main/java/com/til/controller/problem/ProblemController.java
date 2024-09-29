@@ -4,28 +4,28 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import com.til.application.problem.AdminProblemService;
-import com.til.common.http.auth.annotation.CurrentUser;
-import com.til.controller.problem.request.CreateProblemRequest;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.til.application.problem.AdminProblemService;
+import com.til.common.http.auth.annotation.CurrentUser;
+import com.til.common.http.response.ApiResponse;
 import com.til.common.page.PageParamRequest;
+import com.til.controller.problem.request.CreateProblemRequest;
 import com.til.controller.problem.request.SearchProblemRequest;
 import com.til.controller.problem.request.UpdateProblemRequest;
 import com.til.controller.problem.response.ProblemInfoResponse;
 import com.til.controller.problem.response.ProblemPageResponse;
-import com.til.common.http.response.ApiResponse;
 import com.til.domain.auth.dto.AuthUserInfoDto;
 import com.til.domain.problem.dto.AdminProblemInfoDto;
 import com.til.domain.problem.dto.AdminProblemListDto;
 import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.enums.ProblemSuccessCode;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,8 +38,8 @@ public class ProblemController {
     private final AdminProblemService adminProblemService;
 
     @PostMapping("")
-    public ApiResponse<Void> createProblem(@CurrentUser AuthUserInfoDto adminInfo, @RequestBody @Valid
-    CreateProblemRequest createProblemRequest) {
+    public ApiResponse<Void> createProblem(@CurrentUser AuthUserInfoDto adminInfo,
+        @RequestBody @Valid CreateProblemRequest createProblemRequest) {
         log.debug("문제 등록 요청 - 관리자 ID: {}", adminInfo.id());
         adminProblemService.createProblem(createProblemRequest.toServiceDto());
         return ApiResponse.ok();

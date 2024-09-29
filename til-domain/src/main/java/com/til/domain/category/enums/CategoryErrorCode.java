@@ -2,7 +2,7 @@ package com.til.domain.category.enums;
 
 import org.springframework.http.HttpStatus;
 
-import com.til.domain.common.enums.ErrorCode;
+import com.til.common.http.response.enums.ErrorCode;
 
 import lombok.AccessLevel;
 import lombok.Getter;
