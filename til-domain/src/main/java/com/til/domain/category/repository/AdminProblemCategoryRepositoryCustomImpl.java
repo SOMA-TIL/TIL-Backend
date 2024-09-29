@@ -31,11 +31,7 @@ public class AdminProblemCategoryRepositoryCustomImpl implements AdminProblemCat
         deleteByProblemId(problemId);
 
         categoryIdList.forEach(categoryId -> {
-            ProblemCategory newProblemCategory = ProblemCategory.builder()
-                .problemId(problemId)
-                .categoryId(categoryId)
-                .build();
-
+            ProblemCategory newProblemCategory = ProblemCategory.createProblemCategory(problemId, categoryId);
             entityManager.persist(newProblemCategory);
         });
     }

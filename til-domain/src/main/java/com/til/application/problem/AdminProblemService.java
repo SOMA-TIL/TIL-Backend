@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.til.common.exception.BaseException;
-import com.til.domain.category.model.ProblemCategory;
 import com.til.domain.category.repository.CategoryRepository;
 import com.til.domain.category.repository.ProblemCategoryRepository;
 import com.til.domain.common.dto.PageParamDto;
@@ -35,15 +34,7 @@ public class AdminProblemService {
 
         Problem problem = adminCreateProblemDto.toEntity();
         problemRepository.save(problem);
-
-        for (Long categoryId : adminCreateProblemDto.categoryIdList()) {
-            ProblemCategory problemCategory = ProblemCategory.builder()
-                .problemId(problem.getId())
-                .categoryId(categoryId)
-                .build();
-
-            problemCategoryRepository.save(problemCategory);
-        }
+        problemCategoryRepository.saveAllProblemCategories(problem.getId(), adminCreateProblemDto.categoryIdList());
     }
 
     public ProblemPageDto<AdminProblemListDto> getProblemList(PageParamDto pageParamDto,

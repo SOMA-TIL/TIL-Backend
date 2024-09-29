@@ -30,4 +30,10 @@ public class ProblemCategory extends BaseTimeEntity {
     @Column(nullable = false)
     private Long categoryId;
 
+    public static ProblemCategory createProblemCategory(Long problemId, Long categoryId) {
+        return ProblemCategory.builder()
+            .problemId(problemId)
+            .categoryId(categoryId)
+            .build();
+    }
 }
