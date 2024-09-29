@@ -1,9 +1,6 @@
 package com.til.domain.problem.repository;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.types.dsl.Expressions.allOf;
-import static com.til.common.utils.data.ListUtil.isNullOrEmpty;
-import static com.til.common.utils.data.StringUtil.hasText;
 import static com.til.domain.category.model.QProblemCategory.problemCategory;
 import static com.til.domain.problem.model.QProblem.problem;
 import static com.til.domain.problem.model.QProblemStatistics.problemStatistics;
@@ -24,7 +21,6 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.til.common.exception.BaseException;
@@ -51,32 +47,25 @@ public class AdminProblemRepositoryCustomImpl implements AdminProblemRepositoryC
 
         boolean hasUpdate = false;
 
-        if (adminUpdateProblemDto.title() != null ||
-            adminUpdateProblemDto.question() != null ||
-            adminUpdateProblemDto.solution() != null ||
-            adminUpdateProblemDto.grading() != null ||
-            adminUpdateProblemDto.level() != null) {
-
-            if (adminUpdateProblemDto.title() != null) {
-                updateClause.set(problem.title, adminUpdateProblemDto.title());
-                hasUpdate = true;
-            }
-            if (adminUpdateProblemDto.question() != null) {
-                updateClause.set(problem.question, adminUpdateProblemDto.question());
-                hasUpdate = true;
-            }
-            if (adminUpdateProblemDto.solution() != null) {
-                updateClause.set(problem.solution, adminUpdateProblemDto.solution());
-                hasUpdate = true;
-            }
-            if (adminUpdateProblemDto.grading() != null) {
-                updateClause.set(problem.grading, adminUpdateProblemDto.grading());
-                hasUpdate = true;
-            }
-            if (adminUpdateProblemDto.level() != null) {
-                updateClause.set(problem.level, adminUpdateProblemDto.level());
-                hasUpdate = true;
-            }
+        if (adminUpdateProblemDto.title() != null) {
+            updateClause.set(problem.title, adminUpdateProblemDto.title());
+            hasUpdate = true;
+        }
+        if (adminUpdateProblemDto.question() != null) {
+            updateClause.set(problem.question, adminUpdateProblemDto.question());
+            hasUpdate = true;
+        }
+        if (adminUpdateProblemDto.solution() != null) {
+            updateClause.set(problem.solution, adminUpdateProblemDto.solution());
+            hasUpdate = true;
+        }
+        if (adminUpdateProblemDto.grading() != null) {
+            updateClause.set(problem.grading, adminUpdateProblemDto.grading());
+            hasUpdate = true;
+        }
+        if (adminUpdateProblemDto.level() != null) {
+            updateClause.set(problem.level, adminUpdateProblemDto.level());
+            hasUpdate = true;
         }
 
         if (hasUpdate) {
@@ -87,7 +76,9 @@ public class AdminProblemRepositoryCustomImpl implements AdminProblemRepositoryC
     @Override
     public Page<AdminProblemListDto> getProblemList(Pageable pageable,
         ProblemSearchDto searchDto) {
-        BooleanExpression searchCondition = getSearchCondition(searchDto);
+        ProblemSearchCondition problemSearchCondition = new ProblemSearchCondition(problem, problemCategory);
+        BooleanExpression searchCondition = problemSearchCondition.getSearchCondition(searchDto);
+
         List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable);
 
         List<ProblemBasicInfoDto> problemList = queryFactory
@@ -146,29 +137,6 @@ public class AdminProblemRepositoryCustomImpl implements AdminProblemRepositoryC
             .where(searchCondition)
             .fetchOne();
         return count == null ? 0 : count;
-    }
-
-    private BooleanExpression getSearchCondition(ProblemSearchDto searchDto) {
-        return allOf(
-            getKeywordCondition(searchDto.keyword()),
-            getLevelCondition(searchDto.levelList()),
-            getCategoryCondition(searchDto.categoryList())
-        );
-    }
-
-    private BooleanExpression getKeywordCondition(String keyword) {
-        return hasText(keyword) ? problem.title.containsIgnoreCase(keyword) : null;
-    }
-
-    private static BooleanExpression getLevelCondition(List<Integer> levelList) {
-        return !isNullOrEmpty(levelList) ? problem.level.in(levelList) : null;
-    }
-
-    private BooleanExpression getCategoryCondition(List<Long> categoryList) {
-        return !isNullOrEmpty(categoryList) ? JPAExpressions.selectFrom(problemCategory)
-            .where(problemCategory.problemId.eq(problem.id))
-            .where(problemCategory.categoryId.in(categoryList))
-            .exists() : null;
     }
 
     private List<OrderSpecifier<?>> getOrderSpecifiers(Pageable pageable) {

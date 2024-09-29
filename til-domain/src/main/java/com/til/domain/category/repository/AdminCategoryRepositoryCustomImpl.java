@@ -18,12 +18,12 @@ public class AdminCategoryRepositoryCustomImpl implements AdminCategoryRepositor
     public void validateCategoryIds(List<Long> categoryIdList) {
         QCategory category = QCategory.category;
 
-        long validCount = queryFactory.select(category.id)
+        Long validCount = queryFactory.select(category.count())
             .from(category)
             .where(category.id.in(categoryIdList))
-            .fetchCount();
+            .fetchFirst();
 
-        if (validCount != categoryIdList.size()) {
+        if (validCount == null || validCount != categoryIdList.size()) {
             throw new BaseException(CategoryErrorCode.NOT_FOUND_CATEGORY);
         }
     }
