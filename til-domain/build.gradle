@@ -28,6 +28,9 @@ dependencies {
     // WebFlux for Http Request
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.112.Final:osx-aarch_64'
+
+    // p6spy
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 }
 
 def querydslDir = layout.buildDirectory.dir('generated/querydsl')
