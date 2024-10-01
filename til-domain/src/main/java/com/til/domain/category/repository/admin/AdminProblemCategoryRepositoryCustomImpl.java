@@ -1,4 +1,4 @@
-package com.til.domain.category.repository;
+package com.til.domain.category.repository.admin;
 
 import static com.til.domain.category.model.QProblemCategory.problemCategory;
 
