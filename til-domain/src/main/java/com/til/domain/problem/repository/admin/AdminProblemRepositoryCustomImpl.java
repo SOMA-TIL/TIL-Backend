@@ -1,4 +1,4 @@
-package com.til.domain.problem.repository;
+package com.til.domain.problem.repository.admin;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.til.domain.category.model.QProblemCategory.problemCategory;
@@ -28,6 +28,7 @@ import com.til.domain.problem.dto.*;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.enums.ProblemSortCriteria;
 import com.til.domain.problem.model.QProblem;
+import com.til.domain.problem.repository.ProblemSearchCondition;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

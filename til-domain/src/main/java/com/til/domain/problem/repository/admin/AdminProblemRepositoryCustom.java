@@ -1,4 +1,4 @@
-package com.til.domain.problem.repository;
+package com.til.domain.problem.repository.admin;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
