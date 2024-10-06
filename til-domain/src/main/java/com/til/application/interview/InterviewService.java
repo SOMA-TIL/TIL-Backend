@@ -17,6 +17,7 @@ import com.til.domain.interview.dto.InterviewCreateDto;
 import com.til.domain.interview.dto.InterviewInfoDto;
 import com.til.domain.interview.dto.InterviewProblemQuestionDto;
 import com.til.domain.interview.dto.InterviewSolveDto;
+import com.til.domain.interview.dto.SpeechInterviewCreateDto;
 import com.til.domain.interview.enums.InterviewErrorCode;
 import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewProblem;
@@ -53,6 +54,26 @@ public class InterviewService {
 
         // todo: 카테고리 내부에서 문제를 랜덤으로 선정하도록 구현
         createInterviewProblem(interviewCreateDto.categoryIdList(), interview.getId());
+
+        return InterviewCodeDto.of(interview);
+    }
+
+    @Transactional
+    public InterviewCodeDto createSpeechInterview(SpeechInterviewCreateDto speechInterviewCreateDto) {
+        checkProcessingInterviewByUserId(speechInterviewCreateDto.userId());
+
+        String code = createRandomId();
+
+        // todo: LLM에 포트폴리오, 문제 개수 보내서 실제로 문제 생성해서 받아오기(비동기 고려)
+        List<String> questionList = new ArrayList<>();
+        for (int i = 1; i <= speechInterviewCreateDto.questionSize(); i++) {
+            questionList.add(i + "번 질문 더미");
+        }
+
+        // todo: 생성된 문제를 음성면접 문제풀이 테이블에 저장
+
+        Interview interview = speechInterviewCreateDto.toEntity(code);
+        interviewRepository.save(interview);
 
         return InterviewCodeDto.of(interview);
     }
