@@ -14,6 +14,7 @@ import com.til.common.http.auth.annotation.CurrentUser;
 import com.til.common.http.response.ApiResponse;
 import com.til.controller.interview.request.InterviewCreateRequest;
 import com.til.controller.interview.request.InterviewSolveRequest;
+import com.til.controller.interview.request.SpeechInterviewCreateRequest;
 import com.til.controller.interview.response.InterviewCodeResponse;
 import com.til.controller.interview.response.InterviewInfoResponse;
 import com.til.controller.interview.response.InterviewResultResponse;
@@ -38,6 +39,15 @@ public class InterviewController {
     public ApiResponse<InterviewCodeResponse> createInterview(@CurrentUser Long userId,
         @RequestBody InterviewCreateRequest request) {
         InterviewCodeDto interviewCodeDto = interviewService.createInterview(request.toServiceDto(userId));
+
+        return ApiResponse.ok(InterviewSuccessCode.SUCCESS_INTERVIEW_CREATION, InterviewCodeResponse.of(
+            interviewCodeDto));
+    }
+
+    @PostMapping("/create-pro")
+    public ApiResponse<InterviewCodeResponse> createSpeechInterview(@CurrentUser Long userId,
+        @RequestBody SpeechInterviewCreateRequest request) {
+        InterviewCodeDto interviewCodeDto = interviewService.createSpeechInterview(request.toServiceDto(userId));
 
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_INTERVIEW_CREATION, InterviewCodeResponse.of(
             interviewCodeDto));
