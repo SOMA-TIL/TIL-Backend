@@ -2,6 +2,7 @@ package com.til;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Import;
 
 import com.til.common.http.errorhandling.GlobalExceptionHandler;
@@ -10,6 +11,7 @@ import com.til.common.http.security.SecurityConfig;
 import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 @Import({SecurityConfig.class, GlobalExceptionHandler.class})
 public class ApiApplication {
 
