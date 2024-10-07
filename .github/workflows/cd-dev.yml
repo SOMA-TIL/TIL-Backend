@@ -95,8 +95,8 @@ jobs:
           for module in "${modules[@]}"; do
             echo "Build and Push Docker image for module: $module"
             docker build -t somatil/$module \
-              --build-arg PROFILE=dev --build-arg PROJECT_NAME=$module \
-              -f docker/Dockerfile . && docker push somatil/$module &
+              --build-arg PROFILE=dev --build-arg PROJECT_NAME=$module -f docker/Dockerfile .
+            docker push somatil/$module
           done
 
   deploy:
