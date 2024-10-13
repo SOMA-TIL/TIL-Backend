@@ -48,3 +48,6 @@ docker-volume/
 .DS_Store
 .AppleDouble
 .LSOverride
+
+
+*.pyc
