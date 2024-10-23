@@ -23,11 +23,13 @@ import com.til.domain.category.repository.ProblemCategoryRepository;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewCreateDto;
 import com.til.domain.interview.dto.InterviewSolveDto;
+import com.til.domain.interview.dto.SpeechInterviewCreateDto;
 import com.til.domain.interview.enums.InterviewErrorCode;
 import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewStatus;
 import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
+import com.til.domain.interview.repository.SpeechInterviewProblemRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class InterviewServiceTest {
@@ -43,6 +45,9 @@ public class InterviewServiceTest {
 
     @Mock
     private InterviewProblemRepository interviewProblemRepository;
+
+    @Mock
+    private SpeechInterviewProblemRepository speechInterviewProblemRepository;
 
     @Mock
     private ProblemCategoryRepository problemCategoryRepository;
@@ -75,6 +80,32 @@ public class InterviewServiceTest {
 
         // when & then
         assertThatThrownBy(() -> interviewService.createInterview(createInterviewCreateDto()))
+            .isInstanceOf(BaseException.class)
+            .extracting(error -> ((BaseException) error).getErrorCode())
+            .isEqualTo(InterviewErrorCode.ALREADY_PROCESSING_INTERVIEW);
+    }
+
+    @Test
+    void 음성_모의면접_생성시_이미_생성중인_모의면접이_존재하면_예외를_던진다() {
+        // given
+        given(interviewRepository.existsByUserIdAndCreatingOrProcessingStatus(anyLong())).willReturn(true);
+
+        // when & then
+        assertThatThrownBy(() -> interviewService.createSpeechInterview(createSpeechInterviewCreateDtoWithStatus(
+            InterviewStatus.CREATING)))
+            .isInstanceOf(BaseException.class)
+            .extracting(error -> ((BaseException) error).getErrorCode())
+            .isEqualTo(InterviewErrorCode.ALREADY_PROCESSING_INTERVIEW);
+    }
+
+    @Test
+    void 음성_모의면접_생성시_이미_진행중인_모의면접이_존재하면_예외를_던진다() {
+        // given
+        given(interviewRepository.existsByUserIdAndCreatingOrProcessingStatus(anyLong())).willReturn(true);
+
+        // when & then
+        assertThatThrownBy(() -> interviewService.createSpeechInterview(createSpeechInterviewCreateDtoWithStatus(
+            InterviewStatus.PROCESSING)))
             .isInstanceOf(BaseException.class)
             .extracting(error -> ((BaseException) error).getErrorCode())
             .isEqualTo(InterviewErrorCode.ALREADY_PROCESSING_INTERVIEW);
@@ -176,6 +207,14 @@ public class InterviewServiceTest {
             .code(RandomValueGenerator.generateRandomId(11))
             .userId(1L)
             .categoryIdList(List.of(1L))
+            .build();
+    }
+
+    private SpeechInterviewCreateDto createSpeechInterviewCreateDtoWithStatus(InterviewStatus status) {
+        return SpeechInterviewCreateDto.builder()
+            .status(status)
+            .code(RandomValueGenerator.generateRandomId(11))
+            .userId(1L)
             .build();
     }
 

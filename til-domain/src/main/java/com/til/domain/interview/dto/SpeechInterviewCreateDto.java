@@ -16,7 +16,7 @@ public record SpeechInterviewCreateDto(
 
     public Interview toEntity(String code) {
         return Interview.builder()
-            .status(InterviewStatus.PROCESSING)
+            .status(InterviewStatus.CREATING)
             .code(code)
             .userId(userId)
             .build();
