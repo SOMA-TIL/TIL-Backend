@@ -36,6 +36,15 @@ public class InterviewRepositoryCustomImpl implements InterviewRepositoryCustom 
     }
 
     @Override
+    public boolean existsByUserIdAndCreatingOrProcessingStatus(Long userId) {
+        return queryFactory.selectOne()
+            .from(interview)
+            .where(interview.userId.eq(userId),
+                interview.status.eq(InterviewStatus.CREATING).or(interview.status.eq(InterviewStatus.PROCESSING)))
+            .fetchFirst() != null;
+    }
+
+    @Override
     public Interview getProcessingInterview(Long userId, String code) {
         return Optional.ofNullable(
             queryFactory.selectFrom(interview)

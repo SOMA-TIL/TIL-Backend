@@ -2,6 +2,8 @@ package com.til.application.interview;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +25,10 @@ import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewProblem;
 import com.til.domain.interview.model.InterviewProblemStatus;
 import com.til.domain.interview.model.InterviewStatus;
+import com.til.domain.interview.model.SpeechInterviewProblem;
 import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
+import com.til.domain.interview.repository.SpeechInterviewProblemRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +40,7 @@ public class InterviewService {
     private final InterviewRepository interviewRepository;
     private final InterviewCategoryRepository interviewCategoryRepository;
     private final InterviewProblemRepository interviewProblemRepository;
+    private final SpeechInterviewProblemRepository speechInterviewProblemRepository;
 
     private final ProblemCategoryRepository problemCategoryRepository;
 
@@ -60,9 +65,12 @@ public class InterviewService {
 
     @Transactional
     public InterviewCodeDto createSpeechInterview(SpeechInterviewCreateDto speechInterviewCreateDto) {
-        checkProcessingInterviewByUserId(speechInterviewCreateDto.userId());
+        checkCreatingOrProcessingInterviewByUserId(speechInterviewCreateDto.userId());
 
         String code = createRandomId();
+
+        Interview interview = speechInterviewCreateDto.toEntity(code);
+        interviewRepository.save(interview);
 
         // todo: LLM에 포트폴리오, 문제 개수 보내서 실제로 문제 생성해서 받아오기(비동기 고려)
         List<String> questionList = new ArrayList<>();
@@ -70,10 +78,7 @@ public class InterviewService {
             questionList.add(i + "번 질문 더미");
         }
 
-        // todo: 생성된 문제를 음성면접 문제풀이 테이블에 저장
-
-        Interview interview = speechInterviewCreateDto.toEntity(code);
-        interviewRepository.save(interview);
+        createSpeechInterviewProblem(questionList, interview.getId());
 
         return InterviewCodeDto.of(interview);
     }
@@ -131,6 +136,12 @@ public class InterviewService {
         }
     }
 
+    private void checkCreatingOrProcessingInterviewByUserId(Long userId) {
+        if (interviewRepository.existsByUserIdAndCreatingOrProcessingStatus(userId)) {
+            throw new BaseException(InterviewErrorCode.ALREADY_PROCESSING_INTERVIEW);
+        }
+    }
+
     private void checkInterviewProblemSolvable(Long interviewId, Integer sequence) {
         if (!interviewProblemRepository.existsBySolvable(interviewId, sequence, InterviewProblemStatus.UNSOLVED)) {
             throw new BaseException(InterviewErrorCode.NOT_FOUND_INTERVIEW_PROBLEM);
@@ -170,6 +181,16 @@ public class InterviewService {
         });
 
         interviewProblemRepository.saveAll(interviewProblemList);
+    }
+
+    private void createSpeechInterviewProblem(List<String> questionList, Long interviewId) {
+        List<SpeechInterviewProblem> problemList = IntStream.range(0, questionList.size())
+            .mapToObj(i -> SpeechInterviewProblem.createUnsolvedSpeechInterviewProblem(i + 1, questionList.get(i),
+                interviewId))
+            .collect(Collectors.toList());
+
+        speechInterviewProblemRepository.saveAll(problemList);
+        speechInterviewProblemRepository.saveAll(problemList);
     }
 
     private String createRandomId() {

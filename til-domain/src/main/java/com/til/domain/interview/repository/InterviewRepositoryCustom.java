@@ -16,4 +16,6 @@ public interface InterviewRepositoryCustom {
     Long getIdByUserIdAndCode(Long userId, String code);
 
     void updateInterviewStatus(Long id, InterviewStatus status);
+
+    boolean existsByUserIdAndCreatingOrProcessingStatus(Long userId);
 }

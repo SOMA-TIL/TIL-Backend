@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem, interview, grading, interview_category, interview_problem;
+DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem, interview, grading, interview_category, interview_problem, speech_interview_problem;
 DROP VIEW IF EXISTS problem_statistics;
 
 CREATE TABLE user
@@ -68,7 +68,7 @@ CREATE TABLE interview
 (
     id            bigint auto_increment primary key,
     code          varchar(20)                     not null unique,
-    status        enum ('PROCESSING', 'PENDING', 'DONE', 'ERROR', 'ABORTED') not null,
+    status        enum ('CREATING', 'PROCESSING', 'PENDING', 'DONE', 'ERROR', 'ABORTED') not null,
     user_id       bigint                           not null,
     created_date  datetime(6)                      not null,
     modified_date datetime(6)                      not null
@@ -105,6 +105,19 @@ CREATE TABLE interview_problem
     problem_id    bigint    not null,
     created_date  datetime(6) not null,
     modified_date datetime(6) not null
+);
+
+CREATE TABLE speech_interview_problem
+(
+  id            bigint auto_increment not null primary key,
+  question      text      not null,
+  answer        text          null,
+  sequence      int       not null,
+  status        enum('UNSOLVED', 'SOLVED') not null,
+  grading_status enum('IDLE', 'PENDING', 'COMPLETED', 'ERROR') not null,
+  interview_id  bigint    not null,
+  created_date  datetime(6) not null,
+  modified_date datetime(6) not null
 );
 
 -- TEMPORARY VIEW FOR PROBLEM STATISTICS
