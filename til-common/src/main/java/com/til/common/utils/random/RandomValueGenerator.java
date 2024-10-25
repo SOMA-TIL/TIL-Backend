@@ -16,7 +16,7 @@ public final class RandomValueGenerator {
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final Encoder base64Encoder = Base64.getEncoder();
 
-    public static String generateRandomId(int size) {
+    public static String generateRandomString(int size) {
 
         if (size <= 0) {
             throw new IllegalArgumentException("랜덤 ID의 크기는 최소 1 이상이어야 합니다.");

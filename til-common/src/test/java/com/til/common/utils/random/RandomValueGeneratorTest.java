@@ -12,7 +12,7 @@ public class RandomValueGeneratorTest {
         int size = 0;
 
         // when & then
-        assertThatThrownBy(() -> RandomValueGenerator.generateRandomId(size)).isInstanceOf(
+        assertThatThrownBy(() -> RandomValueGenerator.generateRandomString(size)).isInstanceOf(
             IllegalArgumentException.class);
     }
 
@@ -22,7 +22,7 @@ public class RandomValueGeneratorTest {
         int size = 11;
 
         // when & then
-        assertThat(RandomValueGenerator.generateRandomId(size).length()).isEqualTo(size);
+        assertThat(RandomValueGenerator.generateRandomString(size).length()).isEqualTo(size);
     }
 
 }

@@ -194,7 +194,7 @@ public class InterviewService {
     }
 
     private String createRandomId() {
-        String code = RandomValueGenerator.generateRandomId(RANDOM_ID_SIZE);
+        String code = RandomValueGenerator.generateRandomString(RANDOM_ID_SIZE);
         checkDuplicateCode(code);
         return code;
     }

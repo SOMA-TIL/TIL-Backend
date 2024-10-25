@@ -204,7 +204,7 @@ public class InterviewServiceTest {
     private InterviewCreateDto createInterviewCreateDto() {
         return InterviewCreateDto.builder()
             .status(InterviewStatus.PROCESSING)
-            .code(RandomValueGenerator.generateRandomId(11))
+            .code(RandomValueGenerator.generateRandomString(11))
             .userId(1L)
             .categoryIdList(List.of(1L))
             .build();
@@ -213,7 +213,7 @@ public class InterviewServiceTest {
     private SpeechInterviewCreateDto createSpeechInterviewCreateDtoWithStatus(InterviewStatus status) {
         return SpeechInterviewCreateDto.builder()
             .status(status)
-            .code(RandomValueGenerator.generateRandomId(11))
+            .code(RandomValueGenerator.generateRandomString(11))
             .userId(1L)
             .build();
     }
