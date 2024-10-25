@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.til.application.auth.AuthService;
 import com.til.application.user.UserService;
 import com.til.common.http.auth.annotation.CurrentUser;
 import com.til.common.http.response.ApiResponse;
 import com.til.controller.user.request.UserJoinRequest;
 import com.til.controller.user.request.UserNicknameRequest;
 import com.til.controller.user.request.UserPasswordRequest;
+import com.til.controller.user.request.UserPasswordResetRequest;
 import com.til.controller.user.response.UserInfoResponse;
 import com.til.domain.user.enums.UserSuccessCode;
 
@@ -27,7 +27,6 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserService userService;
-    private final AuthService authService;
 
     @PostMapping("/join")
     public ApiResponse<Void> join(@RequestBody @Valid UserJoinRequest request) {
@@ -56,5 +55,11 @@ public class UserController {
     @GetMapping("/my-info")
     public ApiResponse<UserInfoResponse> getUserInfo(@CurrentUser Long userId) {
         return ApiResponse.ok(UserInfoResponse.of(userService.getUserInfo(userId)));
+    }
+
+    @PostMapping("/reset-password")
+    public ApiResponse<Void> resetPassword(@RequestBody @Valid UserPasswordResetRequest request) {
+        userService.resetPassword(request.email());
+        return ApiResponse.ok(UserSuccessCode.SUCCESS_RESET_PASSWORD);
     }
 }

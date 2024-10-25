@@ -1,5 +1,7 @@
 package com.til.application.user;
 
+import static com.til.common.utils.random.RandomValueGenerator.generateRandomString;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +48,17 @@ public class UserService {
         }
 
         return AuthUserInfoDto.of(user.getId(), user.getNickname(), user.getRole());
+    }
+
+    @Transactional
+    public void resetPassword(String userEmail) {
+        User user = userRepository.getByEmail(userEmail);
+
+        String randomPassword = generateRandomString(10);
+
+        userRepository.updatePassword(user.getId(), passwordManager.encodePassword(randomPassword));
+
+        // TODO: message queue로 비밀번호 변경 메일 전송
     }
 
     public void checkEmail(String email) {
