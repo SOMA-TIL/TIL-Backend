@@ -1,19 +1,27 @@
 package com.til.application.interview;
 
+import static com.til.common.http.auth.enums.AuthConstants.AUTHORIZATION_HEADER;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import com.til.common.config.properties.LlmApiProperties;
 import com.til.common.exception.BaseException;
 import com.til.common.utils.random.RandomValueGenerator;
 import com.til.domain.category.dto.InterviewCategoryDto;
 import com.til.domain.category.repository.InterviewCategoryRepository;
 import com.til.domain.category.repository.ProblemCategoryRepository;
 import com.til.domain.grading.enums.GradingStatus;
+import com.til.domain.interview.dto.CreatingProblemInputDataDto;
+import com.til.domain.interview.dto.CreatingProblemResultDto;
 import com.til.domain.interview.dto.InterviewCodeDto;
 import com.til.domain.interview.dto.InterviewCreateDto;
 import com.til.domain.interview.dto.InterviewInfoDto;
@@ -30,12 +38,19 @@ import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
 import com.til.domain.interview.repository.SpeechInterviewProblemRepository;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class InterviewService {
+
+    private static final int RANDOM_ID_SIZE = 11;
+
+    private final LlmApiProperties llmApiProps;
 
     private final InterviewRepository interviewRepository;
     private final InterviewCategoryRepository interviewCategoryRepository;
@@ -44,7 +59,12 @@ public class InterviewService {
 
     private final ProblemCategoryRepository problemCategoryRepository;
 
-    private static final int RANDOM_ID_SIZE = 11;
+    private WebClient webClient;
+
+    @PostConstruct
+    public void init() {
+        this.webClient = WebClient.builder().baseUrl(llmApiProps.getUrl()).build();
+    }
 
     @Transactional
     public InterviewCodeDto createInterview(InterviewCreateDto interviewCreateDto) {
@@ -72,15 +92,26 @@ public class InterviewService {
         Interview interview = speechInterviewCreateDto.toEntity(code);
         interviewRepository.save(interview);
 
-        // todo: LLM에 포트폴리오, 문제 개수 보내서 실제로 문제 생성해서 받아오기(비동기 고려)
-        List<String> questionList = new ArrayList<>();
-        for (int i = 1; i <= speechInterviewCreateDto.questionSize(); i++) {
-            questionList.add(i + "번 질문 더미");
-        }
-
-        createSpeechInterviewProblem(questionList, interview.getId());
+        createSpeechInterviewProblem(interview.getId(), speechInterviewCreateDto.questionSize(),
+            speechInterviewCreateDto.portfolio());
 
         return InterviewCodeDto.of(interview);
+    }
+
+    @Async
+    @Transactional
+    public void createSpeechInterviewProblem(Long interviewId, int questionSize, String portfolio) {
+        CreatingProblemInputDataDto creatingProblemInputDataDto = CreatingProblemInputDataDto.of(questionSize,
+            portfolio);
+
+        CompletableFuture.supplyAsync(() -> sendingCreatingProblemRequest(creatingProblemInputDataDto))
+            .thenAccept(creatingProblemResultDto -> {
+                saveSpeechInterviewProblem(creatingProblemResultDto.questionList(), interviewId);
+                interviewRepository.updateInterviewStatus(interviewId, InterviewStatus.PROCESSING);
+            }).exceptionally(e -> {
+                interviewRepository.updateInterviewStatus(interviewId, InterviewStatus.ERROR);
+                return null;
+            });
     }
 
     public InterviewInfoDto getProcessingInterviewInfo(Long userId, String code) {
@@ -183,13 +214,29 @@ public class InterviewService {
         interviewProblemRepository.saveAll(interviewProblemList);
     }
 
-    private void createSpeechInterviewProblem(List<String> questionList, Long interviewId) {
+    private CreatingProblemResultDto sendingCreatingProblemRequest(
+        CreatingProblemInputDataDto creatingProblemInputDataDto) {
+
+        try {
+            return webClient.post()
+                .uri("/creating-problem")
+                .header(AUTHORIZATION_HEADER, llmApiProps.getKey())
+                .bodyValue(creatingProblemInputDataDto)
+                .retrieve()
+                .bodyToMono(CreatingProblemResultDto.class)
+                .block();
+        } catch (Exception e) {
+            log.error("Creating problem request failed: {}", e.getMessage());
+            throw new RuntimeException("Creating problem request failed", e);
+        }
+    }
+
+    private void saveSpeechInterviewProblem(List<String> questionList, Long interviewId) {
         List<SpeechInterviewProblem> problemList = IntStream.range(0, questionList.size())
             .mapToObj(i -> SpeechInterviewProblem.createUnsolvedSpeechInterviewProblem(i + 1, questionList.get(i),
                 interviewId))
             .collect(Collectors.toList());
 
-        speechInterviewProblemRepository.saveAll(problemList);
         speechInterviewProblemRepository.saveAll(problemList);
     }
 

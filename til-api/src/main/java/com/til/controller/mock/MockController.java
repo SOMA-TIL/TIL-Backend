@@ -1,5 +1,6 @@
 package com.til.controller.mock;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -22,4 +23,12 @@ public class MockController {
 
         return ResponseEntity.ok((new Random()).nextBoolean() ? pass : fail);
     }
+
+    @PostMapping("/llm-service/creating-problem")
+    public ResponseEntity<Object> mockCreatingProblem() {
+        Map<String, List<String>> questionList = Map.of("questionList", List.of("더미 질문 1", "더미 질문 2", "더미 질문 3"));
+
+        return ResponseEntity.ok(questionList);
+    }
+
 }
