@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.til.common.exception.BaseException;
 import com.til.domain.common.dto.PageParamDto;
+import com.til.domain.history.annotation.LogProblemViewHistory;
 import com.til.domain.problem.dto.FavoriteProblemDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPageDto;
@@ -37,6 +38,8 @@ public class ProblemService {
         return ProblemPageDto.of(problems);
     }
 
+    @Transactional
+    @LogProblemViewHistory
     public ProblemPublicInfoDto getProblemInfo(Long userId, Long problemId) {
         return isGuest(userId) ? getProblemPublicInfo(problemId) : getProblemInfoWithUserData(userId, problemId);
     }

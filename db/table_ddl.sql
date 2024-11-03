@@ -1,4 +1,5 @@
-DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem, interview, grading, interview_category, interview_problem, speech_interview_problem;
+DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem,
+  interview, grading, interview_category, interview_problem, speech_interview_problem, til_history;
 DROP VIEW IF EXISTS problem_statistics;
 
 CREATE TABLE user
@@ -96,40 +97,52 @@ CREATE TABLE interview_category
 
 CREATE TABLE interview_problem
 (
-    id            bigint auto_increment not null primary key,
-    answer        text          null,
-    sequence      int       not null,
-    status        enum('UNSOLVED', 'SOLVED') not null,
+    id             bigint auto_increment not null primary key,
+    answer         text null,
+    sequence       int    not null,
+    status         enum('UNSOLVED', 'SOLVED') not null,
     grading_status enum('IDLE', 'PENDING', 'COMPLETED', 'ERROR') not null,
-    interview_id  bigint    not null,
-    problem_id    bigint    not null,
-    created_date  datetime(6) not null,
-    modified_date datetime(6) not null
+    interview_id   bigint not null,
+    problem_id     bigint not null,
+    created_date   datetime(6) not null,
+    modified_date  datetime(6) not null
 );
 
 CREATE TABLE speech_interview_problem
 (
-  id            bigint auto_increment not null primary key,
-  question      text      not null,
-  answer        text          null,
-  sequence      int       not null,
-  status        enum('UNSOLVED', 'SOLVED') not null,
-  grading_status enum('IDLE', 'PENDING', 'COMPLETED', 'ERROR') not null,
-  interview_id  bigint    not null,
-  created_date  datetime(6) not null,
-  modified_date datetime(6) not null
+    id             bigint auto_increment not null primary key,
+    question       text   not null,
+    answer         text null,
+    sequence       int    not null,
+    status         enum('UNSOLVED', 'SOLVED') not null,
+    grading_status enum('IDLE', 'PENDING', 'COMPLETED', 'ERROR') not null,
+    interview_id   bigint not null,
+    created_date   datetime(6) not null,
+    modified_date  datetime(6) not null
+);
+
+CREATE TABLE til_history
+(
+    id           bigint auto_increment not null primary key,
+    action       varchar(30) not null,
+    user_id      bigint      null,
+    target       varchar(30) not null,
+    target_id    bigint      null,
+    details       text        null,
+    created_date datetime(6) not null
 );
 
 -- TEMPORARY VIEW FOR PROBLEM STATISTICS
-CREATE OR REPLACE VIEW problem_statistics AS
-SELECT sp.problem_id AS problem_id,
-       SUM(CASE WHEN g.result = 'PASS' THEN 1 ELSE 0 END) AS passed_count,
-       SUM(CASE WHEN g.result = 'FAIL' THEN 1 ELSE 0 END) AS failed_count,
+CREATE
+OR REPLACE VIEW problem_statistics AS
+SELECT sp.problem_id                                                 AS problem_id,
+       SUM(CASE WHEN g.result = 'PASS' THEN 1 ELSE 0 END)            AS passed_count,
+       SUM(CASE WHEN g.result = 'FAIL' THEN 1 ELSE 0 END)            AS failed_count,
        SUM(CASE WHEN g.result IN ('PASS', 'FAIL') THEN 1 ELSE 0 END) AS attempted_count,
        CASE
            WHEN SUM(CASE WHEN g.result IN ('PASS', 'FAIL') THEN 1 ELSE 0 END) = 0 THEN 0
            ELSE ROUND(SUM(CASE WHEN g.result = 'PASS' THEN 1 ELSE 0 END) * 100.0 / SUM(CASE WHEN g.result IN ('PASS', 'FAIL') THEN 1 ELSE 0 END), 1)
-           END AS pass_rate
+           END                                                       AS pass_rate
 FROM solve_problem sp
          JOIN grading g ON sp.id = g.target_id AND g.`type` = 'PROBLEM'
 WHERE sp.status = 'COMPLETED'
