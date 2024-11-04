@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem,
-  interview, grading, interview_category, interview_problem, speech_interview_problem, til_history;
+  interview, grading, interview_category, interview_problem, speech_interview_problem,
+  til_history, problem_hourly_view_statistics;
 DROP VIEW IF EXISTS problem_statistics;
 
 CREATE TABLE user
@@ -130,6 +131,15 @@ CREATE TABLE til_history
     target_id    bigint      null,
     details       text        null,
     created_date datetime(6) not null
+);
+
+CREATE TABLE problem_hourly_view_statistics (
+    id          bigint auto_increment not null primary key,
+    statistic_date  date not null,
+    statistic_hour  tinyint not null check (statistic_hour BETWEEN 0 AND 23),
+    problem_id    bigint not null,
+    view_count    bigint null,
+    created_date  datetime(6) not null default current_timestamp(6)
 );
 
 -- TEMPORARY VIEW FOR PROBLEM STATISTICS

@@ -2,26 +2,13 @@ package com.til;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 
-import jakarta.annotation.PostConstruct;
-
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.til.batch", "com.til.common", "com.til.domain.problem",
+    "com.til.application.problem", "com.til.config.db", "com.til.batch"})
 public class BatchApplication {
 
-    // ----Test Code----
-    private final TestDomainBean testDomainBean;
-
-    public BatchApplication(TestDomainBean testDomainBean) {
-        this.testDomainBean = testDomainBean;
-    }
-
-    @PostConstruct
-    public void dependencyTest() {
-        testDomainBean.dependencyTest();
-    }
-
-    // ------------------
     public static void main(String[] args) {
         SpringApplication.run(BatchApplication.class, args);
     }
