@@ -289,10 +289,10 @@ VALUES
 
 
 -- =================== interview ===================
-INSERT INTO interview (id, code, status, user_id, created_date, modified_date)
+INSERT INTO interview (id, code, status, type, question_size, portfolio, user_id, created_date, modified_date)
 VALUES
-    (1, "qr6Os81rvNc", "DONE", (SELECT id FROM user WHERE email = "til@gmail.com"), now(), now()),
-    (2, "R4hyQw5OqYo", "DONE", (SELECT id FROM user WHERE email = "til@gmail.com"), now(), now());
+    (1, "qr6Os81rvNc", "DONE", "NORMAL", 3, null, (SELECT id FROM user WHERE email = "til@gmail.com"), now(), now()),
+    (2, "R4hyQw5OqYo", "DONE", "NORMAL", 3, null, (SELECT id FROM user WHERE email = "til@gmail.com"), now(), now());
 
 
 -- =================== interview_category ===================
