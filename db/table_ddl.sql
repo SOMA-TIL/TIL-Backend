@@ -71,6 +71,9 @@ CREATE TABLE interview
     id            bigint auto_increment primary key,
     code          varchar(20)                     not null unique,
     status        enum ('CREATING', 'PROCESSING', 'PENDING', 'DONE', 'ERROR', 'ABORTED') not null,
+    type          enum ('NORMAL', 'PORTFOLIO')     not null,
+    question_size int not null,
+    portfolio     text null,
     user_id       bigint                           not null,
     created_date  datetime(6)                      not null,
     modified_date datetime(6)                      not null

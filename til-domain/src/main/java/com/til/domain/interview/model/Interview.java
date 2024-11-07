@@ -33,6 +33,16 @@ public class Interview extends BaseTimeEntity {
     @Column(nullable = false)
     private InterviewStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private InterviewType type;
+
+    @Column(nullable = false)
+    private Integer questionSize;
+
+    @Column(nullable = true)
+    private String portfolio;
+
     @Column(nullable = false)
     private Long userId;
 

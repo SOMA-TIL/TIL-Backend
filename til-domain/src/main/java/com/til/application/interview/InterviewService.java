@@ -27,12 +27,12 @@ import com.til.domain.interview.dto.InterviewCreateDto;
 import com.til.domain.interview.dto.InterviewInfoDto;
 import com.til.domain.interview.dto.InterviewProblemQuestionDto;
 import com.til.domain.interview.dto.InterviewSolveDto;
-import com.til.domain.interview.dto.SpeechInterviewCreateDto;
 import com.til.domain.interview.enums.InterviewErrorCode;
 import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewProblem;
 import com.til.domain.interview.model.InterviewProblemStatus;
 import com.til.domain.interview.model.InterviewStatus;
+import com.til.domain.interview.model.InterviewType;
 import com.til.domain.interview.model.SpeechInterviewProblem;
 import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
@@ -68,32 +68,26 @@ public class InterviewService {
 
     @Transactional
     public InterviewCodeDto createInterview(InterviewCreateDto interviewCreateDto) {
-        checkProcessingInterviewByUserId(interviewCreateDto.userId());
+        checkCreatingOrProcessingInterviewByUserId(interviewCreateDto.userId());
 
         String code = createRandomId();
 
         Interview interview = interviewCreateDto.toEntity(code);
         interviewRepository.save(interview);
 
-        createInterviewCategory(interview.getId(), interviewCreateDto.categoryIdList());
+        // interviewType을 이용하여 면접 종류에 따라 두 가지 생성 로직을 구분
 
-        // todo: 카테고리 내부에서 문제를 랜덤으로 선정하도록 구현
-        createInterviewProblem(interviewCreateDto.categoryIdList(), interview.getId());
-
-        return InterviewCodeDto.of(interview);
-    }
-
-    @Transactional
-    public InterviewCodeDto createSpeechInterview(SpeechInterviewCreateDto speechInterviewCreateDto) {
-        checkCreatingOrProcessingInterviewByUserId(speechInterviewCreateDto.userId());
-
-        String code = createRandomId();
-
-        Interview interview = speechInterviewCreateDto.toEntity(code);
-        interviewRepository.save(interview);
-
-        createSpeechInterviewProblem(interview.getId(), speechInterviewCreateDto.questionSize(),
-            speechInterviewCreateDto.portfolio());
+        // -- cs 질문 기반 면접 생성
+        if (interviewCreateDto.interviewType().equals(InterviewType.NORMAL)) {
+            createInterviewCategory(interview.getId(), interviewCreateDto.categoryIdList());
+            createInterviewProblem(interviewCreateDto.categoryIdList(), interview.getQuestionSize(), interview.getId());
+            interviewRepository.updateInterviewStatus(interview.getId(), InterviewStatus.PROCESSING);
+        }
+        // -- portfolio 질문 기반 면접 생성
+        else if (interviewCreateDto.interviewType().equals(InterviewType.PORTFOLIO)) {
+            createSpeechInterviewProblem(interview.getId(), interviewCreateDto.questionSize(), interviewCreateDto
+                .portfolio());
+        }
 
         return InterviewCodeDto.of(interview);
     }
@@ -197,19 +191,27 @@ public class InterviewService {
             categoryId).toEntity()));
     }
 
-    private void createInterviewProblem(List<Long> categoryIdList, Long interviewId) {
+    private void createInterviewProblem(List<Long> categoryIdList, int questionSize, Long interviewId) {
         List<InterviewProblem> interviewProblemList = new ArrayList<>();
 
-        categoryIdList.forEach((categoryId) -> {
-            List<Long> problemIdList = problemCategoryRepository.getProblemIdListByCategoryId(categoryId);
+        int categorySize = categoryIdList.size();
+        int assignedProblemSize = questionSize / categorySize;
+        int remainProblemSize = assignedProblemSize + (questionSize % categorySize);
 
-            // todo: Bulk Insert 리팩토링, 문제 Sequence로직 구현
-            for (int i = 0; i < problemIdList.size(); i++) {
+        for (int i = 0; i < categorySize; i++) {
+            Long categoryId = categoryIdList.get(i);
+            int currentQuestionSize = (i + 1 != categorySize) ? assignedProblemSize : remainProblemSize; // 마지막 카테고리인 경우 문제 사이즈 변동
+
+            List<Long> problemIdList = problemCategoryRepository.getProblemIdListByCategoryId(categoryId,
+                currentQuestionSize);
+
+            // todo: Bulk Insert 리팩토링, 카테고리 내에서 문제를 랜덤하게 선정하는 로직 구현
+            for (int j = 0; j < problemIdList.size(); j++) {
                 interviewProblemList.add(
-                    InterviewProblem.createUnsolvedInterviewProblem(i + 1, interviewId, problemIdList.get(i))
+                    InterviewProblem.createUnsolvedInterviewProblem(j + 1, interviewId, problemIdList.get(j))
                 );
             }
-        });
+        }
 
         interviewProblemRepository.saveAll(interviewProblemList);
     }
