@@ -28,15 +28,15 @@ import com.til.domain.interview.dto.InterviewInfoDto;
 import com.til.domain.interview.dto.InterviewProblemQuestionDto;
 import com.til.domain.interview.dto.InterviewSolveDto;
 import com.til.domain.interview.enums.InterviewErrorCode;
+import com.til.domain.interview.model.ExperienceInterviewProblem;
 import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewProblem;
 import com.til.domain.interview.model.InterviewProblemStatus;
 import com.til.domain.interview.model.InterviewStatus;
 import com.til.domain.interview.model.InterviewType;
-import com.til.domain.interview.model.SpeechInterviewProblem;
+import com.til.domain.interview.repository.ExperienceInterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
-import com.til.domain.interview.repository.SpeechInterviewProblemRepository;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public class InterviewService {
     private final InterviewRepository interviewRepository;
     private final InterviewCategoryRepository interviewCategoryRepository;
     private final InterviewProblemRepository interviewProblemRepository;
-    private final SpeechInterviewProblemRepository speechInterviewProblemRepository;
+    private final ExperienceInterviewProblemRepository experienceInterviewProblemRepository;
 
     private final ProblemCategoryRepository problemCategoryRepository;
 
@@ -75,8 +75,6 @@ public class InterviewService {
         Interview interview = interviewCreateDto.toEntity(code);
         interviewRepository.save(interview);
 
-        // interviewType을 이용하여 면접 종류에 따라 두 가지 생성 로직을 구분
-
         // -- cs 질문 기반 면접 생성
         if (interviewCreateDto.interviewType().equals(InterviewType.NORMAL)) {
             createInterviewCategory(interview.getId(), interviewCreateDto.categoryIdList());
@@ -85,7 +83,7 @@ public class InterviewService {
         }
         // -- portfolio 질문 기반 면접 생성
         else if (interviewCreateDto.interviewType().equals(InterviewType.PORTFOLIO)) {
-            createSpeechInterviewProblem(interview.getId(), interviewCreateDto.questionSize(), interviewCreateDto
+            createExperienceInterviewProblem(interview.getId(), interviewCreateDto.questionSize(), interviewCreateDto
                 .portfolio());
         }
 
@@ -94,13 +92,13 @@ public class InterviewService {
 
     @Async
     @Transactional
-    public void createSpeechInterviewProblem(Long interviewId, int questionSize, String portfolio) {
+    public void createExperienceInterviewProblem(Long interviewId, int questionSize, String portfolio) {
         CreatingProblemInputDataDto creatingProblemInputDataDto = CreatingProblemInputDataDto.of(questionSize,
             portfolio);
 
         CompletableFuture.supplyAsync(() -> sendingCreatingProblemRequest(creatingProblemInputDataDto))
             .thenAccept(creatingProblemResultDto -> {
-                saveSpeechInterviewProblem(creatingProblemResultDto.questionList(), interviewId);
+                saveExperienceInterviewProblem(creatingProblemResultDto.questionList(), interviewId);
                 interviewRepository.updateInterviewStatus(interviewId, InterviewStatus.PROCESSING);
             }).exceptionally(e -> {
                 interviewRepository.updateInterviewStatus(interviewId, InterviewStatus.ERROR);
@@ -111,12 +109,22 @@ public class InterviewService {
     public InterviewInfoDto getProcessingInterviewInfo(Long userId, String code) {
         Interview interview = interviewRepository.getProcessingInterview(userId, code);
 
-        List<Long> categoryIdList = interviewCategoryRepository.getCategoryIdListByInterviewId(interview.getId());
+        List<Long> categoryIdList = new ArrayList<>();
+        List<InterviewProblemQuestionDto> problemList = new ArrayList<>();
 
-        List<InterviewProblemQuestionDto> problemList = interviewProblemRepository
-            .getInterviewProblemQuestionByInterviewId(interview.getId());
+        // -- cs 질문 기반 면접 조회
+        if (interview.getType().equals(InterviewType.NORMAL)) {
+            categoryIdList = interviewCategoryRepository.getCategoryIdListByInterviewId(interview.getId());
+            problemList = interviewProblemRepository.getInterviewProblemQuestionByInterviewId(interview.getId());
+        }
+        // -- portfolio 질문 기반 면접 조회
+        else if (interview.getType().equals(InterviewType.PORTFOLIO)) {
+            problemList = experienceInterviewProblemRepository.getExperienceInterviewProblemQuestionByInterviewId(
+                interview
+                    .getId());
+        }
 
-        return InterviewInfoDto.of(interview.getCreatedDate(), categoryIdList, problemList);
+        return InterviewInfoDto.of(interview.getType(), interview.getCreatedDate(), categoryIdList, problemList);
     }
 
     public InterviewStatus getInterviewStatus(Long userId, String code) {
@@ -128,12 +136,21 @@ public class InterviewService {
         Interview interview = interviewRepository.getProcessingInterview(interviewSolveDto.userId(), interviewSolveDto
             .code());
 
-        checkInterviewProblemSolvable(interview.getId(), interviewSolveDto.sequence());
+        // -- cs 질문 기반 면접 조회
+        if (interview.getType().equals(InterviewType.NORMAL)) {
+            checkInterviewProblemSolvable(interview.getId(), interviewSolveDto.sequence());
+            checkInterviewProblemSequence(interview.getId(), interviewSolveDto.sequence());
+            interviewProblemRepository.solveInterviewProblem(interview.getId(), interviewSolveDto.sequence(),
+                interviewSolveDto.answer());
+        }
+        // -- portfolio 질문 기반 면접 조회
+        else if (interview.getType().equals(InterviewType.PORTFOLIO)) {
+            checkExperienceInterviewProblemSolvable(interview.getId(), interviewSolveDto.sequence());
+            checkExperienceInterviewProblemSequence(interview.getId(), interviewSolveDto.sequence());
+            experienceInterviewProblemRepository.solveInterviewProblem(interview.getId(), interviewSolveDto.sequence(),
+                interviewSolveDto.answer());
+        }
 
-        checkInterviewProblemSequence(interview.getId(), interviewSolveDto.sequence());
-
-        interviewProblemRepository.solveInterviewProblem(interview.getId(), interviewSolveDto.sequence(),
-            interviewSolveDto.answer());
     }
 
     @Transactional
@@ -175,6 +192,20 @@ public class InterviewService {
 
     private void checkInterviewProblemSequence(Long interviewId, Integer sequence) {
         if (interviewProblemRepository.existsBySequenceConsistency(interviewId, sequence,
+            InterviewProblemStatus.UNSOLVED)) {
+            throw new BaseException(InterviewErrorCode.INTERVIEW_SEQUENCE_INCONSISTENCY);
+        }
+    }
+
+    private void checkExperienceInterviewProblemSolvable(Long interviewId, Integer sequence) {
+        if (!experienceInterviewProblemRepository.existsBySolvable(interviewId, sequence,
+            InterviewProblemStatus.UNSOLVED)) {
+            throw new BaseException(InterviewErrorCode.NOT_FOUND_INTERVIEW_PROBLEM);
+        }
+    }
+
+    private void checkExperienceInterviewProblemSequence(Long interviewId, Integer sequence) {
+        if (experienceInterviewProblemRepository.existsBySequenceConsistency(interviewId, sequence,
             InterviewProblemStatus.UNSOLVED)) {
             throw new BaseException(InterviewErrorCode.INTERVIEW_SEQUENCE_INCONSISTENCY);
         }
@@ -233,13 +264,14 @@ public class InterviewService {
         }
     }
 
-    private void saveSpeechInterviewProblem(List<String> questionList, Long interviewId) {
-        List<SpeechInterviewProblem> problemList = IntStream.range(0, questionList.size())
-            .mapToObj(i -> SpeechInterviewProblem.createUnsolvedSpeechInterviewProblem(i + 1, questionList.get(i),
+    private void saveExperienceInterviewProblem(List<String> questionList, Long interviewId) {
+        List<ExperienceInterviewProblem> problemList = IntStream.range(0, questionList.size())
+            .mapToObj(i -> ExperienceInterviewProblem.createUnsolvedExperienceInterviewProblem(i + 1, questionList.get(
+                i),
                 interviewId))
             .collect(Collectors.toList());
 
-        speechInterviewProblemRepository.saveAll(problemList);
+        experienceInterviewProblemRepository.saveAll(problemList);
     }
 
     private String createRandomId() {

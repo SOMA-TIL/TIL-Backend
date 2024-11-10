@@ -25,11 +25,9 @@ public class InterviewProblemRepositoryCustomImpl implements InterviewProblemRep
     @Override
     public List<InterviewProblemQuestionDto> getInterviewProblemQuestionByInterviewId(Long interviewId) {
         return queryFactory.select(Projections.constructor(InterviewProblemQuestionDto.class,
-            interviewProblem.id,
             interviewProblem.answer,
             interviewProblem.sequence,
             interviewProblem.status,
-            interviewProblem.problemId,
             problem.question))
             .from(interviewProblem)
             .leftJoin(problem)

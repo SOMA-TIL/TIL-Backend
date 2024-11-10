@@ -6,11 +6,9 @@ import lombok.Builder;
 
 @Builder
 public record InterviewProblemQuestionDto(
-                                          Long id,
                                           String answer,
                                           Integer sequence,
                                           InterviewProblemStatus status,
-                                          Long problemId,
                                           String question
 ) {
 
