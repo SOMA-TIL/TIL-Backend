@@ -20,8 +20,8 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "speech_interview_problem")
-public class SpeechInterviewProblem extends BaseTimeEntity {
+@Table(name = "experience_interview_problem")
+public class ExperienceInterviewProblem extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,12 +47,12 @@ public class SpeechInterviewProblem extends BaseTimeEntity {
     @Column(nullable = false)
     private Long interviewId;
 
-    public static SpeechInterviewProblem createUnsolvedSpeechInterviewProblem(
+    public static ExperienceInterviewProblem createUnsolvedExperienceInterviewProblem(
         Integer sequence,
         String question,
         Long interviewId
     ) {
-        return SpeechInterviewProblem.builder()
+        return ExperienceInterviewProblem.builder()
             .status(InterviewProblemStatus.UNSOLVED)
             .gradingStatus(GradingStatus.IDLE)
             .sequence(sequence)

@@ -27,9 +27,9 @@ import com.til.domain.interview.enums.InterviewErrorCode;
 import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewStatus;
 import com.til.domain.interview.model.InterviewType;
+import com.til.domain.interview.repository.ExperienceInterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
-import com.til.domain.interview.repository.SpeechInterviewProblemRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class InterviewServiceTest {
@@ -47,7 +47,7 @@ public class InterviewServiceTest {
     private InterviewProblemRepository interviewProblemRepository;
 
     @Mock
-    private SpeechInterviewProblemRepository speechInterviewProblemRepository;
+    private ExperienceInterviewProblemRepository experienceInterviewProblemRepository;
 
     @Mock
     private ProblemCategoryRepository problemCategoryRepository;
@@ -146,7 +146,7 @@ public class InterviewServiceTest {
     void 유효하지_않은_면접_문제에_답변을_제출하면_예외를_던진다() {
         // given
         given(interviewRepository.getProcessingInterview(anyLong(), anyString())).willReturn(
-            createInterview(InterviewStatus.PROCESSING)
+            createInterview(InterviewStatus.PROCESSING, InterviewType.NORMAL)
         );
         given(interviewProblemRepository.existsBySolvable(anyLong(), anyInt(), any()))
             .willThrow(new BaseException(InterviewErrorCode.NOT_FOUND_INTERVIEW_PROBLEM));
@@ -164,7 +164,7 @@ public class InterviewServiceTest {
     void 면접_문제풀이의_순서_일관성이_깨지면_예외를_던진다() {
         // given
         given(interviewRepository.getProcessingInterview(anyLong(), anyString())).willReturn(
-            createInterview(InterviewStatus.PROCESSING)
+            createInterview(InterviewStatus.PROCESSING, InterviewType.NORMAL)
         );
         given(interviewProblemRepository.existsBySolvable(anyLong(), anyInt(), any())).willReturn(true);
         given(interviewProblemRepository.existsBySequenceConsistency(anyLong(), anyInt(), any())).willThrow(
@@ -183,7 +183,7 @@ public class InterviewServiceTest {
     void 면접_문제를_모두_풀이하지_않았는데_면접을_완료하면_예외를_던진다() {
         // given
         given(interviewRepository.getProcessingInterview(anyLong(), anyString())).willReturn(
-            createInterview(InterviewStatus.PROCESSING)
+            createInterview(InterviewStatus.PROCESSING, InterviewType.NORMAL)
         );
         given(interviewProblemRepository.existsByInterviewIdAndStatus(anyLong(), any())).willThrow(new BaseException(
             InterviewErrorCode.FAIL_SUBMIT_INTERVIEW));
@@ -195,9 +195,10 @@ public class InterviewServiceTest {
             .isEqualTo(InterviewErrorCode.FAIL_SUBMIT_INTERVIEW);
     }
 
-    private Interview createInterview(InterviewStatus status) {
+    private Interview createInterview(InterviewStatus status, InterviewType type) {
         return Interview.builder()
             .id(1L)
+            .type(type)
             .code("code")
             .status(status)
             .userId(1L)

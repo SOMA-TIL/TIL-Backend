@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem,
-  interview, grading, interview_category, interview_problem, speech_interview_problem,
+  interview, grading, interview_category, interview_problem, experience_interview_problem,
   til_history, problem_hourly_view_statistics;
 DROP VIEW IF EXISTS problem_statistics;
 
@@ -112,7 +112,7 @@ CREATE TABLE interview_problem
     modified_date  datetime(6) not null
 );
 
-CREATE TABLE speech_interview_problem
+CREATE TABLE experience_interview_problem
 (
     id             bigint auto_increment not null primary key,
     question       text   not null,
