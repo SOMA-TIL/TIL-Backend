@@ -19,9 +19,9 @@ import com.til.controller.problem.request.SearchProblemRequest;
 import com.til.controller.problem.request.UpdateProblemRequest;
 import com.til.controller.problem.response.ProblemInfoResponse;
 import com.til.controller.problem.response.ProblemPageResponse;
+import com.til.domain.common.dto.PageDto;
 import com.til.domain.problem.dto.AdminProblemInfoDto;
 import com.til.domain.problem.dto.AdminProblemListDto;
-import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.enums.ProblemSuccessCode;
 
 import jakarta.validation.Valid;
@@ -48,10 +48,10 @@ public class ProblemController {
     public ApiResponse<ProblemPageResponse> readProblemList(@CurrentUser Long adminId,
         @ModelAttribute PageParamRequest pageParamRequest, @ModelAttribute SearchProblemRequest searchProblemRequest) {
         log.debug("문제 리스트 조회 요청 - 관리자 ID: {}", adminId);
-        ProblemPageDto<AdminProblemListDto> problemPage = adminProblemService.getProblemList(
+        PageDto<AdminProblemListDto> problemPage = adminProblemService.getProblemList(
             pageParamRequest.toServiceDto(), searchProblemRequest.toServiceDto());
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_LIST,
-            ProblemPageResponse.of(problemPage.problemList(), problemPage.pageInfo()));
+            ProblemPageResponse.of(problemPage.list(), problemPage.pageInfo()));
     }
 
     @GetMapping("/{id}")

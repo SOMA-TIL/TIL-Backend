@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.til.common.exception.BaseException;
+import com.til.domain.common.dto.PageDto;
 import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.history.annotation.LogProblemViewHistory;
 import com.til.domain.problem.dto.FavoriteProblemDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
-import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.dto.ProblemSearchDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
@@ -27,15 +27,15 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
     private final FavoriteProblemRepository favoriteProblemRepository;
 
-    public ProblemPageDto<ProblemOverviewInfoDto> getProblemOverviewList(Long userId, PageParamDto pageParamDto,
+    public PageDto<ProblemOverviewInfoDto> getProblemOverviewList(Long userId, PageParamDto pageParamDto,
         ProblemSearchDto problemSearchDto) {
         return isGuest(userId) ? getProblemPublicOverviewList(pageParamDto, problemSearchDto)
             : getProblemOverviewListWithUserData(pageParamDto, problemSearchDto, userId);
     }
 
-    public ProblemPageDto<Problem> getProblemList(PageParamDto pageParamDto) {
+    public PageDto<Problem> getProblemList(PageParamDto pageParamDto) {
         Page<Problem> problems = problemRepository.findAll(pageParamDto.toPageable());
-        return ProblemPageDto.of(problems);
+        return PageDto.of(problems);
     }
 
     @Transactional
@@ -53,17 +53,17 @@ public class ProblemService {
             .setFavorite(favoriteProblemRepository.existsByUserIdAndProblemId(userId, problemId));
     }
 
-    private ProblemPageDto<ProblemOverviewInfoDto> getProblemPublicOverviewList(PageParamDto pageParamDto,
+    private PageDto<ProblemOverviewInfoDto> getProblemPublicOverviewList(PageParamDto pageParamDto,
         ProblemSearchDto problemSearchDto) {
-        return ProblemPageDto.of(
+        return PageDto.of(
             problemRepository.getProblemPublicOverviewInfoList(pageParamDto.toPageable(), problemSearchDto));
     }
 
-    private ProblemPageDto<ProblemOverviewInfoDto> getProblemOverviewListWithUserData(PageParamDto pageParamDto,
+    private PageDto<ProblemOverviewInfoDto> getProblemOverviewListWithUserData(PageParamDto pageParamDto,
         ProblemSearchDto problemSearchDto, Long userId) {
         Page<ProblemOverviewInfoDto> problems = problemRepository.getProblemOverviewListWithUserData(
             pageParamDto.toPageable(), problemSearchDto, userId);
-        return ProblemPageDto.of(problems);
+        return PageDto.of(problems);
     }
 
     @Transactional

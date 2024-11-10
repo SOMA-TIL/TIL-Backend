@@ -6,12 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.til.common.exception.BaseException;
 import com.til.domain.category.repository.CategoryRepository;
 import com.til.domain.category.repository.ProblemCategoryRepository;
+import com.til.domain.common.dto.PageDto;
 import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.problem.dto.AdminCreateProblemDto;
 import com.til.domain.problem.dto.AdminProblemInfoDto;
 import com.til.domain.problem.dto.AdminProblemListDto;
 import com.til.domain.problem.dto.AdminUpdateProblemDto;
-import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.ProblemSearchDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
 import com.til.domain.problem.model.Problem;
@@ -37,9 +37,9 @@ public class AdminProblemService {
         problemCategoryRepository.saveAllProblemCategories(problem.getId(), adminCreateProblemDto.categoryIdList());
     }
 
-    public ProblemPageDto<AdminProblemListDto> getProblemList(PageParamDto pageParamDto,
+    public PageDto<AdminProblemListDto> getProblemList(PageParamDto pageParamDto,
         ProblemSearchDto problemSearchDto) {
-        return ProblemPageDto.of(
+        return PageDto.of(
             problemRepository.getProblemList(pageParamDto.toPageable(), problemSearchDto));
     }
 

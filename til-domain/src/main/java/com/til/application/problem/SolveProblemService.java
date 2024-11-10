@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.til.common.exception.BaseException;
+import com.til.domain.common.dto.PageDto;
+import com.til.domain.common.dto.PageParamDto;
+import com.til.domain.problem.dto.OthersAnswerDto;
 import com.til.domain.problem.dto.SolveProblemDto;
 import com.til.domain.problem.dto.SubmitHistoryDto;
 import com.til.domain.problem.dto.SubmitResultDto;
@@ -23,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 public class SolveProblemService {
 
     private final UserProblemRepository userProblemRepository;
-
     private final ProblemRepository problemRepository;
 
     @Transactional
@@ -39,6 +41,11 @@ public class SolveProblemService {
         List<SubmitHistoryDto> submitHistory = userProblemRepository.getSubmitHistory(userId, problemId);
         boolean isPass = userProblemRepository.isProblemPassed(userId, problemId);
         return SubmitResultDto.of(submitHistory, isPass ? problemRepository.getSolutionByProblemId(problemId) : null);
+    }
+
+    public PageDto<OthersAnswerDto> getProblemOthersAnswer(Long userId, Long problemId, PageParamDto pageParamDto) {
+        validateProblemExists(problemId);
+        return PageDto.of(userProblemRepository.getPassedOthersAnswer(problemId, userId, pageParamDto.toPageable()));
     }
 
     private void validateProblemExists(Long problemId) {

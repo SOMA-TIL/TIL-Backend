@@ -19,13 +19,15 @@ import com.til.controller.problem.request.FavoriteProblemRequest;
 import com.til.controller.problem.request.SearchProblemRequest;
 import com.til.controller.problem.request.SolveProblemRequest;
 import com.til.controller.problem.response.ProblemInfoResponse;
+import com.til.controller.problem.response.ProblemOthersAnswerResponse;
 import com.til.controller.problem.response.ProblemPageResponse;
 import com.til.controller.problem.response.ProblemResultResponse;
 import com.til.controller.problem.response.ProblemSubmitHistory;
 import com.til.controller.problem.response.SolveProblemResponse;
+import com.til.domain.common.dto.PageDto;
 import com.til.domain.grading.dto.GradingResultDto;
+import com.til.domain.problem.dto.OthersAnswerDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
-import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.dto.SubmitResultDto;
 import com.til.domain.problem.dto.SubmitStatusDto;
@@ -49,10 +51,10 @@ public class ProblemController {
     public ApiResponse<ProblemPageResponse> getProblemList(@CurrentUser(required = false) Long userId,
         @ModelAttribute PageParamRequest pageParamRequest, @ModelAttribute SearchProblemRequest searchProblemRequest) {
         log.debug("searchProblemRequest: {}", searchProblemRequest);
-        ProblemPageDto<ProblemOverviewInfoDto> problemPage = problemService.getProblemOverviewList(userId,
+        PageDto<ProblemOverviewInfoDto> problemPage = problemService.getProblemOverviewList(userId,
             pageParamRequest.toServiceDto(), searchProblemRequest.toServiceDto());
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_PROBLEM_LIST,
-            ProblemPageResponse.of(problemPage.problemList(), problemPage.pageInfo()));
+            ProblemPageResponse.of(problemPage.list(), problemPage.pageInfo()));
     }
 
     @GetMapping("/{id}")
@@ -89,5 +91,14 @@ public class ProblemController {
     public ApiResponse<ProblemSubmitHistory> getProblemSubmitHistory(@CurrentUser Long userId, @PathVariable Long id) {
         SubmitResultDto submitResult = solveProblemService.getProblemSubmitResult(userId, id);
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_SUBMIT_HISTORY, ProblemSubmitHistory.of(submitResult));
+    }
+
+    @GetMapping("/{id}/others")
+    public ApiResponse<ProblemOthersAnswerResponse> getProblemOthersAnswer(@CurrentUser Long userId,
+        @PathVariable Long id, @ModelAttribute PageParamRequest pageParamRequest) {
+        PageDto<OthersAnswerDto> othersAnswerList = solveProblemService.getProblemOthersAnswer(userId, id,
+            pageParamRequest.toServiceDto());
+        return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_OTHERS_ANSWER, ProblemOthersAnswerResponse.of(
+            othersAnswerList));
     }
 }
