@@ -33,6 +33,9 @@ public class Grading extends BaseTimeEntity {
     private AnswerType type;
 
     @Column(nullable = false)
+    private Long userId;
+
+    @Column(nullable = false)
     private Long targetId;
 
     @Enumerated(EnumType.STRING)

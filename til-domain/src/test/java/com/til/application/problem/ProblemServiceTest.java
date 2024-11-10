@@ -24,10 +24,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import com.til.common.exception.BaseException;
+import com.til.domain.common.dto.PageDto;
 import com.til.domain.common.dto.PageParamDto;
 import com.til.domain.problem.dto.FavoriteProblemDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
-import com.til.domain.problem.dto.ProblemPageDto;
 import com.til.domain.problem.dto.ProblemPublicInfoDto;
 import com.til.domain.problem.dto.ProblemSearchDto;
 import com.til.domain.problem.enums.ProblemErrorCode;
@@ -62,13 +62,13 @@ public class ProblemServiceTest {
         given(problemRepository.findAll(any(PageRequest.class))).willReturn(problemPage);
 
         // when
-        ProblemPageDto<Problem> result = problemService.getProblemList(pageParamDto);
+        PageDto<Problem> result = problemService.getProblemList(pageParamDto);
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.problemList().size()).isEqualTo(1);
-        assertThat(result.problemList().get(0).getId()).isEqualTo(problem.getId());
-        assertThat(result.problemList().get(0).getTitle()).isEqualTo(problem.getTitle());
+        assertThat(result.list().size()).isEqualTo(1);
+        assertThat(result.list().get(0).getId()).isEqualTo(problem.getId());
+        assertThat(result.list().get(0).getTitle()).isEqualTo(problem.getTitle());
     }
 
     @Test
@@ -95,14 +95,14 @@ public class ProblemServiceTest {
             .willReturn(problemPage);
 
         // when
-        ProblemPageDto<ProblemOverviewInfoDto> result = problemService.getProblemOverviewList(null, pageParamDto,
+        PageDto<ProblemOverviewInfoDto> result = problemService.getProblemOverviewList(null, pageParamDto,
             problemSearchDto);
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.problemList()).isNotNull();
+        assertThat(result.list()).isNotNull();
 
-        ProblemOverviewInfoDto dto = result.problemList().get(0);
+        ProblemOverviewInfoDto dto = result.list().get(0);
         assertThat(dto.title()).contains("Sample Problem");
         assertThat(dto.level()).isEqualTo(1);
         assertThat(dto.categoryList()).containsExactly(1L);
