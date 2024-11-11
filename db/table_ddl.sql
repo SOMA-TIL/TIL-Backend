@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS user, category, favorite_problem, problem, problem_category, solve_problem,
-  interview, grading, interview_category, interview_problem, experience_interview_problem,
+  interview, grading, interview_category, interview_problem,
   til_history, problem_hourly_view_statistics;
 DROP VIEW IF EXISTS problem_statistics;
 
@@ -102,25 +102,14 @@ CREATE TABLE interview_category
 CREATE TABLE interview_problem
 (
     id             bigint auto_increment not null primary key,
+    question       text not null,
     answer         text null,
     sequence       int    not null,
     status         enum('UNSOLVED', 'SOLVED') not null,
     grading_status enum('IDLE', 'PENDING', 'COMPLETED', 'ERROR') not null,
+    grading_criteria text null,
     interview_id   bigint not null,
-    problem_id     bigint not null,
-    created_date   datetime(6) not null,
-    modified_date  datetime(6) not null
-);
-
-CREATE TABLE experience_interview_problem
-(
-    id             bigint auto_increment not null primary key,
-    question       text   not null,
-    answer         text null,
-    sequence       int    not null,
-    status         enum('UNSOLVED', 'SOLVED') not null,
-    grading_status enum('IDLE', 'PENDING', 'COMPLETED', 'ERROR') not null,
-    interview_id   bigint not null,
+    problem_id     bigint null,
     created_date   datetime(6) not null,
     modified_date  datetime(6) not null
 );
