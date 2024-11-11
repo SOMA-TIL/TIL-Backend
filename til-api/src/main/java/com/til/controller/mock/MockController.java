@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.til.domain.interview.dto.CreatingProblemResultDto;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,7 +28,10 @@ public class MockController {
 
     @PostMapping("/llm-service/creating-problem")
     public ResponseEntity<Object> mockCreatingProblem() {
-        Map<String, List<String>> questionList = Map.of("questionList", List.of("더미 질문 1", "더미 질문 2", "더미 질문 3"));
+        Map<String, Object> questionList = Map.of("questionList", List.of(
+            CreatingProblemResultDto.create("더미 질문 1", "채점 기준 1"),
+            CreatingProblemResultDto.create("더미 질문 2", "채점 기준 2"),
+            CreatingProblemResultDto.create("더미 질문 3", "채점 기준 3")));
 
         return ResponseEntity.ok(questionList);
     }

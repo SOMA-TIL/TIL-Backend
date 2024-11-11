@@ -27,9 +27,9 @@ import com.til.domain.interview.enums.InterviewErrorCode;
 import com.til.domain.interview.model.Interview;
 import com.til.domain.interview.model.InterviewStatus;
 import com.til.domain.interview.model.InterviewType;
-import com.til.domain.interview.repository.ExperienceInterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewProblemRepository;
 import com.til.domain.interview.repository.InterviewRepository;
+import com.til.domain.problem.repository.ProblemRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class InterviewServiceTest {
@@ -47,7 +47,7 @@ public class InterviewServiceTest {
     private InterviewProblemRepository interviewProblemRepository;
 
     @Mock
-    private ExperienceInterviewProblemRepository experienceInterviewProblemRepository;
+    private ProblemRepository problemRepository;
 
     @Mock
     private ProblemCategoryRepository problemCategoryRepository;

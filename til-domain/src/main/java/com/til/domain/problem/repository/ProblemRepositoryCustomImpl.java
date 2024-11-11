@@ -41,6 +41,7 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.til.common.exception.BaseException;
 import com.til.domain.grading.enums.GradingStatus;
+import com.til.domain.interview.dto.InterviewProblemSnapshotDto;
 import com.til.domain.problem.dto.ProblemBasicInfoDto;
 import com.til.domain.problem.dto.ProblemOverviewInfoDto;
 import com.til.domain.problem.dto.ProblemPublicInfoDto;
@@ -192,6 +193,20 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             .having(userStatusCondition);
 
         return subQuery.fetch().size();
+    }
+
+    @Override
+    public List<InterviewProblemSnapshotDto> getInterviewProblemSnapshotList(Long categoryId, int questionSize) {
+        return queryFactory.select(Projections.constructor(InterviewProblemSnapshotDto.class,
+            problem.question,
+            problem.solution,
+            problem.id))
+            .from(problem)
+            .leftJoin(problemCategory)
+            .on(problem.id.eq(problemCategory.problemId))
+            .where(problemCategory.categoryId.eq(categoryId))
+            .limit(questionSize)
+            .fetch();
     }
 
     private BooleanExpression getSearchCondition(ProblemSearchDto searchDto) {

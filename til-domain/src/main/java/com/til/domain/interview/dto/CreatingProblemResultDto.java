@@ -1,9 +1,17 @@
 package com.til.domain.interview.dto;
 
-import java.util.List;
+import lombok.Builder;
 
+@Builder
 public record CreatingProblemResultDto(
-                                       List<String> questionList
+                                       String question,
+                                       String gradingCriteria
 ) {
 
+    public static CreatingProblemResultDto create(String question, String gradingCriteria) {
+        return CreatingProblemResultDto.builder()
+            .question(question)
+            .gradingCriteria(gradingCriteria)
+            .build();
+    }
 }

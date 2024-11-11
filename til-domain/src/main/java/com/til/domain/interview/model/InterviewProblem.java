@@ -20,6 +20,9 @@ public class InterviewProblem extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String question;
+
     @Column(nullable = true)
     private String answer;
 
@@ -34,23 +37,47 @@ public class InterviewProblem extends BaseTimeEntity {
     @Column(nullable = false)
     private GradingStatus gradingStatus;
 
+    @Column(nullable = true)
+    private String gradingCriteria;
+
     @Column(nullable = false)
     private Long interviewId;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long problemId;
 
     public static InterviewProblem createUnsolvedInterviewProblem(
+        String question,
+        String gradingCriteria,
         Integer sequence,
         Long interviewId,
         Long problemId
     ) {
         return InterviewProblem.builder()
+            .question(question)
             .status(InterviewProblemStatus.UNSOLVED)
             .gradingStatus(GradingStatus.IDLE)
+            .gradingCriteria(gradingCriteria)
             .sequence(sequence)
             .interviewId(interviewId)
             .problemId(problemId)
+            .build();
+    }
+
+    public static InterviewProblem createUnsolvedInterviewProblemWithPortfolio(
+        String question,
+        String gradingCriteria,
+        Integer sequence,
+        Long interviewId
+    ) {
+        return InterviewProblem.builder()
+            .question(question)
+            .status(InterviewProblemStatus.UNSOLVED)
+            .gradingStatus(GradingStatus.IDLE)
+            .gradingCriteria(gradingCriteria)
+            .sequence(sequence)
+            .interviewId(interviewId)
+            .problemId(null)
             .build();
     }
 

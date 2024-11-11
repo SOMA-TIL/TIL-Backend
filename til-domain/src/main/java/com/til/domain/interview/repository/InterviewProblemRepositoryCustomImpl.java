@@ -1,7 +1,6 @@
 package com.til.domain.interview.repository;
 
 import static com.til.domain.interview.model.QInterviewProblem.interviewProblem;
-import static com.til.domain.problem.model.QProblem.problem;
 
 import java.util.List;
 
@@ -25,13 +24,11 @@ public class InterviewProblemRepositoryCustomImpl implements InterviewProblemRep
     @Override
     public List<InterviewProblemQuestionDto> getInterviewProblemQuestionByInterviewId(Long interviewId) {
         return queryFactory.select(Projections.constructor(InterviewProblemQuestionDto.class,
+            interviewProblem.question,
             interviewProblem.answer,
             interviewProblem.sequence,
-            interviewProblem.status,
-            problem.question))
+            interviewProblem.status))
             .from(interviewProblem)
-            .leftJoin(problem)
-            .on(interviewProblem.problemId.eq(problem.id))
             .where(interviewProblem.interviewId.eq(interviewId))
             .fetch();
     }

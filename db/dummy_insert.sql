@@ -303,18 +303,18 @@ VALUES
 
 
 -- =================== interview_problem ===================
-INSERT INTO interview_problem (id, answer, sequence, status, grading_status, interview_id, problem_id, created_date, modified_date)
+INSERT INTO interview_problem (id, question, answer, sequence, status, grading_status, grading_criteria, interview_id, problem_id, created_date, modified_date)
 VALUES
-    (1, "1번 인터뷰 시퀀스 1번 문제 답변", 1, "SOLVED", "COMPLETED", 1, 1, now(), now()),
-    (2, "1번 인터뷰 시퀀스 2번 문제 답변", 2, "SOLVED", "COMPLETED", 1, 2, now(), now()),
-    (3, "1번 인터뷰 시퀀스 3번 문제 답변", 3, "SOLVED", "COMPLETED", 1, 3, now(), now()),
-    (4, "1번 인터뷰 시퀀스 4번 문제 답변", 4, "SOLVED", "COMPLETED", 1, 4, now(), now()),
-    (5, "1번 인터뷰 시퀀스 5번 문제 답변", 5, "SOLVED", "COMPLETED", 1, 5, now(), now()),
-    (6, "2번 인터뷰 시퀀스 1번 문제 답변", 1, "SOLVED", "COMPLETED", 2, 6, now(), now()),
-    (7, "2번 인터뷰 시퀀스 2번 문제 답변", 2, "SOLVED", "COMPLETED", 2, 7, now(), now()),
-    (8, "2번 인터뷰 시퀀스 3번 문제 답변", 3, "SOLVED", "COMPLETED", 2, 8, now(), now()),
-    (9, "2번 인터뷰 시퀀스 4번 문제 답변", 4, "SOLVED", "COMPLETED", 2, 9, now(), now()),
-    (10, "2번 인터뷰 시퀀스 5번 문제 답변", 5, "SOLVED", "COMPLETED", 2, 10, now(), now());
+    (1, "1번 문제 스냅샷", "1번 인터뷰 시퀀스 1번 문제 답변", 1, "SOLVED", "COMPLETED", "1번 문제 채점 기준", 1, 1, now(), now()),
+    (2, "2번 문제 스냅샷", "1번 인터뷰 시퀀스 2번 문제 답변", 2, "SOLVED", "COMPLETED", "2번 문제 채점 기준", 1, 2, now(), now()),
+    (3, "3번 문제 스냅샷", "1번 인터뷰 시퀀스 3번 문제 답변", 3, "SOLVED", "COMPLETED", "3번 문제 채점 기준", 1, 3, now(), now()),
+    (4, "4번 문제 스냅샷", "1번 인터뷰 시퀀스 4번 문제 답변", 4, "SOLVED", "COMPLETED", "4번 문제 채점 기준", 1, 4, now(), now()),
+    (5, "5번 문제 스냅샷", "1번 인터뷰 시퀀스 5번 문제 답변", 5, "SOLVED", "COMPLETED", "5번 문제 채점 기준", 1, 5, now(), now()),
+    (6, "1번 문제 스냅샷", "2번 인터뷰 시퀀스 1번 문제 답변", 1, "SOLVED", "COMPLETED", "1번 문제 채점 기준", 2, 6, now(), now()),
+    (7, "2번 문제 스냅샷", "2번 인터뷰 시퀀스 2번 문제 답변", 2, "SOLVED", "COMPLETED", "2번 문제 채점 기준", 2, 7, now(), now()),
+    (8, "3번 문제 스냅샷", "2번 인터뷰 시퀀스 3번 문제 답변", 3, "SOLVED", "COMPLETED", "3번 문제 채점 기준", 2, 8, now(), now()),
+    (9, "4번 문제 스냅샷", "2번 인터뷰 시퀀스 4번 문제 답변", 4, "SOLVED", "COMPLETED", "4번 문제 채점 기준", 2, 9, now(), now()),
+    (10, "5번 문제 스냅샷", "2번 인터뷰 시퀀스 5번 문제 답변", 5, "SOLVED", "COMPLETED", "5번 문제 채점 기준", 2, 10, now(), now());
 
 
 -- =================== grading(interview) ===================
