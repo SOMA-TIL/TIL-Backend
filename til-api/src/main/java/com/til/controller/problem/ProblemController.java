@@ -76,7 +76,7 @@ public class ProblemController {
         @RequestBody @Valid SolveProblemRequest solveProblemRequest) {
         SubmitStatusDto submitStatus = solveProblemService.solveProblem(
             solveProblemRequest.toServiceDto(userId, id));
-        gradingService.makeGradingUserProblem(submitStatus.submitId());
+        gradingService.makeGradingUserProblem(submitStatus.submitId(), userId);
         return ApiResponse.ok(SolveProblemResponse.of(submitStatus));
     }
 

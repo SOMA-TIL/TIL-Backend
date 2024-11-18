@@ -22,10 +22,11 @@ public record GradingResultDto(
             .build();
     }
 
-    public static Grading toEntity(AnswerType type, Long targetId, GradingResultDto gradingResultDto) {
+    public static Grading toEntity(AnswerType type, Long targetId, Long userId, GradingResultDto gradingResultDto) {
         return Grading.builder()
             .type(type)
             .targetId(targetId)
+            .userId(userId)
             .result(gradingResultDto.result())
             .comment(gradingResultDto.comment())
             .build();
