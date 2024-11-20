@@ -48,12 +48,11 @@ public class GradingRepositoryCustomImpl implements GradingRepositoryCustom {
     public Map<Long, GradingInputDataDto> getGradingInputDataFromInterview(Long interviewId) {
         List<Tuple> data = queryFactory.select(
             interviewProblem.id,
-            problem.question,
-            problem.grading,
+            interviewProblem.question,
+            interviewProblem.gradingCriteria,
             interviewProblem.answer
         )
             .from(interviewProblem)
-            .leftJoin(problem).on(interviewProblem.problemId.eq(problem.id))
             .where(interviewProblem.interviewId.eq(interviewId))
             .fetch();
 
@@ -61,8 +60,8 @@ public class GradingRepositoryCustomImpl implements GradingRepositoryCustom {
             .collect(Collectors.toMap(
                 tuple -> Objects.requireNonNull(tuple.get(interviewProblem.id)),
                 tuple -> GradingInputDataDto.of(
-                    tuple.get(problem.question),
-                    tuple.get(problem.grading),
+                    tuple.get(interviewProblem.question),
+                    tuple.get(interviewProblem.gradingCriteria),
                     tuple.get(interviewProblem.answer)
                 )
             ));
