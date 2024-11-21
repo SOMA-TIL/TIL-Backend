@@ -184,7 +184,6 @@ public class InterviewService {
             Long categoryId = categoryIdList.get(i);
             int currentQuestionSize = (i + 1 != categorySize) ? assignedProblemSize : remainProblemSize; // 마지막 카테고리인 경우 문제 사이즈 변동
 
-            // todo: 카테고리 내에서 문제를 랜덤하게 선정하는 로직 구현
             List<InterviewProblemSnapshotDto> problemList = problemRepository.getInterviewProblemSnapshotList(
                 categoryId, currentQuestionSize);
 
