@@ -49,14 +49,14 @@ public class GradingService {
 
     @Async
     @Transactional
-    public void makeGradingUserProblem(Long targetId, Long userId) {
+    public void makeGradingUserProblem(Long targetId) {
         GradingInputDataDto gradingInputData = prepareGradingInputFromUserProblem(targetId);
         log.info("Grading input data : {}", gradingInputData);
 
         CompletableFuture<GradingResultDto> gradingResultFuture = sendGradingRequest(gradingInputData);
 
         gradingResultFuture.thenAccept(result -> {
-            gradingRepository.save(GradingResultDto.toEntity(AnswerType.PROBLEM, targetId, userId, result));
+            gradingRepository.save(GradingResultDto.toEntity(AnswerType.PROBLEM, targetId, result));
             userProblemRepository.updateStatus(targetId, GradingStatus.COMPLETED);
         }).exceptionally(e -> {
             userProblemRepository.updateStatus(targetId, GradingStatus.ERROR);
@@ -66,12 +66,12 @@ public class GradingService {
 
     @Async
     @Transactional
-    public void makeGradingInterview(Long interviewId, Long userId) {
+    public void makeGradingInterview(Long interviewId) {
         Map<Long, GradingInputDataDto> gradingInputDataList = prepareGradingInputFromInterview(interviewId);
         log.debug("Grading input data : {}", gradingInputDataList);
 
         List<CompletableFuture<Void>> futures = gradingInputDataList.entrySet().stream()
-            .map(entry -> processInterviewGrading(entry.getKey(), userId, entry.getValue()))
+            .map(entry -> processInterviewGrading(entry.getKey(), entry.getValue()))
             .toList();
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).whenComplete((result, throwable) -> {
@@ -83,10 +83,10 @@ public class GradingService {
         });
     }
 
-    private CompletableFuture<Void> processInterviewGrading(Long targetId, Long userId,
+    private CompletableFuture<Void> processInterviewGrading(Long targetId,
         GradingInputDataDto gradingInputDataDto) {
         return sendGradingRequest(gradingInputDataDto).thenAccept(result -> {
-            gradingRepository.save(GradingResultDto.toEntity(AnswerType.INTERVIEW, targetId, userId, result));
+            gradingRepository.save(GradingResultDto.toEntity(AnswerType.INTERVIEW, targetId, result));
             interviewProblemRepository.updateProblemGradingStatusById(targetId, GradingStatus.COMPLETED);
         }).exceptionally(e -> {
             interviewProblemRepository.updateProblemGradingStatusById(targetId, GradingStatus.ERROR);
