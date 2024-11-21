@@ -94,12 +94,11 @@ public class GradingRepositoryCustomImpl implements GradingRepositoryCustom {
 
         List<GradingResultWithProblemInfoDto> result = queryFactory
             .select(Projections.constructor(GradingResultWithProblemInfoDto.class,
-                problem.question,
+                interviewProblem.question,
                 interviewProblem.answer,
                 grading.result,
                 grading.comment
             )).from(interviewProblem)
-            .leftJoin(problem).on(interviewProblem.problemId.eq(problem.id))
             .leftJoin(grading).on(interviewProblem.id.eq(grading.targetId), grading.type.eq(AnswerType.INTERVIEW))
             .where(interviewProblem.interviewId.eq(interviewId))
             .orderBy(interviewProblem.sequence.asc())
