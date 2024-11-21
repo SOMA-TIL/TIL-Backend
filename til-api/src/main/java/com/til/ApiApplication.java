@@ -2,17 +2,17 @@ package com.til;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Import;
 
+import com.til.common.http.cors.BasicCorsConfig;
 import com.til.common.http.errorhandling.GlobalExceptionHandler;
 import com.til.common.http.security.SecurityConfig;
+import com.til.config.DiscoveryClientConfig;
 
 import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication
-@EnableDiscoveryClient
-@Import({SecurityConfig.class, GlobalExceptionHandler.class})
+@Import({DiscoveryClientConfig.class, SecurityConfig.class, GlobalExceptionHandler.class, BasicCorsConfig.class})
 public class ApiApplication {
 
     // ----Test Code----
