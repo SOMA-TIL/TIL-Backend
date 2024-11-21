@@ -35,6 +35,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -205,6 +206,7 @@ public class ProblemRepositoryCustomImpl implements ProblemRepositoryCustom {
             .leftJoin(problemCategory)
             .on(problem.id.eq(problemCategory.problemId))
             .where(problemCategory.categoryId.eq(categoryId))
+            .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
             .limit(questionSize)
             .fetch();
     }
