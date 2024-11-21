@@ -84,9 +84,7 @@ public class UserProblemRepositoryCustomImpl implements UserProblemRepositoryCus
                 userProblem.answer
             ))
             .from(userProblem)
-            .leftJoin(grading)
-            .on(userProblem.id.eq(grading.targetId)
-                .and(grading.userId.eq(userProblem.userId)))
+            .leftJoin(grading).on(userProblem.id.eq(grading.targetId))
             .leftJoin(user).on(userProblem.userId.eq(user.id))
             .where(
                 userProblem.problemId.eq(problemId),
@@ -102,9 +100,7 @@ public class UserProblemRepositoryCustomImpl implements UserProblemRepositoryCus
         var countQuery = queryFactory
             .select(userProblem.count())
             .from(userProblem)
-            .leftJoin(grading)
-            .on(userProblem.id.eq(grading.targetId)
-                .and(grading.userId.eq(userProblem.userId)))
+            .leftJoin(grading).on(userProblem.id.eq(grading.targetId))
             .leftJoin(user).on(userProblem.userId.eq(user.id))
             .where(
                 userProblem.problemId.eq(problemId),
@@ -115,4 +111,46 @@ public class UserProblemRepositoryCustomImpl implements UserProblemRepositoryCus
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
+//    @Override
+//    public Page<OthersAnswerDto> getPassedOthersAnswer(Long userId, Long problemId, Pageable pageable) {
+//        List<OthersAnswerDto> content = queryFactory
+//            .select(Projections.constructor(
+//                OthersAnswerDto.class,
+//                userProblem.id,
+//                userProblem.problemId,
+//                user.nickname,
+//                userProblem.answer
+//            ))
+//            .from(userProblem)
+//            .leftJoin(grading)
+//            .on(userProblem.id.eq(grading.targetId)
+//                .and(grading.userId.eq(userProblem.userId)))
+//            .leftJoin(user).on(userProblem.userId.eq(user.id))
+//            .where(
+//                userProblem.problemId.eq(problemId),
+//                userProblem.userId.ne(userId),
+//                grading.type.eq(AnswerType.PROBLEM),
+//                grading.result.eq(GradingResult.PASS)
+//            )
+//            .orderBy(userProblem.createdDate.desc())
+//            .offset(pageable.getOffset())
+//            .limit(pageable.getPageSize())
+//            .fetch();
+//
+//        var countQuery = queryFactory
+//            .select(userProblem.count())
+//            .from(userProblem)
+//            .leftJoin(grading)
+//            .on(userProblem.id.eq(grading.targetId)
+//                .and(grading.userId.eq(userProblem.userId)))
+//            .leftJoin(user).on(userProblem.userId.eq(user.id))
+//            .where(
+//                userProblem.problemId.eq(problemId),
+//                userProblem.userId.ne(userId),
+//                grading.type.eq(AnswerType.PROBLEM),
+//                grading.result.eq(GradingResult.PASS)
+//            );
+//
+//        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+//    }
 }

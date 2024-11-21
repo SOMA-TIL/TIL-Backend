@@ -62,7 +62,7 @@ public class InterviewController {
     @PostMapping("/{code}/submit")
     public ApiResponse<Void> submitInterview(@CurrentUser Long userId, @PathVariable String code) {
         Long interviewId = interviewService.submitInterview(userId, code);
-        gradingService.makeGradingInterview(interviewId, userId);
+        gradingService.makeGradingInterview(interviewId);
         return ApiResponse.ok(InterviewSuccessCode.SUCCESS_SUBMIT_INTERVIEW);
     }
 

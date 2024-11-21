@@ -32,8 +32,9 @@ public class Grading extends BaseTimeEntity {
     @Column(nullable = false)
     private AnswerType type;
 
-    @Column(nullable = false)
-    private Long userId;
+    // to-do: 추가할 예정
+    //@Column(nullable = false)
+    //private Long userId;
 
     @Column(nullable = false)
     private Long targetId;

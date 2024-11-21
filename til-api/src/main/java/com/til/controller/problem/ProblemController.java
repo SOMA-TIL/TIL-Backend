@@ -76,7 +76,7 @@ public class ProblemController {
         @RequestBody @Valid SolveProblemRequest solveProblemRequest) {
         SubmitStatusDto submitStatus = solveProblemService.solveProblem(
             solveProblemRequest.toServiceDto(userId, id));
-        gradingService.makeGradingUserProblem(submitStatus.submitId(), userId);
+        gradingService.makeGradingUserProblem(submitStatus.submitId());
         return ApiResponse.ok(SolveProblemResponse.of(submitStatus));
     }
 
@@ -93,7 +93,7 @@ public class ProblemController {
         return ApiResponse.ok(ProblemSuccessCode.SUCCESS_GET_SUBMIT_HISTORY, ProblemSubmitHistory.of(submitResult));
     }
 
-    @GetMapping("/{id}/others")
+    @GetMapping("/{id}/othersAnswer")
     public ApiResponse<ProblemOthersAnswerResponse> getProblemOthersAnswer(@CurrentUser Long userId,
         @PathVariable Long id, @ModelAttribute PageParamRequest pageParamRequest) {
         PageDto<OthersAnswerDto> othersAnswerList = solveProblemService.getProblemOthersAnswer(userId, id,
