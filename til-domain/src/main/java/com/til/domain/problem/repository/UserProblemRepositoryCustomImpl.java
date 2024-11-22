@@ -88,7 +88,7 @@ public class UserProblemRepositoryCustomImpl implements UserProblemRepositoryCus
             .leftJoin(user).on(userProblem.userId.eq(user.id))
             .where(
                 userProblem.problemId.eq(problemId),
-                userProblem.userId.ne(userId),
+//                userProblem.userId.ne(userId), 나중에 지우는 것 고려하기
                 grading.type.eq(AnswerType.PROBLEM),
                 grading.result.eq(GradingResult.PASS)
             )
