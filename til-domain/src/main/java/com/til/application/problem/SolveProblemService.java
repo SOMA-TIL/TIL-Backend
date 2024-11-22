@@ -45,7 +45,7 @@ public class SolveProblemService {
 
     public PageDto<OthersAnswerDto> getProblemOthersAnswer(Long userId, Long problemId, PageParamDto pageParamDto) {
         validateProblemExists(problemId);
-        return PageDto.of(userProblemRepository.getPassedOthersAnswer(problemId, userId, pageParamDto.toPageable()));
+        return PageDto.of(userProblemRepository.getPassedOthersAnswer(userId, problemId, pageParamDto.toPageable()));
     }
 
     private void validateProblemExists(Long problemId) {
